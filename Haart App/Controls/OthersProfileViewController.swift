@@ -23,7 +23,6 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
     @IBOutlet weak var userNameLbl: UILabel!
     @IBOutlet var storiesViewContainer: UIView!
     private var viewModel: IGHomeViewModel = IGHomeViewModel()
-    
     @IBOutlet weak var followBtn: UIButton!
     @IBOutlet weak var followingCountLbl: UILabel!
     @IBOutlet weak var followersCountLbl: UILabel!
@@ -59,10 +58,9 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
         IGCache.shared.removeAllObjects()
     }
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(personId)
         self.view.backgroundColor = UIColor.init(red: 246/255.0, green: 246/255.0, blue: 246/255.0, alpha: 1)
         gallaryCollectionView.register(UINib(nibName: "GallaryCell", bundle: nil), forCellWithReuseIdentifier: "GallaryCell")
         
@@ -79,6 +77,7 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
         grayView.grayViewRadiousBottm(value:36)
        
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.view.endEditing(true)
@@ -107,6 +106,7 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
             self.listType = .suggested
         }
     }
+    
     func getData() {
         if(self.userDocument == nil) {
             SVProgressHUD.show()
@@ -179,7 +179,6 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
         return nil
     }
     
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
@@ -243,11 +242,13 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
             cell.story = story
             return cell
     }
+    
     func addStoryButtonPressed() {
         let storiesController = StoriesController()
         storiesController.currentUserDocument = userDocument
         storiesController.addStory()
     }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if(collectionView == gallaryCollectionView){
             return
@@ -257,6 +258,7 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
             self.present(storyPreviewScene, animated: true, completion: nil)
         }
     }
+    
     @objc override func rightBarBtnClicked(sender:UIButton) {
         
         switch sender.tag {
@@ -278,9 +280,12 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
     @IBAction func messageBtnPressed(_ sender: Any) {
         if let user = Auth.auth().currentUser {
             let vc = ChannelsViewController(currentUser: user)
-            UIApplication.visibleViewController.present(UINavigationController.init(rootViewController: vc), animated: true, completion: nil)
+            let controller = UINavigationController.init(rootViewController: vc)
+            controller.modalPresentationStyle = .overFullScreen
+            UIApplication.visibleViewController.present(controller, animated: true, completion: nil)
         }
     }
+    
     @IBAction func followBtnPressed(_ sender: UIButton) {
         if(listType == .followed) {
             unfollow(personUserId:personId)
@@ -292,8 +297,6 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
             followRequest(personUserId: personId, status: "")
         }
     }
-    
-    
     
     func cancelFollowRequest(personUserId:String) {
         SVProgressHUD.show()
@@ -378,7 +381,6 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
         
     }
     
-    
     func unfollow(personUserId:String) {
         SVProgressHUD.show()
         //  let ref1 = db.collection("users").whereField("userId", isEqualTo: user.uid)
@@ -426,7 +428,6 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
         })
         // }
     }
-    
     
     func reloadCurrentUserData() {
         

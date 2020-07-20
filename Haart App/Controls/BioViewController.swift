@@ -506,11 +506,10 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
             showMessageToEnterFullName()
         }
     }
+    
     @IBAction func dismissBtnPressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
-    
-    
     
     @IBAction func bioBtnPressed(_ sender: Any) {
         if(fullNameTxtField.text?.count ?? 0 > 0) {
@@ -529,18 +528,22 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
         let selectedArr1 = userDocument?.data()[kProfessionKey] as? [String] ?? [String]()
         showProfessionInterestsPopUp(sender: sender, values:selectedArr1 , arrKey: kProfessionKey)
     }
+    
     @IBAction func raceBtnPressed(_ sender: UIButton) {
         currentSelectedList = ethnicitySelectedList
         showPopUpItems(sender: sender, arr1:bioEthnicitys, arrKey: kEthnicityKey)
     }
+    
     @IBAction func religionBtnPressed(_ sender: UIButton) {
         currentSelectedList = religionSelectedList
         showPopUpItems(sender: sender, arr1:bioReligion, arrKey: kReligionKey)
     }
+    
     @IBAction func bodyTypeBtnPressed(_ sender: UIButton) {
         currentSelectedList = bodyTypeSelectedList
         showPopUpItems(sender: sender, arr1:bioBodyFigure, arrKey: kBodyTypeKey)
     }
+    
     @IBAction func hairColorBtnPressed(_ sender: UIButton) {
         currentSelectedList = hairColorSelectedList
         showPopUpItems(sender: sender, arr1:bioHairColors, arrKey: kHairColorsKey)
@@ -569,6 +572,7 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
         currentSelectedList = educationSelectedList
         showPopUpItems(sender: sender, arr1:bioEducationLevel, arrKey: kEducationLevelKey)
     }
+    
     @IBAction func kidsBtnPressed(_ sender: UIButton) {
         currentSelectedList = kidsSelectedList
         showPopUpItems(sender: sender, arr1:bioKids, arrKey: kKids)
@@ -578,6 +582,7 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
         currentSelectedList = dietrySelectedList
         showPopUpItems(sender: sender, arr1:bioDietryPreferences, arrKey: kDietryPreferences)
     }
+    
     @IBAction func alchohalBtnPressed(_ sender: UIButton) {
         currentSelectedList = alchohalSelectedList
         showPopUpItems(sender: sender, arr1:bioAlchohal, arrKey: kAlchohal)
@@ -587,6 +592,7 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
         currentSelectedList = smokingSelectedList
         showPopUpItems(sender: sender, arr1:bioSmoking, arrKey: kSmoking)
     }
+    
     @IBAction func workoutBtnPressed(_ sender: UIButton) {
         currentSelectedList = workoutSelectedList
         showPopUpItems(sender: sender, arr1: bioWorkout, arrKey: kWorkout)
@@ -680,12 +686,14 @@ extension BioViewController {
         datePicker.minimumDate = minDate
         datePicker.maximumDate = maxDate
     }
+    
     @IBAction func dobBtnPressed(_ sender: Any) {
 
         UIView.animate(withDuration: 0.1) {
             self.datePickerContainer.isHidden = false
         }
     }
+    
     @IBAction func datePickerDoneBtnPressed(_ sender: Any) {
         let dateStr = datePicker.date.string("dd-MMM-YYYY")
         dobTxtField.text = dateStr//("\(day)/\(month)/\(year)")
@@ -694,6 +702,7 @@ extension BioViewController {
         }
         
     }
+    
     @IBAction func datePickerCancelBtnPressed(_ sender: Any) {
         UIView.animate(withDuration: 0.1) {
             self.datePickerContainer.isHidden = true
@@ -737,15 +746,19 @@ extension BioViewController {
         saveMedia(index: 0, sender: sender)
         
     }
+    
     @IBAction func bioMedia2BtnPressed(_ sender: UIButton) {
         saveMedia(index: 1, sender: sender)
     }
+    
     @IBAction func bioMedia3BtnPressed(_ sender: UIButton) {
         saveMedia(index: 2, sender: sender)
     }
+    
     @IBAction func bioMedia4BtnPressed(_ sender: UIButton) {
         saveMedia(index: 3, sender: sender)
     }
+    
     @IBAction func bioMedia5BtnPressed(_ sender: UIButton) {
         saveMedia(index: 4, sender: sender)
     }
@@ -775,6 +788,7 @@ extension BioViewController {
         }
         present(picker, animated: true, completion: nil)
     }
+    
     private func uploadImage(_ image: UIImage,_ folderName:String, completion: @escaping (URL?) -> Void) {
 
         guard let scaledImage = image.scaledToSafeUploadSize, let data = scaledImage.jpegData(compressionQuality: 0.4) else {
