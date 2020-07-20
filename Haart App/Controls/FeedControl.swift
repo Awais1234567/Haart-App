@@ -17,6 +17,7 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
 
     private var viewModel: IGHomeViewModel = IGHomeViewModel()
     var feedsArr = [[String:Any]]()
+    var image: UIImage!
     @IBOutlet weak var storyContainer: UIView!
     @IBOutlet weak var tblView: UITableView!
     var _storiesView:IGHomeView!
@@ -38,6 +39,7 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
         if(feedsArr.count > 1) {
             feedsArr.removeFirst()
         }
+        print(feedsArr)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -113,12 +115,13 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
 
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10//feedsArr.count
+        return feedsArr.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FeedCell", for: indexPath) as! FeedCell
-       // cell.setData(data: feedsArr[indexPath.row])
+        cell.profilePicImgView.image = image
+        cell.setData(data: feedsArr[indexPath.row])
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

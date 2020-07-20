@@ -250,6 +250,7 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
             else {
                 if(indexPath.row < galleryItemsArr.count) {
                     let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "FeedControl") as! FeedControl
+                    vc.image = profileImgView.image
                     vc.feedsArr = galleryItemsArr
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
@@ -295,7 +296,9 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
         case 1:
             if let user = Auth.auth().currentUser {
                 let vc = ChannelsViewController(currentUser: user)
-                UIApplication.visibleViewController.present(UINavigationController.init(rootViewController: vc), animated: true, completion: nil)
+                let controller = UINavigationController.init(rootViewController: vc)
+                controller.modalPresentationStyle = .overFullScreen
+                UIApplication.visibleViewController.present(controller, animated: true, completion: nil)
             }           
         default:
             let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -309,7 +312,7 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
 
     @IBAction func messageBtnPressed(_ sender: Any) {
         if let user = Auth.auth().currentUser {
-            let vc = ChannelsViewController(currentUser: user) //UIApplication.visibleViewController.present(UINavigationController.init(rootViewController: vc), animated: true, completion: nil)
+            let vc = ChannelsViewController(currentUser: user)
             let controller = UINavigationController.init(rootViewController: vc)
             controller.modalPresentationStyle = .overFullScreen
             UIApplication.rootViewController.present(controller, animated: true, completion: nil)
