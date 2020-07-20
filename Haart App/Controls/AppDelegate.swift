@@ -118,7 +118,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
    
     func application(_ application: UIApplication, continue userActivity: NSUserActivity,
                      restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        
+         print("called1")
         let handled = DynamicLinks.dynamicLinks().handleUniversalLink(userActivity.webpageURL!) { (dynamiclink, error) in
             let link = dynamiclink?.url?.absoluteString ?? ""
             SVProgressHUD.show()
@@ -130,6 +130,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
                     if (user?.user.isEmailVerified == true) {
                         if let user = Auth.auth().currentUser {
                             AppSettings.displayName = user.displayName ?? "nil"
+                            print("called")
                             let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                             let viewController = mainStoryboard.instantiateViewController(withIdentifier: "AddAccountsViewController")
                             UIApplication.shared.keyWindow?.rootViewController = viewController

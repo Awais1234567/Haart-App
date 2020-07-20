@@ -24,13 +24,14 @@ class HomeViewController: AbstractControl, UICollectionViewDelegate,UICollection
     private var appUsersListener: ListenerRegistration?
 
  //   let user:User = Auth.auth().currentUser!
-    
+
     var itemsArr = Array<QueryDocumentSnapshot>()
     @IBOutlet weak var swipeAbleView: UIImageView!
     @IBOutlet weak var homeCollectionView: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("hit..min")
         homeCollectionView.register(UINib(nibName: "HomeCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "HomeCollectionViewCell")
         homeCollectionView.contentInset = UIEdgeInsets(top: 0, left:  22, bottom: 0, right:  22)
         homeCollectionView.decelerationRate = UIScrollView.DecelerationRate.fast

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05372ED424C5BBC200D4B602 /* MSPeekCollectionViewDelegateImplementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05372ED124C5BBC100D4B602 /* MSPeekCollectionViewDelegateImplementation.swift */; };
+		05372ED524C5BBC200D4B602 /* UICollectionView+PeekConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05372ED224C5BBC100D4B602 /* UICollectionView+PeekConfiguration.swift */; };
+		05372ED624C5BBC200D4B602 /* UICollectionViewScrollDirection+PeekDataCovnversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05372ED324C5BBC100D4B602 /* UICollectionViewScrollDirection+PeekDataCovnversion.swift */; };
+		05F9423724C5ABA00070FCC4 /* PorfileImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F9423624C5ABA00070FCC4 /* PorfileImageCell.swift */; };
+		05F9423924C5B3850070FCC4 /* appConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F9423824C5B3850070FCC4 /* appConstant.swift */; };
 		8E0005ED23DF284C000F1960 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0005EC23DF284C000F1960 /* HomeViewController.swift */; };
 		8E0005EF23DF2A77000F1960 /* AbstractControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0005EE23DF2A77000F1960 /* AbstractControl.swift */; };
 		8E0005F123DF2A7D000F1960 /* AbstractCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0005F023DF2A7D000F1960 /* AbstractCollectionCell.swift */; };
@@ -164,6 +169,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		05372ED124C5BBC100D4B602 /* MSPeekCollectionViewDelegateImplementation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MSPeekCollectionViewDelegateImplementation.swift; sourceTree = "<group>"; };
+		05372ED224C5BBC100D4B602 /* UICollectionView+PeekConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionView+PeekConfiguration.swift"; sourceTree = "<group>"; };
+		05372ED324C5BBC100D4B602 /* UICollectionViewScrollDirection+PeekDataCovnversion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionViewScrollDirection+PeekDataCovnversion.swift"; sourceTree = "<group>"; };
+		05F9423624C5ABA00070FCC4 /* PorfileImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PorfileImageCell.swift; sourceTree = "<group>"; };
+		05F9423824C5B3850070FCC4 /* appConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = appConstant.swift; sourceTree = "<group>"; };
 		538F6172423F165B0390E330 /* Pods-Haart App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Haart App.debug.xcconfig"; path = "Target Support Files/Pods-Haart App/Pods-Haart App.debug.xcconfig"; sourceTree = "<group>"; };
 		639E7DB5F47F9012BCB7D830 /* Pods-Haart App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Haart App.release.xcconfig"; path = "Target Support Files/Pods-Haart App/Pods-Haart App.release.xcconfig"; sourceTree = "<group>"; };
 		8E0005EC23DF284C000F1960 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -339,6 +349,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		05372ECA24C5BA8A00D4B602 /* Peeking */ = {
+			isa = PBXGroup;
+			children = (
+				05372ED124C5BBC100D4B602 /* MSPeekCollectionViewDelegateImplementation.swift */,
+				05372ED224C5BBC100D4B602 /* UICollectionView+PeekConfiguration.swift */,
+				05372ED324C5BBC100D4B602 /* UICollectionViewScrollDirection+PeekDataCovnversion.swift */,
+			);
+			path = Peeking;
+			sourceTree = "<group>";
+		};
 		58A20523A1833D664272AFC5 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -523,6 +543,7 @@
 				8EA1C32523E3237600A8AA7A /* Stories Modules */,
 				8E25F35C23E2DF9B00F909D1 /* Font */,
 				8E95583923DC8CE200F72FBC /* Notes.rtf */,
+				05F9423824C5B3850070FCC4 /* appConstant.swift */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -551,6 +572,7 @@
 				8EB38B982446DC3200655361 /* LIkedCell.xib */,
 				8E937658247BC95C007D290E /* CommentCell.swift */,
 				8E937659247BC95C007D290E /* CommentCell.xib */,
+				05F9423624C5ABA00070FCC4 /* PorfileImageCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -626,6 +648,7 @@
 		8EA1C33623E329B600A8AA7A /* Libs */ = {
 			isa = PBXGroup;
 			children = (
+				05372ECA24C5BA8A00D4B602 /* Peeking */,
 				8EA1C33723E32A0500A8AA7A /* Custom */,
 				8EB8F0CD2417B3050042ACB4 /* DispatchQueue.swift */,
 			);
@@ -974,6 +997,7 @@
 				8EA1C33023E3237600A8AA7A /* IGHomeController.swift in Sources */,
 				8EBB43F923F172450023BA44 /* DSCircularLayout.m in Sources */,
 				8EC7EAB423F2FED200C1C2D6 /* HaartTextView.swift in Sources */,
+				05F9423924C5B3850070FCC4 /* appConstant.swift in Sources */,
 				8EA1C35E23E32A0500A8AA7A /* UIViewController.swift in Sources */,
 				8E25F35323E2DF5700F909D1 /* IGStoryPreviewView.swift in Sources */,
 				8EA6C98B23E5CA6A00BAE477 /* IGHomeView.swift in Sources */,
@@ -984,6 +1008,7 @@
 				8EA6AFAD2444755E00972F76 /* ChannelsCell.swift in Sources */,
 				8EC7EAB923F30F5100C1C2D6 /* VerificationViewController.swift in Sources */,
 				8E25F34023E2DF5700F909D1 /* Color+Additions.swift in Sources */,
+				05F9423724C5ABA00070FCC4 /* PorfileImageCell.swift in Sources */,
 				8ED6C9CE2424E96D007FD5E1 /* UIImage+Additions.swift in Sources */,
 				8EA5FDCB23F2B0FF002BDA4F /* HaartTextField.swift in Sources */,
 				8E25F34323E2DF5700F909D1 /* IGStoryPreviewHeaderView.swift in Sources */,
@@ -1007,6 +1032,7 @@
 				8EA1C36023E32A0500A8AA7A /* UIApplication.swift in Sources */,
 				8E25F34823E2DF5700F909D1 /* UIImageView+Extension.swift in Sources */,
 				8E25F34223E2DF5700F909D1 /* IGSnapProgressView.swift in Sources */,
+				05372ED424C5BBC200D4B602 /* MSPeekCollectionViewDelegateImplementation.swift in Sources */,
 				8EA1C36123E32A0500A8AA7A /* UIScreen.swift in Sources */,
 				8ED6C9CB2424E96D007FD5E1 /* Message.swift in Sources */,
 				8ED6C9D32424E985007FD5E1 /* AppSettings.swift in Sources */,
@@ -1019,6 +1045,7 @@
 				8E25F35623E2DF5700F909D1 /* CubeAttributesAnimator.swift in Sources */,
 				8EA1C35523E32A0500A8AA7A /* Float.swift in Sources */,
 				8E95584923DCAEEC00F72FBC /* FeedCell.swift in Sources */,
+				05372ED624C5BBC200D4B602 /* UICollectionViewScrollDirection+PeekDataCovnversion.swift in Sources */,
 				8EADF6AE23FEEAC100A406DB /* SelectedIntrestsCollectionViewController.swift in Sources */,
 				8E9CF8D42413F42D003001B9 /* CustomizedTabBar.swift in Sources */,
 				8E25F34523E2DF5700F909D1 /* IGStories.swift in Sources */,
@@ -1045,6 +1072,7 @@
 				8E9AE12C23EC554600C35720 /* SettingsSimpleCell.swift in Sources */,
 				8E0005ED23DF284C000F1960 /* HomeViewController.swift in Sources */,
 				8EA1C32F23E3237600A8AA7A /* IGAddStoryCell.swift in Sources */,
+				05372ED524C5BBC200D4B602 /* UICollectionView+PeekConfiguration.swift in Sources */,
 				8E25F35823E2DF5700F909D1 /* UIView+Anchor.swift in Sources */,
 				8E25F33C23E2DF5700F909D1 /* IGMockLoader.swift in Sources */,
 				8E25F35423E2DF5700F909D1 /* Reachability.swift in Sources */,
