@@ -106,7 +106,7 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
                 vc.verificationID = verificationID
                 UIApplication.visibleViewController.present(vc, animated: true, completion: nil)
             }
-           
+
         }
     }
  }

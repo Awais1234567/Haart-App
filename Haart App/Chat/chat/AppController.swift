@@ -69,7 +69,7 @@ final class AppController {
   }
   
   private func handleAppState() {
-    if let user = Auth.auth().currentUser {
+    if let _ = Auth.auth().currentUser {
             if (UserDefaults.standard.bool(forKey: "isLoggedIn")) {
                 let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                 let viewController = mainStoryboard.instantiateViewController(withIdentifier: "HaartTabViewCotroller") as! UITabBarController

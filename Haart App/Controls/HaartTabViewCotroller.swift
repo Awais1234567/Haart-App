@@ -61,5 +61,4 @@ class HaartTabViewCotroller: UITabBarController {
     @objc func homeBtnPressed() {
         self.selectedIndex = 2
     }
-
 }

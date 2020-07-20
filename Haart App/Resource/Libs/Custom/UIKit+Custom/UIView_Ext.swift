@@ -95,7 +95,7 @@ extension UIView {
     
     func roundForMessageSender() {
         let maskPath1 = UIBezierPath(roundedRect: bounds,
-                                     byRoundingCorners: [.bottomLeft , .topRight, .topLeft],
+                                     byRoundingCorners: [.bottomLeft , .topRight, .topLeft, .bottomRight],
                                      cornerRadii: CGSize(width: 8, height: 8))
         let maskLayer1 = CAShapeLayer()
         maskLayer1.frame = bounds
@@ -105,7 +105,7 @@ extension UIView {
     
     func roundForMessageOtherUser() {
         let maskPath1 = UIBezierPath(roundedRect: bounds,
-                                     byRoundingCorners: [.bottomLeft , .topRight, .bottomRight],
+                                     byRoundingCorners: [.bottomLeft , .topRight, .bottomRight, .topLeft],
                                      cornerRadii: CGSize(width: 8, height: 8))
         let maskLayer1 = CAShapeLayer()
         maskLayer1.frame = bounds
@@ -153,6 +153,21 @@ extension UIView {
         maskLayer1.frame = bounds
         maskLayer1.path = maskPath1.cgPath
         layer.mask = maskLayer1
+    }
+    func insertBottomSeperatorLine(color: UIColor = UIColor.init(hexString: "#617798").withAlphaComponent(0.08)){
+        let seperatorLine: UIView = {
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.backgroundColor = color
+            return view
+        }()
+        addSubview(seperatorLine)
+        //Constraints to view
+        seperatorLine.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        seperatorLine.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        seperatorLine.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        seperatorLine.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        
     }
     
 }
