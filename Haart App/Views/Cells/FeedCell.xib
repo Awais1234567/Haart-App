@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -16,11 +14,11 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="415"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="375" height="414.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="375" height="415"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="klb-Sd-sPQ">
-                        <rect key="frame" x="19" y="0.0" width="337" height="401.5"/>
+                        <rect key="frame" x="19" y="0.0" width="337" height="402"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eCC-0e-XXF">
                                 <rect key="frame" x="12" y="371.5" width="69" height="18"/>
@@ -33,12 +31,12 @@
                                 </state>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aOI-BO-yHr">
-                                <rect key="frame" x="12" y="345.5" width="97" height="26"/>
+                                <rect key="frame" x="12" y="345.5" width="92" height="26"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="26" id="Al7-11-Mzc"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                <state key="normal" title="Total 3 Comment">
+                                <state key="normal" title="Total Comments">
                                     <color key="titleColor" red="0.37643486259999998" green="0.37649339440000001" blue="0.37642204759999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                             </button>
@@ -210,10 +208,12 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="captionLbl" destination="D1O-0n-OxV" id="Be7-ag-aql"/>
+                <outlet property="commenterNameLabel" destination="eCC-0e-XXF" id="Mey-tZ-ei8"/>
                 <outlet property="commentsCountLbl" destination="aOI-BO-yHr" id="NuD-dY-i8Z"/>
                 <outlet property="fullName" destination="r5D-oe-UfB" id="DaM-FM-NtM"/>
                 <outlet property="imgView" destination="H4u-45-SLj" id="4Bd-la-nqf"/>
                 <outlet property="profilePicImgView" destination="SLa-1i-LDV" id="kwD-4F-9qv"/>
+                <outlet property="recentCommentLabel" destination="a9T-pC-Y2E" id="9EI-n8-Jcy"/>
                 <outlet property="timeLbl" destination="EPy-DD-LT5" id="4bU-G5-mZh"/>
             </connections>
             <point key="canvasLocation" x="159.19999999999999" y="160.56971514242881"/>
