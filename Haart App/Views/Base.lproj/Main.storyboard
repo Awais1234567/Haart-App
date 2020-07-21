@@ -3821,7 +3821,7 @@
                                                 <rect key="frame" x="20" y="151" width="374" height="87"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Age" translatesAutoresizingMaskIntoConstraints="NO" id="6HM-3Q-9rh">
-                                                        <rect key="frame" x="0.0" y="0.0" width="22" height="22.000000000000004"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="22" height="22"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="22" id="5fJ-Jn-9PJ"/>
                                                             <constraint firstAttribute="width" constant="22" id="xsA-TU-pNK"/>
@@ -3892,13 +3892,13 @@
                                                 <rect key="frame" x="20" y="255" width="374" height="87"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Eyes Color" translatesAutoresizingMaskIntoConstraints="NO" id="kT8-pP-FtS">
-                                                        <rect key="frame" x="0.0" y="0.0" width="26" height="22.000000000000004"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="52" height="22"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="22" id="pmd-og-LQa"/>
                                                         </constraints>
                                                     </imageView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Eye Color" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hDB-Wp-4CR">
-                                                        <rect key="frame" x="35.000000000000007" y="1.6666666666666856" width="69.666666666666686" height="19"/>
+                                                        <rect key="frame" x="61.000000000000007" y="1.6666666666666856" width="69.666666666666686" height="19"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                         <nil key="textColor"/>
@@ -4765,7 +4765,7 @@
                                                 <rect key="frame" x="20" y="1815" width="374" height="87"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Smoking" translatesAutoresizingMaskIntoConstraints="NO" id="edY-dw-VUk">
-                                                        <rect key="frame" x="0.0" y="0.0" width="26.666666666666675" height="22"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="26.666666666666668" height="22"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="22" id="CmP-wD-g9C"/>
                                                             <constraint firstAttribute="width" constant="26.5" id="pFr-w9-oHA"/>

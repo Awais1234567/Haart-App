@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 class CommentCell: UITableViewCell {
 
@@ -23,6 +24,12 @@ class CommentCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    func setData(userDocument:QueryDocumentSnapshot) {
+        fullNameLbl.text = "Awais"//userDocument.data()["unreadLikesCount"] as? String
+        commentLbl.text = userDocument.data()["comment"] as? String
+        timeLbl.text = "1h"//userDocument.data()["unreadLikesCount"]
+        profileImgView.image = UIImage(named: "Back")
     }
     
 }
