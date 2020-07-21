@@ -14,7 +14,7 @@ import YPImagePicker
 import Firebase
 
 class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UICollectionViewDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout,IGAddStoryCellDelegate {
-
+    
     private var viewModel: IGHomeViewModel = IGHomeViewModel()
     var feedsArr = [[String:Any]]()
     var image: UIImage!
@@ -34,7 +34,9 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       tblView.register(UINib(nibName: "FeedCell", bundle: nil), forCellReuseIdentifier: "FeedCell")
+        //view.backgroundColor = UIColor.haartRed
+        self.navigationController?.view.backgroundColor = UIColor.red
+        tblView.register(UINib(nibName: "FeedCell", bundle: nil), forCellReuseIdentifier: "FeedCell")
         self.setNavBarButtons(letfImages: [UIImage.init(named: "Back")!], rightImage: nil)
         if(feedsArr.count > 1) {
             feedsArr.removeFirst()
@@ -44,7 +46,7 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-      //  getData()
+        //  getData()
     }
     
     func getData() {
@@ -95,7 +97,7 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
                 storiesController.currentUserDocument = self.userDocument
                 self.viewModel.stories = storiesController.returnAndSetValidStories(storiesArr: storiesArr)
                 self._storiesView.collectionView.reloadData()
-              
+                
             }
         }
     }
@@ -112,7 +114,7 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
         }
         return nil
     }
-
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return feedsArr.count
@@ -127,13 +129,13 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 415
     }
-
+    
     //MARK: - Private functions
     @objc private func clearImageCache() {
         IGCache.shared.removeAllObjects()
     }
     
-  
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.numberOfItemsInSection(section)
     }
@@ -167,7 +169,7 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
         storiesController.addStory()
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-     
+        
         if indexPath.row == 0 {
             addStoryButtonPressed()
         } else {

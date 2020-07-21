@@ -47,3 +47,14 @@ extension UIColor {
     }
 }
 
+
+
+extension UIColor {
+
+  @nonobjc class var haartRed: UIColor {
+    return UIColor.init(hexString: "#EC2B00")
+  }
+
+  
+
+}
