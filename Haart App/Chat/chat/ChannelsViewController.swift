@@ -85,6 +85,18 @@ class ChannelsViewController: UIViewController, UITableViewDelegate, UITableView
         super.init(nibName: nil, bundle: nil)
         self.title = "Messages"
         
+        print(channels)
+//        let controller = AbstractControl()
+//        let ref = controller.db.collection("users").whereField("userId", isEqualTo: currentUser.uid)
+//        ref.getDocuments { (snapshot, error) in
+//
+//
+//            if(snapshot?.documents.count == 0) {
+//
+//            }
+//            print(snapshot?.documents[0])
+//        }
+        
     }
     
     
