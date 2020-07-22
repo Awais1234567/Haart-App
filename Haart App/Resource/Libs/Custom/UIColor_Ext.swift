@@ -50,11 +50,15 @@ extension UIColor {
 
 
 extension UIColor {
-
-  @nonobjc class var haartRed: UIColor {
-    return UIColor.init(hexString: "#EC2B00")
-  }
-
-  
-
+    
+    @nonobjc class var haartRed: UIColor {
+        return UIColor.init(hexString: "#EC2B00")
+    }
+    @nonobjc class var incommingMsgColor: UIColor {
+        return UIColor(red: 97 / 255, green: 119 / 255, blue: 152 / 255, alpha: 1)
+    }
+    
+    
+    
+    
 }
