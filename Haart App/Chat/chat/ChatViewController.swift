@@ -33,6 +33,8 @@ import MessageKit
 import FirebaseFirestore
 import SVProgressHUD
 import FirebaseAuth
+import FirebaseStorage
+
 
 final class ChatViewController: MessagesViewController {
     

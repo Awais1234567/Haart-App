@@ -13,6 +13,7 @@ import SDWebImage
 import YPImagePicker
 import Firebase
 import Lightbox
+import FirebaseStorage
 class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, IGAddStoryCellDelegate {
    
     var lightBoxImagesArr = [LightboxImage]()
