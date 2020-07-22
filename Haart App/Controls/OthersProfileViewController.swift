@@ -18,7 +18,7 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
     
     
     var shouldFetchImagesArr = true
-    private let storage = Storage.storage().reference()
+//    private let storage = Storage.storage().reference()
     @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var userNameLbl: UILabel!
     @IBOutlet var storiesViewContainer: UIView!

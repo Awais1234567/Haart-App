@@ -29,82 +29,82 @@
 import FirebaseFirestore
 
 struct Channel {
-  
-  let id: String?
-  let name: String
-  let createrName:String
-  let createrId:String
-  let createrProfilePicUrl:String
-  let createUserName:String
-  let profilePicUrl:String
-  let userName:String
-  let timeStamp:Date
-  var userIds = Array<String>()
-    init(name: String,createrName:String,createrId:String,userIds: Array<String>, userName:String, profilePicUrl:String, createrProfilePicUrl:String, createUserName:String) {
-    id = nil
     
-    self.userIds = userIds
-    self.name = name
-    self.userName = userName
-    self.profilePicUrl = profilePicUrl
-    self.timeStamp = Date()
-    self.createrProfilePicUrl = createrProfilePicUrl
-    self.createUserName = createUserName
-    self.createrName = createrName
-    self.createrId = createrId
-  }
-  
-  init?(document: QueryDocumentSnapshot) {
-    let data = document.data()
-
-    guard let name = data["name"] as? String else {
-      return nil
+    let id: String?
+    let name: String
+    let createrName:String
+    let createrId:String
+    let createrProfilePicUrl:String
+    let createUserName:String
+    let profilePicUrl:String
+    let userName:String
+    let timeStamp:Date
+    var userIds = Array<String>()
+    init(name: String,createrName:String,createrId:String,userIds: Array<String>, userName:String, profilePicUrl:String, createrProfilePicUrl:String, createUserName:String) {
+        id = nil
+        
+        self.userIds = userIds
+        self.name = name
+        self.userName = userName
+        self.profilePicUrl = profilePicUrl
+        self.timeStamp = Date()
+        self.createrProfilePicUrl = createrProfilePicUrl
+        self.createUserName = createUserName
+        self.createrName = createrName
+        self.createrId = createrId
     }
     
-    createrId = data["createrId"] as! String
-    createrName = data["createrName"] as! String
-    userIds = data["userIds"] as! Array<String>
-    self.userName = data["userName"] as! String
-    self.profilePicUrl = data["profilePicUrl"] as! String
-    self.timeStamp = (data["timeStamp"] as! Timestamp).dateValue()
-    self.createrProfilePicUrl = data["createrProfilePicUrl"] as! String
-    self.createUserName = data["createrUserName"] as! String
-    id = document.documentID
-    self.name = name
-  }
+    init?(document: QueryDocumentSnapshot) {
+        let data = document.data()
+        
+        guard let name = data["name"] as? String else {
+            return nil
+        }
+        
+        createrId = data["createrId"] as! String
+        createrName = data["createrName"] as! String
+        userIds = data["userIds"] as! Array<String>
+        self.userName = data["userName"] as! String
+        self.profilePicUrl = data["profilePicUrl"] as! String
+        self.timeStamp = (data["timeStamp"] as! Timestamp).dateValue()
+        self.createrProfilePicUrl = data["createrProfilePicUrl"] as! String
+        self.createUserName = data["createrUserName"] as! String
+        id = document.documentID
+        self.name = name
+    }
 }
 
 extension Channel: DatabaseRepresentation {
-  
-  var representation: [String : Any] {
-    var rep = [String : Any]()
-    rep["name"] = name
-    rep["createrName"] = createrName
-    rep["createrId"] = createrId
     
-    rep["userName"] = userName
-    rep["profilePicUrl"] = profilePicUrl
-    rep["timeStamp"] = timeStamp
-    rep["createrProfilePicUrl"] = createrProfilePicUrl
-    rep["createrUserName"] = createUserName
-    
-    if let id = id {
-      rep["id"] = id
+    var representation: [String : Any] {
+        var rep = [String : Any]()
+        rep["name"] = name
+        rep["createrName"] = createrName
+        rep["createrId"] = createrId
+        
+        rep["userName"] = userName
+        rep["profilePicUrl"] = profilePicUrl
+        rep["timeStamp"] = timeStamp
+        rep["createrProfilePicUrl"] = createrProfilePicUrl
+        rep["createrUserName"] = createUserName
+        
+        if let id = id {
+            rep["id"] = id
+        }
+        rep["userIds"] = userIds
+        return rep
     }
-    rep["userIds"] = userIds
-    return rep
-  }
-  
+    
 }
 
 extension Channel: Comparable {
-  
-  static func == (lhs: Channel, rhs: Channel) -> Bool {
-    return lhs.id == rhs.id
-  }
-  
-  static func < (lhs: Channel, rhs: Channel) -> Bool {
-    return lhs.name < rhs.name
-  }
-
+    
+    static func == (lhs: Channel, rhs: Channel) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    static func < (lhs: Channel, rhs: Channel) -> Bool {
+        return lhs.name < rhs.name
+    }
+    
 }

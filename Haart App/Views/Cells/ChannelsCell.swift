@@ -71,14 +71,6 @@ class ChannelssCell: UITableViewCell {
         lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
     }()
-    var userNameLbl: UILabel = {
-        let lbl = UILabel()
-        lbl.textColor = UIColor.init(hexString: "#617798").withAlphaComponent(0.5)
-        lbl.translatesAutoresizingMaskIntoConstraints = false
-        lbl.font = lbl.font.withSize(14)
-        lbl.textColor = UIColor.lightGray
-        return lbl
-    }()
     var timeLbl: UILabel = {
         let lbl = UILabel()
         lbl.translatesAutoresizingMaskIntoConstraints = false
@@ -86,6 +78,14 @@ class ChannelssCell: UITableViewCell {
         lbl.textColor = UIColor.init(hexString: "#617798").withAlphaComponent(0.5)
         lbl.textColor = UIColor.lightGray
         return lbl
+    }()
+    var isActiveCircleView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.incommingMsgColor
+        view.layer.cornerRadius = 5
+        return view
+        
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -106,44 +106,73 @@ class ChannelssCell: UITableViewCell {
         addSubview(outerCircleView)
         addSubview(imgView)
         addSubview(nameLbl)
-        addSubview(userNameLbl)
         addSubview(timeLbl)
+        addSubview(isActiveCircleView)
         NSLayoutConstraint.activate([
-            outerCircleView.centerXAnchor.constraint(equalTo: imgView.centerXAnchor),
-            outerCircleView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            outerCircleView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
+            outerCircleView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
+            outerCircleView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10),
             outerCircleView.widthAnchor.constraint(equalToConstant: 70),
             outerCircleView.heightAnchor.constraint(equalToConstant: 70),
             
-            imgView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-            imgView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            imgView.centerXAnchor.constraint(equalTo: outerCircleView.centerXAnchor),
+            imgView.centerYAnchor.constraint(equalTo: outerCircleView.centerYAnchor),
             imgView.widthAnchor.constraint(equalToConstant: 58),
             imgView.heightAnchor.constraint(equalToConstant: 58),
             
             nameLbl.leadingAnchor.constraint(equalTo: imgView.trailingAnchor, constant: 20),
-            nameLbl.topAnchor.constraint(equalTo: self.topAnchor, constant: 35),
-            
-            userNameLbl.leadingAnchor.constraint(equalTo: nameLbl.leadingAnchor),
-            userNameLbl.topAnchor.constraint(equalTo: nameLbl.bottomAnchor, constant: 5),
-            userNameLbl.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -31),
+            nameLbl.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             
             timeLbl.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
             timeLbl.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            
+            isActiveCircleView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
+            isActiveCircleView.widthAnchor.constraint(equalToConstant: 10),
+            isActiveCircleView.heightAnchor.constraint(equalToConstant: 10),
+            isActiveCircleView.bottomAnchor.constraint(equalTo: timeLbl.topAnchor, constant: -2)
         ])
     }
     func setData(channel:Channel) {
+        print("Creater Id",channel.createrId)
+        print("id", channel.id)
+        print(channel.userIds)
+        
         self.selectionStyle = .none
         timeLbl.text = channel.timeStamp.formattedRelativeString()
         if(channel.createrId == Auth.auth().currentUser?.uid) {
             nameLbl.text = channel.name
-            userNameLbl.text = channel.userName
             self.imgView.sd_imageIndicator = SDWebImageActivityIndicator.whiteLarge
             self.imgView.sd_setImage(with: URL(string:channel.profilePicUrl), placeholderImage: nil)
+            for i in channel.userIds{
+                if i != channel.createrId{
+                    getUserActiveState(id: i)
+                }
+            }
+            
         }
         else {
             nameLbl.text = channel.createrName
-            userNameLbl.text = channel.createUserName
             self.imgView.sd_imageIndicator = SDWebImageActivityIndicator.whiteLarge
             self.imgView.sd_setImage(with: URL(string:channel.createrProfilePicUrl), placeholderImage: nil)
+            getUserActiveState(id: channel.createrId)
+            for i in channel.userIds{
+                if i == channel.createrId{
+                    getUserActiveState(id: i)
+                }
+            }
         }
+    }
+    func getUserActiveState(id: String){
+        let controller = AbstractControl()
+        let ref = controller.db.collection("users").whereField("userId", isEqualTo: id)
+        ref.addSnapshotListener({(snapshot, error)in
+            let state = snapshot?.documents[0].data()["isActive"] as? String ?? "0"
+            if state == "0"{
+                self.isActiveCircleView.backgroundColor = UIColor.incommingMsgColor
+            }else{
+                self.isActiveCircleView.backgroundColor = UIColor.green
+            }
+        })
+        
     }
 }

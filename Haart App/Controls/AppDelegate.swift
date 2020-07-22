@@ -33,6 +33,8 @@ import SVProgressHUD
 import YPImagePicker
 import FirebaseMessaging
 import NotificationView
+import FirebaseDynamicLinks
+import FirebaseFirestore
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDelegate,MessagingDelegate {
     
@@ -109,7 +111,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
     }
     
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-        if let dynamicLink = DynamicLinks.dynamicLinks().dynamicLink(fromCustomSchemeURL: url) {
+        if let _ = DynamicLinks.dynamicLinks().dynamicLink(fromCustomSchemeURL: url) {
             return true
         }
         return GIDSignIn.sharedInstance().handle(url, sourceApplication: sourceApplication, annotation: annotation)
@@ -143,12 +145,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
         
         return handled
     }
+    func applicationWillResignActive(_ application: UIApplication) {
+        setUserState(isActive: "0")
+    }
     
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        setUserState(isActive: "1")
+    }
+    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
+    }
     @available(iOS 9.0, *)
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
         return application(app, open: url,
                            sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
                            annotation: "")
+    }
+    
+    /*
+     User State can only be 1 or 0
+     1 = Active
+     0 = InActive
+     */
+    func setUserState(isActive: String){
+        if let currentUser = Auth.auth().currentUser{
+            let controller = AbstractControl()
+            let ref = controller.db.collection("users").whereField("userId", isEqualTo: currentUser.uid)
+            ref.getDocuments { (snapshot, error) in
+                let userData = ["isActive":isActive] as [String : Any]
+                snapshot?.documents[0].reference.updateData(userData, completion: {error in
+                })
+            }
+        }
     }
     
 

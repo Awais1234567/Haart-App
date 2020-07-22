@@ -13,6 +13,7 @@ import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 import AVFoundation
+import FirebaseStorage
 class StoriesController:UIViewController {
     private let storage = Storage.storage().reference()
     var currentUser = Auth.auth().currentUser

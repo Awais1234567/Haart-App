@@ -18,6 +18,7 @@ import CoreLocation
 import YPImagePicker
 import SDWebImage
 import GoogleMaps
+import FirebaseStorage
 
 class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
     var randomStr:String?
