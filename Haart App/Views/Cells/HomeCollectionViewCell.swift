@@ -1,10 +1,3 @@
-//
-//  HomeCollectionViewCell.swift
-//  Haart App
-//
-//  Created by Stone on 25/01/20.
-//  Copyright © 2020 TalhaShah. All rights reserved.
-//
 
 import UIKit
 import SwiftMessages
@@ -32,6 +25,10 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
     
     @IBOutlet weak var profileImageCollection: UICollectionView!
     
+      func numberOfSections(in collectionView: UICollectionView) -> Int {
+             return 1
+         }
+    
 
       
      
@@ -47,8 +44,8 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
                   
                                               
         print("no.of photos\(imgsArr!.count)")
-                                              print(imgsArr)
-                                              print(imageIndex)
+                                         
+                                    
                                               
         menuCell.imageView.sd_imageIndicator = SDWebImageActivityIndicator.whiteLarge
         menuCell.imageView.sd_setImage(with: URL(string:imgsArr![indexPath.row]), placeholderImage: nil)
@@ -67,18 +64,22 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
     var currentUserUnreadMatchesCount:Int = 0
     var indexPath:IndexPath!
     let maxImages = 5
+    let i = IndexPath(item: 2, section: 0)
     var imageIndex: NSInteger = 0
     let gesture = UISwipeGestureRecognizer()
+      var delegate: MSPeekCollectionViewDelegateImplementation!
     override func awakeFromNib() {
         super.awakeFromNib()
+        delegate = MSPeekCollectionViewDelegateImplementation()
         profileImageCollection.dataSource = self
-        profileImageCollection.delegate = self
-        profileImageCollection.isPagingEnabled = true
+        profileImageCollection.delegate =  delegate
+        
         profileImageCollection.configureForPeekingDelegate()
         
      profileImageCollection.register(ProfileImageViewCell.self, forCellWithReuseIdentifier: ProfileImageViewCell.identifier)
         print("fuck")
         profileImageCollection.configureForPeekingDelegate()
+
         let leftRecognizer = UISwipeGestureRecognizer(target: self, action:
         #selector(swipe))
            leftRecognizer.direction = .left
@@ -87,7 +88,7 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
            rightRecognizer.direction = .right
         gesture.addTarget(self, action: #selector(swipe))
         
-    
+
 
         //imgView.roundTop(value:10)
     }
@@ -95,8 +96,8 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
     @objc func swipe(gesture: UISwipeGestureRecognizer){
       
         }
-    
-    
+  
+   
     func setData(userDocument:QueryDocumentSnapshot) {
         self.userDocument = userDocument
         unreadLikesCount = self.userDocument?.data()["unreadLikesCount"] as? Int ?? 0
@@ -113,12 +114,12 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
         
 //        if let imgsArr = (self.userDocument?.data()["bioPics"] as? [String]) {
 //            if(imgsArr.count > 0) {
-//                
-//                
-//                
+//
+//
+//
 //                print("no.of photos\(imgsArr.count)")
 //                print(imgsArr)
-//                
+//
 //                self.imgView.sd_imageIndicator = SDWebImageActivityIndicator.whiteLarge
 //                self.imgView.sd_setImage(with: URL(string:imgsArr[0]), placeholderImage: nil)
 //            }
@@ -199,6 +200,7 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
         
         
     }
+  
     @IBAction func suggestBtnPressed(_ sender: Any) {
         let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "RecommendedViewController") as! RecommendedViewController
         vc.personId = self.userDocument?.data()["userId"] as? String ?? ""
@@ -375,6 +377,8 @@ extension UIImageView {
           }
           downloadImageTask.resume()
       }
+  
+    
 }
 extension HomeCollectionViewCell : UICollectionViewDelegateFlowLayout {
     
@@ -383,5 +387,6 @@ extension HomeCollectionViewCell : UICollectionViewDelegateFlowLayout {
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 339 * appConstant.widthRatio, height: 353 * appConstant.heightRatio )
     }
+  
 
 }

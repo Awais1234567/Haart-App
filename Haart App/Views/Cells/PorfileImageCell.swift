@@ -14,7 +14,7 @@ class ProfileImageViewCell : UICollectionViewCell{
     lazy var imageView : UIImageView = {
         let iv = UIImageView()
         iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.contentMode = .scaleAspectFill
+        iv.contentMode = .scaleToFill
      
         return iv
     }()

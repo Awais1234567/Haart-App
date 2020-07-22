@@ -19,7 +19,6 @@ class FriendCell: UITableViewCell {
     var listType:ListType = .followers
     @IBOutlet weak var userNameLbl: UILabel!
     @IBOutlet weak var userNameTrailing: NSLayoutConstraint!
-    
     @IBOutlet weak var chatBtn: UIButton!
     @IBOutlet weak var nameLbl: UILabel!
      var channelReference: Query {
@@ -27,6 +26,7 @@ class FriendCell: UITableViewCell {
     }
     @IBOutlet weak var imgView: UIImageView!
     @IBOutlet weak var actionBtn: UIButton!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -44,6 +44,7 @@ class FriendCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
     }
+    
     func configureWith(userDocument:QueryDocumentSnapshot, currentUserSnapshot:QueryDocumentSnapshot, listType:ListType) {
         actionBtn.setHidden(false, animated: false)
         chatBtn.setHidden(false, animated: false)
@@ -131,6 +132,7 @@ class FriendCell: UITableViewCell {
             self.listType = .suggested
         }
 }
+    
     @IBAction func chatBtnPressed(_ sender: Any) {
         createChannelAndPushVc()
     }
@@ -160,7 +162,9 @@ class FriendCell: UITableViewCell {
                     if (doc != nil) {
                         let channel = Channel.init(document: doc!)
                         let vc = ChatViewController(user: self.user, channel: channel!)
-                        UIApplication.visibleViewController.present(UINavigationController.init(rootViewController: vc), animated: true, completion: nil)
+                        let controller = UINavigationController.init(rootViewController: vc)
+                        controller.modalPresentationStyle = .overFullScreen
+                        UIApplication.visibleViewController.present(controller, animated: true, completion: nil)
                     }
                     else {
                         SVProgressHUD.show()
@@ -185,7 +189,9 @@ class FriendCell: UITableViewCell {
                                     if (doc != nil) {
                                         let channel = Channel.init(document: doc!)
                                         let vc = ChatViewController(user: self.user, channel: channel!)
-                                    UIApplication.visibleViewController.present(UINavigationController.init(rootViewController: vc), animated: true, completion: nil)
+                                        let controller = UINavigationController.init(rootViewController: vc)
+                                        controller.modalPresentationStyle = .overFullScreen
+                                        UIApplication.visibleViewController.present(controller, animated: true, completion: nil)
                                     }
                                 })
                             }
@@ -219,7 +225,6 @@ class FriendCell: UITableViewCell {
             followRequest(personUserId: data["userId"] as! String, status: "")
         }
     }
-    
     
     func cancelFollowRequest(personUserId:String) {
          SVProgressHUD.show()
@@ -261,6 +266,7 @@ class FriendCell: UITableViewCell {
             })
        // }
     }
+    
     func followRequest(personUserId:String, status:String) {
         
         SVProgressHUD.show()
@@ -433,7 +439,6 @@ class FriendCell: UITableViewCell {
             })
        // }
     }
-    
     
     @IBAction func otherUserProfileBtnPressed(_ sender: Any) {
         let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)

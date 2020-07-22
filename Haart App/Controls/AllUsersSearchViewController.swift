@@ -89,15 +89,16 @@ class AllUsersSearchViewController: AbstractControl, UITableViewDelegate, UITabl
         tblView.reloadData()
     }
     
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FriendCell", for: indexPath) as! FriendCell
         cell.configureWith(userDocument: itemsArr[indexPath.row], currentUserSnapshot: currentUserSnapshot, listType: .allUsers)
         return cell
     }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 90
     }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemsArr.count
     }

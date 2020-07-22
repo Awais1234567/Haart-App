@@ -30,8 +30,8 @@ import UIKit
 
 open class MSPeekCollectionViewDelegateImplementation: NSObject {
     
-    public var cellPeekWidth: CGFloat = 10 * appConstant.widthRatio
-    public var cellSpacing: CGFloat = 15 * appConstant.widthRatio
+    public var cellPeekWidth: CGFloat = 10 * UBLConstants.widthRatio
+    public var cellSpacing: CGFloat = 15 * UBLConstants.widthRatio
     public let scrollThreshold: CGFloat
     public let minimumItemsToScroll: Int
     public let maximumItemsToScroll: Int

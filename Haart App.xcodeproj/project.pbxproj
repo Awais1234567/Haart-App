@@ -10,6 +10,7 @@
 		05372ED424C5BBC200D4B602 /* MSPeekCollectionViewDelegateImplementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05372ED124C5BBC100D4B602 /* MSPeekCollectionViewDelegateImplementation.swift */; };
 		05372ED524C5BBC200D4B602 /* UICollectionView+PeekConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05372ED224C5BBC100D4B602 /* UICollectionView+PeekConfiguration.swift */; };
 		05372ED624C5BBC200D4B602 /* UICollectionViewScrollDirection+PeekDataCovnversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05372ED324C5BBC100D4B602 /* UICollectionViewScrollDirection+PeekDataCovnversion.swift */; };
+		05BB922D24C72707002F10AD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05BB922C24C72707002F10AD /* Main.storyboard */; };
 		05F9423724C5ABA00070FCC4 /* PorfileImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F9423624C5ABA00070FCC4 /* PorfileImageCell.swift */; };
 		05F9423924C5B3850070FCC4 /* appConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F9423824C5B3850070FCC4 /* appConstant.swift */; };
 		8E0005ED23DF284C000F1960 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0005EC23DF284C000F1960 /* HomeViewController.swift */; };
@@ -72,7 +73,6 @@
 		8E94457224115D28007D87F5 /* ProfessionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E94457124115D28007D87F5 /* ProfessionsVC.swift */; };
 		8E95582823DC8A4F00F72FBC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E95582723DC8A4F00F72FBC /* AppDelegate.swift */; };
 		8E95582A23DC8A4F00F72FBC /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E95582923DC8A4F00F72FBC /* SignUpViewController.swift */; };
-		8E95582D23DC8A4F00F72FBC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E95582B23DC8A4F00F72FBC /* Main.storyboard */; };
 		8E95582F23DC8A5000F72FBC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E95582E23DC8A5000F72FBC /* Assets.xcassets */; };
 		8E95583223DC8A5000F72FBC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E95583023DC8A5000F72FBC /* LaunchScreen.storyboard */; };
 		8E95583A23DC8CE200F72FBC /* Notes.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 8E95583923DC8CE200F72FBC /* Notes.rtf */; };
@@ -172,6 +172,7 @@
 		05372ED124C5BBC100D4B602 /* MSPeekCollectionViewDelegateImplementation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MSPeekCollectionViewDelegateImplementation.swift; sourceTree = "<group>"; };
 		05372ED224C5BBC100D4B602 /* UICollectionView+PeekConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionView+PeekConfiguration.swift"; sourceTree = "<group>"; };
 		05372ED324C5BBC100D4B602 /* UICollectionViewScrollDirection+PeekDataCovnversion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UICollectionViewScrollDirection+PeekDataCovnversion.swift"; sourceTree = "<group>"; };
+		05BB922C24C72707002F10AD /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = ../../../../../../Downloads/Main.storyboard; sourceTree = "<group>"; };
 		05F9423624C5ABA00070FCC4 /* PorfileImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PorfileImageCell.swift; sourceTree = "<group>"; };
 		05F9423824C5B3850070FCC4 /* appConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = appConstant.swift; sourceTree = "<group>"; };
 		538F6172423F165B0390E330 /* Pods-Haart App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Haart App.debug.xcconfig"; path = "Target Support Files/Pods-Haart App/Pods-Haart App.debug.xcconfig"; sourceTree = "<group>"; };
@@ -238,7 +239,6 @@
 		8E95582423DC8A4F00F72FBC /* Haart App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Haart App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E95582723DC8A4F00F72FBC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8E95582923DC8A4F00F72FBC /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
-		8E95582C23DC8A4F00F72FBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8E95582E23DC8A5000F72FBC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8E95583123DC8A5000F72FBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8E95583323DC8A5000F72FBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -725,9 +725,9 @@
 			children = (
 				8E0005F023DF2A7D000F1960 /* AbstractCollectionCell.swift */,
 				8EC4C35A23F59F0D0008F062 /* PersonCalloutView.swift */,
+				05BB922C24C72707002F10AD /* Main.storyboard */,
 				8EC4C35C23F59F860008F062 /* PersonCalloutView.xib */,
 				8E0005F223DF2AAD000F1960 /* FlowLayout.swift */,
-				8E95582B23DC8A4F00F72FBC /* Main.storyboard */,
 				8E95583023DC8A5000F72FBC /* LaunchScreen.storyboard */,
 				8E80108D23DDDABF00FD740E /* Cells */,
 				8EBC5A3124407D0E0087ADF9 /* HaartAppMarker.swift */,
@@ -902,10 +902,10 @@
 				8E95582F23DC8A5000F72FBC /* Assets.xcassets in Resources */,
 				8EC4C35D23F59F860008F062 /* PersonCalloutView.xib in Resources */,
 				8E25F36E23E2DFA800F909D1 /* OpenSans-LightItalic.ttf in Resources */,
+				05BB922D24C72707002F10AD /* Main.storyboard in Resources */,
 				8E25F36B23E2DFA800F909D1 /* OpenSans-Italic.ttf in Resources */,
 				8E25F36723E2DFA800F909D1 /* OpenSans-Regular.ttf in Resources */,
 				8E25F36823E2DFA800F909D1 /* OpenSans-Semibold.ttf in Resources */,
-				8E95582D23DC8A4F00F72FBC /* Main.storyboard in Resources */,
 				8E93765B247BC95C007D290E /* CommentCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1112,14 +1112,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		8E95582B23DC8A4F00F72FBC /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8E95582C23DC8A4F00F72FBC /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		8E95583023DC8A5000F72FBC /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

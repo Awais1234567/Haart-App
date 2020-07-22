@@ -7,10 +7,11 @@
 //
 
 import UIKit
-import MessageInputBar
+//import MessageInputBar
 import FirebaseAuth
 import FirebaseFirestore
 import Firebase
+import MessageKit
 //enum MessageInputBarStyle: String {
 //    case imessage = "iMessage"
 //    case slack = "Slack"
@@ -30,11 +31,20 @@ import Firebase
 //    }
 //}
 
-class CommentsViewController: AbstractControl {
+class CommentssViewController: AbstractControl {
     
+    lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.estimatedRowHeight = 65
+        tableView.dataSource = self
+        tableView.separatorStyle = .none
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
+    }()
     var commentsReference: CollectionReference!
     var post = [String:Any]()
-      var postCommentsDoc:QueryDocumentSnapshot?
+      var postCommentsDoc:[QueryDocumentSnapshot]?
     override var inputAccessoryView: UIView? {
         return messageInputBar
     }
@@ -50,12 +60,28 @@ class CommentsViewController: AbstractControl {
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor.haartRed
+        tableView.register(UINib(nibName: "CommentCell", bundle: nil), forCellReuseIdentifier: "cellId")
+        setupViews()
         let path = ["posts", post["id"] as! String, "comments"].joined(separator: "/")
 
         commentsReference =  db.collection(path)//db.collection("comments_\(post["id"] ?? "")")
-        print(post)
+        commentsReference.getDocuments(completion: {(snapshot, error) in
+            if let documents = snapshot?.documents {
+                self.postCommentsDoc = documents
+                self.tableView.reloadData()
+                print(documents.count)
+                for i in 0..<(documents.count) {
+                    
+                    print(documents[i].data()["comment"])
+                }
+            }
+            
+        })
         self.setNavBarButtons(letfImages: [UIImage.init(named: "Back")!], rightImage: nil)
         messageInputBar.delegate = self
+        
+        
        
 //        commentsReference.getDocuments { (snapshot, error) in
 //            if(snapshot?.documents.count ?? 0 > 0) {
@@ -65,6 +91,17 @@ class CommentsViewController: AbstractControl {
 //
 //            }
 //        }
+    }
+    func setupViews(){
+        view.addSubview(tableView)
+        tableView.superview?.bringSubviewToFront(tableView)
+        
+        NSLayoutConstraint.activate([
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+        ])
     }
     
     override func leftBarBtnClicked(sender: UIButton) {
@@ -82,24 +119,46 @@ class CommentsViewController: AbstractControl {
     }
 }
 
-extension CommentsViewController: MessageInputBarDelegate {
+extension CommentssViewController: MessageInputBarDelegate {
     
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
         // Use to send the message
         messageInputBar.inputTextView.text = String()
-        messageInputBar.invalidatePlugins()
+        //messageInputBar.invalidatePlugins()
         
             commentsReference.addDocument(data: ["userId":user.uid, "comment":text, "userPic":"", "timeStamp":Date()]) { (error) in
                 print(error?.localizedDescription ?? "no error")
             }
      }
     
-    func messageInputBar(_ inputBar: MessageInputBar, textViewTextDidChangeTo text: String) {
-        // Use to send a typing indicator
-    }
-    
-    func messageInputBar(_ inputBar: MessageInputBar, didChangeIntrinsicContentTo size: CGSize) {
-        // Use to change any other subview insets
-    }
+//    func messageInputBar(_ inputBar: MessageInputBar, textViewTextDidChangeTo text: String) {
+//        // Use to send a typing indicator
+//    }
+//
+//    func messageInputBar(_ inputBar: MessageInputBar, didChangeIntrinsicContentTo size: CGSize) {
+//        // Use to change any other subview insets
+//    }
     
 }
+extension CommentssViewController: UITableViewDelegate, UITableViewDataSource{
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if let comments = postCommentsDoc{
+            return comments.count
+        }
+        return 0
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath) as! CommentCell
+        if let comments = postCommentsDoc{
+            cell.setData(userDocument: comments[indexPath.row])
+        }
+        return cell
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+}
+

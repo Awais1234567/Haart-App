@@ -56,8 +56,6 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
         IGCache.shared.removeAllObjects()
     }
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.init(red: 246/255.0, green: 246/255.0, blue: 246/255.0, alpha: 1)
@@ -69,6 +67,7 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
         self.setNavBarButtons(letfImages: [UIImage.init(named: "Filter")!], rightImage: [ UIImage.init(named: "Chat")!])
         grayView.grayViewRadiousBottm(value:36)
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.view.endEditing(true)
@@ -157,7 +156,6 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
         return nil
     }
     
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
@@ -237,11 +235,13 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
             return cell
         }
     }
+    
     func addStoryButtonPressed() {
         let storiesController = StoriesController()
         storiesController.currentUserDocument = userDocument
         storiesController.addStory()
     }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if(collectionView.isEqual(gallaryCollectionView)) {
             if indexPath.row == 0 {
@@ -250,6 +250,7 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
             else {
                 if(indexPath.row < galleryItemsArr.count) {
                     let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "FeedControl") as! FeedControl
+                    vc.image = profileImgView.image
                     vc.feedsArr = galleryItemsArr
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
@@ -288,13 +289,16 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
             }
         }
     }
+    
     @objc override func rightBarBtnClicked(sender:UIButton) {
         
         switch sender.tag {
         case 1:
             if let user = Auth.auth().currentUser {
                 let vc = ChannelsViewController(currentUser: user)
-                UIApplication.visibleViewController.present(UINavigationController.init(rootViewController: vc), animated: true, completion: nil)
+                let controller = UINavigationController.init(rootViewController: vc)
+                controller.modalPresentationStyle = .overFullScreen
+                UIApplication.visibleViewController.present(controller, animated: true, completion: nil)
             }           
         default:
             let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -309,7 +313,9 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
     @IBAction func messageBtnPressed(_ sender: Any) {
         if let user = Auth.auth().currentUser {
             let vc = ChannelsViewController(currentUser: user)
-            UIApplication.visibleViewController.present(UINavigationController.init(rootViewController: vc), animated: true, completion: nil)
+            let controller = UINavigationController.init(rootViewController: vc)
+            controller.modalPresentationStyle = .overFullScreen
+            UIApplication.rootViewController.present(controller, animated: true, completion: nil)
         }
     }
     
@@ -346,6 +352,7 @@ extension ProfileViewController:AddPostViewControllerDelegate {
         }
         present(picker, animated: true, completion: nil)
     }
+    
     func updateGalleryPics() {
         SVProgressHUD.show()
         self.userDocument!.reference.updateData(["galleryPics":galleryItemsArr, "fcmToken":AppSettings.deviceToken], completion: { (error) in
@@ -355,6 +362,7 @@ extension ProfileViewController:AddPostViewControllerDelegate {
             }
         })
     }
+    
     private func uploadImage(_ image: UIImage,_ folderName:String, completion: @escaping (URL?) -> Void) {
         
         guard let scaledImage = image.scaledToSafeUploadSize, let data = scaledImage.jpegData(compressionQuality: 0.4) else {
@@ -384,6 +392,7 @@ extension ProfileViewController:AddPostViewControllerDelegate {
             })
         }
     }
+    
     // MARK: - GET DOWNLOAD URL
     private func getDownloadURL(from path: String, completion: @escaping (URL?, Error?) -> Void) {
         storage.child(path).downloadURL(completion: completion)
