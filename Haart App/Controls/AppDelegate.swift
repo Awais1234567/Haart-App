@@ -33,11 +33,22 @@ import SVProgressHUD
 import YPImagePicker
 import FirebaseMessaging
 import NotificationView
+import Quickblox
+import QuickbloxWebRTC
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDelegate,MessagingDelegate {
     
     var window: UIWindow?
 
+    var isCalling = false {
+        didSet {
+            if UIApplication.shared.applicationState == .background,
+                isCalling == false, CallKitManager.instance.isHasSession() {
+                disconnect()
+            }
+        }
+    }
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         registerForPushNotification(application: application)
             // for default navigation bar title color
@@ -55,6 +66,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
 
         AppController.shared.show(in: self.window)
         Messaging.messaging().delegate = self
+        configQuickBlox()
+        
         return true
     }
     
@@ -142,6 +155,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
         
         return handled
     }
+    func applicationWillTerminate(_ application: UIApplication) {
+        disconnect()
+    }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        // Logging in to chat.
+        if QBChat.instance.isConnected == true {
+            return
+        }
+        connect { (error) in
+            if let error = error {
+                debugPrint("Connect error: \(error.localizedDescription)")
+                return
+            }
+            SVProgressHUD.showSuccess(withStatus: "Connected")
+        }
+    }
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        connect()
+    }
+    
     func applicationWillResignActive(_ application: UIApplication) {
         setUserState(isActive: "0")
     }
@@ -339,6 +374,69 @@ extension AppDelegate: NotificationViewDelegate  {
             }
           
         }
+    }
+}
+
+//MARK: - QuickBlox Configuration
+struct QuickBloxCredentialsConstant {
+     static let applicationID:UInt = 84065
+     static let authKey = "JXCVrXtYuAjMnyQ"
+     static let authSecret = "4dS2fwK52FsmnKA"
+     static let accountKey = "BnamoYdzTM-eN5qznUn-"
+}
+struct AppDelegateConstant {
+    static let enableStatsReports: UInt = 1
+}
+struct TimeIntervalConstant {
+    static let answerTimeInterval: TimeInterval = 60.0
+    static let dialingTimeInterval: TimeInterval = 5.0
+}
+
+
+extension AppDelegate{
+    func configQuickBlox(){
+        
+        QBSettings.applicationID = QuickBloxCredentialsConstant.applicationID;
+        QBSettings.authKey = QuickBloxCredentialsConstant.authKey
+        QBSettings.authSecret = QuickBloxCredentialsConstant.authSecret
+        QBSettings.accountKey = QuickBloxCredentialsConstant.accountKey
+        QBSettings.autoReconnectEnabled = true
+        QBSettings.logLevel = QBLogLevel.nothing
+        QBSettings.disableXMPPLogging()
+        QBSettings.disableFileLogging()
+        QBRTCConfig.setLogLevel(QBRTCLogLevel.nothing)
+        QBRTCConfig.setAnswerTimeInterval(TimeIntervalConstant.answerTimeInterval)
+        QBRTCConfig.setDialingTimeInterval(TimeIntervalConstant.dialingTimeInterval)
+        
+        if AppDelegateConstant.enableStatsReports == 1 {
+            QBRTCConfig.setStatsReportTimeInterval(1.0)
+        }
+        
+        SVProgressHUD.setDefaultMaskType(SVProgressHUDMaskType.clear)
+        QBRTCClient.initializeRTC()
+    }
+    //MARK: - Connect/Disconnect
+    func connect(completion: QBChatCompletionBlock? = nil) {
+        let currentUser = QuickBloxProfile()
+        
+        guard currentUser.isFull == true else {
+            completion?(NSError(domain: "com.q-municate.chatservice",
+                                code: -1000,
+                                userInfo: [
+                                    NSLocalizedDescriptionKey: "Please enter your login and username."
+                ]))
+            return
+        }
+        if QBChat.instance.isConnected == true {
+            completion?(nil)
+        } else {
+            QBSettings.autoReconnectEnabled = true
+            QBChat.instance.connect(withUserID: currentUser.ID, password: currentUser.password, completion: completion)
+        }
+    }
+    
+    func disconnect(completion: QBChatCompletionBlock? = nil) {
+        QBChat.instance.disconnect(completionBlock: completion)
     }
 }
 /* notification types

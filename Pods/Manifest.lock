@@ -193,6 +193,9 @@ PODS:
     - DynamicBlurView (~> 3.0.1)
   - Protobuf (3.9.0)
   - PryntTrimmerView (3.0.0)
+  - QuickBlox (2.17.4)
+  - Quickblox-WebRTC (2.7.5):
+    - QuickBlox (>= 2.7.5)
   - RangeSeekSlider (1.8.0)
   - ScaledVisibleCellsCollectionView (0.2.1)
   - SDWebImage (5.0.6):
@@ -241,6 +244,8 @@ DEPENDENCIES:
   - MessageKit (= 0.13.1)
   - NotificationView
   - PopupDialog (~> 1.1)
+  - QuickBlox (~> 2.17.4)
+  - Quickblox-WebRTC (~> 2.7.4)
   - RangeSeekSlider
   - ScaledVisibleCellsCollectionView
   - SDWebImage (~> 5.0)
@@ -252,7 +257,7 @@ DEPENDENCIES:
   - ZLSwipeableView
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - BoringSSL-GRPC
     - Cache
@@ -309,6 +314,9 @@ SPEC REPOS:
     - ViewAnimator
     - YPImagePicker
     - ZLSwipeableView
+  trunk:
+    - QuickBlox
+    - Quickblox-WebRTC
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
@@ -357,6 +365,8 @@ SPEC CHECKSUMS:
   PopupDialog: 42fb7a0bc4fafdf89fef8b5b2b127a6023f3e1cc
   Protobuf: 1097ca58584c8d9be81bfbf2c5ff5975648dd87a
   PryntTrimmerView: 53ac64053c7ce63cb3e27f54090f52da0734891d
+  QuickBlox: 992be26bc127313991a1337dfd98c9359832c147
+  Quickblox-WebRTC: 6be5253719fc8b747408fdac53985d04d40f3172
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   ScaledVisibleCellsCollectionView: a9265adc56f905502fe02f2ec00cef4a220e806a
   SDWebImage: 920f1a2ff1ca8296ad34f6e0510a1ef1d70ac965
@@ -368,6 +378,6 @@ SPEC CHECKSUMS:
   YPImagePicker: 8039f89ad79281545fa868486f32d9bf5d65ede1
   ZLSwipeableView: df385760ff4838935cdbcb62878ac5acd7355949
 
-PODFILE CHECKSUM: 76eca6c6d27c6713a85e3e2bebdbf270988b42a1
+PODFILE CHECKSUM: 89a3e2280f1fd82f6af76c960b873b9060f472b8
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.9.3

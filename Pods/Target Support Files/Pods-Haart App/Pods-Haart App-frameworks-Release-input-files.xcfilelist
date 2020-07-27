@@ -25,6 +25,8 @@ ${BUILT_PRODUCTS_DIR}/NotificationView/NotificationView.framework
 ${BUILT_PRODUCTS_DIR}/PopupDialog/PopupDialog.framework
 ${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework
 ${BUILT_PRODUCTS_DIR}/PryntTrimmerView/PryntTrimmerView.framework
+${PODS_ROOT}/QuickBlox/Quickblox.framework
+${PODS_ROOT}/Quickblox-WebRTC/QuickbloxWebRTC.framework
 ${BUILT_PRODUCTS_DIR}/RangeSeekSlider/RangeSeekSlider.framework
 ${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework
 ${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework

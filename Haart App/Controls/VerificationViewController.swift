@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseAuth
 import SVProgressHUD
+import Quickblox
 class VerificationViewController: UIViewController {
     @IBOutlet weak var proceedBtn: UIButton!
     var verificationID = ""
@@ -47,7 +48,6 @@ class VerificationViewController: UIViewController {
     @IBAction func backBtnPressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
-    
     /*
     // MARK: - Navigation
 

@@ -34,7 +34,7 @@ extension UIApplication {
     }
     
     class var visibleNavigationController: UINavigationController! {
-        return self.visibleViewController.navigationController!
+        return self.visibleViewController.navigationController ?? UINavigationController()
     }
     
     class var visibleTabBarController: UITabBarController! {

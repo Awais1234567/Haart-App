@@ -171,8 +171,8 @@ class ChannelssCell: UITableViewCell {
                 self.isActiveCircleView.backgroundColor = UIColor.incommingMsgColor
             }else{
                 self.isActiveCircleView.backgroundColor = UIColor.green
+                self.outerCircleView.layer.borderColor = UIColor.green.cgColor
             }
         })
-        
     }
 }

@@ -35,6 +35,9 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
     var personId = ""
     var _storiesView:IGHomeView!
     var listType:ListType = .suggested
+    var channelReference: Query {
+        return db.collection("channels").whereField("userIds", arrayContains: user.uid)
+    }
     //MARK: - Overridden functions
     override func loadView() {
         super.loadView()
@@ -279,11 +282,74 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
     
     @IBAction func messageBtnPressed(_ sender: Any) {
         if let user = Auth.auth().currentUser {
-            let vc = ChannelsViewController(currentUser: user)
-            let controller = UINavigationController.init(rootViewController: vc)
-            controller.modalPresentationStyle = .overFullScreen
-            UIApplication.visibleViewController.present(controller, animated: true, completion: nil)
+//            let vc = ChannelsViewController(currentUser: user)
+//            let controller = UINavigationController.init(rootViewController: vc)
+//            controller.modalPresentationStyle = .overFullScreen
+//            UIApplication.visibleViewController.present(controller, animated: true, completion: nil)
+            createChannelAndPushVc()
         }
+    }
+    func createChannelAndPushVc() {
+        let user = userDocument!.data()
+                    let channelName = user["fullName"] as! String
+                    let recieverId = user["userId"] as! String
+                    let userName = user["userName"] as! String
+                    var profilePic = ""
+                    if let imgsArr = (user["bioPics"] as? [String]) {
+                            if(imgsArr.count > 0) {
+                                profilePic = imgsArr[0]
+                            }
+                    }
+                SVProgressHUD.show()
+                self.channelReference.getDocuments(completion: { (snapshot, error) in
+                    
+                    var doc:QueryDocumentSnapshot?
+                    for document in snapshot?.documents ?? [QueryDocumentSnapshot]() {
+                        if((document.data()["userIds"] as! NSArray).contains(recieverId)) {
+                            doc = document
+                            break
+                        }
+                    }
+                    SVProgressHUD.dismiss()
+                    if (doc != nil) {
+                        let channel = Channel.init(document: doc!)
+                        let vc = ChatViewController(user: self.user, channel: channel!)
+                        let controller = UINavigationController.init(rootViewController: vc)
+                        controller.modalPresentationStyle = .overFullScreen
+                        UIApplication.visibleViewController.present(controller, animated: true, completion: nil)
+                    }
+                    else {
+                        SVProgressHUD.show()
+                        let channel = Channel(name: channelName, createrName: AppSettings.fullName,createrId: self.user.uid, userIds: [recieverId, self.user.uid], userName:userName, profilePicUrl:profilePic, createrProfilePicUrl:AppSettings.profilePicUrl, createUserName:AppSettings.userName)
+                        self.db.collection("channels").addDocument(data: channel.representation) { error in
+                            SVProgressHUD.dismiss()
+                            if let e = error {
+                                UIApplication.showMessageWith(e.localizedDescription)
+                                print("Error saving channel: \(e.localizedDescription)")
+                            }
+                            else {
+                                SVProgressHUD.show()
+                                self.channelReference.getDocuments(completion: { (snapshot, error) in
+                                    var doc:QueryDocumentSnapshot?
+                                    for document in snapshot?.documents ?? [QueryDocumentSnapshot]() {
+                                        if((document.data()["userIds"] as! NSArray).contains(recieverId)) {
+                                            doc = document
+                                            break
+                                        }
+                                    }
+                                    SVProgressHUD.dismiss()
+                                    if (doc != nil) {
+                                        let channel = Channel.init(document: doc!)
+                                        let vc = ChatViewController(user: self.user, channel: channel!)
+                                        let controller = UINavigationController.init(rootViewController: vc)
+                                        controller.modalPresentationStyle = .overFullScreen
+                                        UIApplication.visibleViewController.present(controller, animated: true, completion: nil)
+                                    }
+                                })
+                            }
+                        }
+                    }
+                })
     }
     
     @IBAction func followBtnPressed(_ sender: UIButton) {

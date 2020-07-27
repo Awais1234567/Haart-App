@@ -4,17 +4,21 @@
 target 'Haart App' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-	pod "ScaledVisibleCellsCollectionView"
 
-  pod 'MessageInputBar'
-  pod 'MessageInputBar/AttachmentManager'
-  pod 'MessageInputBar/AutocompleteManager'
+pod 'QuickBlox', '~> 2.17.4'
+pod 'Quickblox-WebRTC', '~> 2.7.4'
+
+pod "ScaledVisibleCellsCollectionView"
+
+pod 'MessageInputBar'
+pod 'MessageInputBar/AttachmentManager'
+pod 'MessageInputBar/AutocompleteManager'
 
 
 pod 'Lightbox'
- pod 'FBSDKCoreKit'
- pod 'FBSDKLoginKit'
- pod 'FBSDKShareKit'
+pod 'FBSDKCoreKit'
+pod 'FBSDKLoginKit'
+pod 'FBSDKShareKit'
 pod 'FAPaginationLayout'
 pod 'TTSegmentedControl', '~>0.4.6'
 pod 'GoogleMaps'

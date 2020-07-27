@@ -31,6 +31,7 @@ import FirebaseAuth
 import FirebaseMessaging
 import GoogleSignIn
 import SVProgressHUD
+import Quickblox
 class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate {
   
 /*******************  Email Log In **********************/
@@ -109,6 +110,11 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
 
         }
     }
+    
+    /******************** Quickblox signup ************************/
+    
  }
+
+
 
 

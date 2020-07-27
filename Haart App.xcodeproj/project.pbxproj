@@ -7,6 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3425A02B24CAC07F00616F8A /* QuickBloxProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3425A02A24CAC07F00616F8A /* QuickBloxProfile.swift */; };
+		3425A02D24CAF82500616F8A /* CallPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3425A02C24CAF82500616F8A /* CallPermissions.swift */; };
+		3425A02F24CAF8D400616F8A /* CallKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3425A02E24CAF8D400616F8A /* CallKitManager.swift */; };
+		3425A03124CAFCD700616F8A /* CallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3425A03024CAFCD700616F8A /* CallViewController.swift */; };
+		3425A03324CB015300616F8A /* OpponentsFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3425A03224CB015300616F8A /* OpponentsFlowLayout.swift */; };
+		3425A03524CB01E400616F8A /* UsersDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3425A03424CB01E400616F8A /* UsersDataSource.swift */; };
+		3425A03B24CB037800616F8A /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3425A03A24CB037800616F8A /* UserCell.swift */; };
+		3425A03D24CB0B2C00616F8A /* SoundProvidor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3425A03C24CB0B2C00616F8A /* SoundProvidor.swift */; };
+		345822D724CC60EF009AAD5F /* SharingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345822D624CC60EF009AAD5F /* SharingViewController.swift */; };
+		345822DC24CE9FF8009AAD5F /* busy.wav in Resources */ = {isa = PBXBuildFile; fileRef = 345822D824CE9F7E009AAD5F /* busy.wav */; };
+		345822DD24CE9FF8009AAD5F /* calling.wav in Resources */ = {isa = PBXBuildFile; fileRef = 345822D924CE9F80009AAD5F /* calling.wav */; };
+		345822DE24CE9FF8009AAD5F /* end_of_call.wav in Resources */ = {isa = PBXBuildFile; fileRef = 345822DB24CE9F84009AAD5F /* end_of_call.wav */; };
+		345822DF24CE9FF8009AAD5F /* ringtone.wav in Resources */ = {isa = PBXBuildFile; fileRef = 345822DA24CE9F82009AAD5F /* ringtone.wav */; };
+		34AC4DC224CC262D002EF68E /* ToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AC4DC124CC262D002EF68E /* ToolBar.swift */; };
+		34AC4DC424CC2642002EF68E /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AC4DC324CC2642002EF68E /* CustomButton.swift */; };
+		34AC4DC624CC265E002EF68E /* ButtonsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AC4DC524CC265E002EF68E /* ButtonsFactory.swift */; };
+		34AC4DC824CC26D1002EF68E /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AC4DC724CC26D1002EF68E /* Settings.swift */; };
+		34AC4DCA24CC2723002EF68E /* LocalVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AC4DC924CC2723002EF68E /* LocalVideoView.swift */; };
+		34AC4DCC24CC2755002EF68E /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AC4DCB24CC2755002EF68E /* StatsView.swift */; };
+		34AC4DCE24CC27DB002EF68E /* QuickbloxReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AC4DCD24CC27DB002EF68E /* QuickbloxReachability.swift */; };
+		34AC4DD024CC2E0C002EF68E /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AC4DCF24CC2E0C002EF68E /* UserTableViewCell.swift */; };
+		34AC4DD224CC31A5002EF68E /* UsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AC4DD124CC31A5002EF68E /* UsersViewController.swift */; };
+		34AC4DD424CC32A4002EF68E /* SessionSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AC4DD324CC32A4002EF68E /* SessionSettingsViewController.swift */; };
 		8E0005ED23DF284C000F1960 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0005EC23DF284C000F1960 /* HomeViewController.swift */; };
 		8E0005EF23DF2A77000F1960 /* AbstractControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0005EE23DF2A77000F1960 /* AbstractControl.swift */; };
 		8E0005F123DF2A7D000F1960 /* AbstractCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0005F023DF2A7D000F1960 /* AbstractCollectionCell.swift */; };
@@ -164,6 +187,29 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3425A02A24CAC07F00616F8A /* QuickBloxProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickBloxProfile.swift; sourceTree = "<group>"; };
+		3425A02C24CAF82500616F8A /* CallPermissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallPermissions.swift; sourceTree = "<group>"; };
+		3425A02E24CAF8D400616F8A /* CallKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallKitManager.swift; sourceTree = "<group>"; };
+		3425A03024CAFCD700616F8A /* CallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallViewController.swift; sourceTree = "<group>"; };
+		3425A03224CB015300616F8A /* OpponentsFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentsFlowLayout.swift; sourceTree = "<group>"; };
+		3425A03424CB01E400616F8A /* UsersDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersDataSource.swift; sourceTree = "<group>"; };
+		3425A03A24CB037800616F8A /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
+		3425A03C24CB0B2C00616F8A /* SoundProvidor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundProvidor.swift; sourceTree = "<group>"; };
+		345822D624CC60EF009AAD5F /* SharingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingViewController.swift; sourceTree = "<group>"; };
+		345822D824CE9F7E009AAD5F /* busy.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = busy.wav; sourceTree = "<group>"; };
+		345822D924CE9F80009AAD5F /* calling.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = calling.wav; sourceTree = "<group>"; };
+		345822DA24CE9F82009AAD5F /* ringtone.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ringtone.wav; sourceTree = "<group>"; };
+		345822DB24CE9F84009AAD5F /* end_of_call.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = end_of_call.wav; sourceTree = "<group>"; };
+		34AC4DC124CC262D002EF68E /* ToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolBar.swift; sourceTree = "<group>"; };
+		34AC4DC324CC2642002EF68E /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
+		34AC4DC524CC265E002EF68E /* ButtonsFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsFactory.swift; sourceTree = "<group>"; };
+		34AC4DC724CC26D1002EF68E /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		34AC4DC924CC2723002EF68E /* LocalVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalVideoView.swift; sourceTree = "<group>"; };
+		34AC4DCB24CC2755002EF68E /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		34AC4DCD24CC27DB002EF68E /* QuickbloxReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickbloxReachability.swift; sourceTree = "<group>"; };
+		34AC4DCF24CC2E0C002EF68E /* UserTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
+		34AC4DD124CC31A5002EF68E /* UsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersViewController.swift; sourceTree = "<group>"; };
+		34AC4DD324CC32A4002EF68E /* SessionSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSettingsViewController.swift; sourceTree = "<group>"; };
 		538F6172423F165B0390E330 /* Pods-Haart App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Haart App.debug.xcconfig"; path = "Target Support Files/Pods-Haart App/Pods-Haart App.debug.xcconfig"; sourceTree = "<group>"; };
 		639E7DB5F47F9012BCB7D830 /* Pods-Haart App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Haart App.release.xcconfig"; path = "Target Support Files/Pods-Haart App/Pods-Haart App.release.xcconfig"; sourceTree = "<group>"; };
 		8E0005EC23DF284C000F1960 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -339,6 +385,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3425A03624CB027000616F8A /* ToolBar */ = {
+			isa = PBXGroup;
+			children = (
+				34AC4DC124CC262D002EF68E /* ToolBar.swift */,
+				34AC4DC324CC2642002EF68E /* CustomButton.swift */,
+				34AC4DC524CC265E002EF68E /* ButtonsFactory.swift */,
+			);
+			path = ToolBar;
+			sourceTree = "<group>";
+		};
 		58A20523A1833D664272AFC5 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -584,6 +640,10 @@
 				8E80108C23DDDAA000FD740E /* Resource */,
 				8EBB43F723F172440023BA44 /* DSCircularLayout.h */,
 				8EBB43F823F172440023BA44 /* DSCircularLayout.m */,
+				345822D824CE9F7E009AAD5F /* busy.wav */,
+				345822D924CE9F80009AAD5F /* calling.wav */,
+				345822DB24CE9F84009AAD5F /* end_of_call.wav */,
+				345822DA24CE9F82009AAD5F /* ringtone.wav */,
 				8E95582E23DC8A5000F72FBC /* Assets.xcassets */,
 				8E95583323DC8A5000F72FBC /* Info.plist */,
 				8EBB43F623F172430023BA44 /* Haart App-Bridging-Header.h */,
@@ -693,6 +753,7 @@
 			isa = PBXGroup;
 			children = (
 				8ED6C9BD2424E929007FD5E1 /* chat */,
+				345822D624CC60EF009AAD5F /* SharingViewController.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -754,6 +815,7 @@
 		8ED6C9BD2424E929007FD5E1 /* chat */ = {
 			isa = PBXGroup;
 			children = (
+				3425A03624CB027000616F8A /* ToolBar */,
 				8ED6C9D62424EA3F007FD5E1 /* LoginController.swift */,
 				8ED6C9D42424EA13007FD5E1 /* AppController.swift */,
 				8ED6C9D22424E985007FD5E1 /* AppSettings.swift */,
@@ -761,6 +823,20 @@
 				8ED6C9C22424E96B007FD5E1 /* Models */,
 				8ED6C9BE2424E93B007FD5E1 /* ChannelsViewController.swift */,
 				8ED6C9BF2424E93D007FD5E1 /* ChatViewController.swift */,
+				3425A02C24CAF82500616F8A /* CallPermissions.swift */,
+				3425A02E24CAF8D400616F8A /* CallKitManager.swift */,
+				3425A03024CAFCD700616F8A /* CallViewController.swift */,
+				3425A03224CB015300616F8A /* OpponentsFlowLayout.swift */,
+				3425A03424CB01E400616F8A /* UsersDataSource.swift */,
+				3425A03A24CB037800616F8A /* UserCell.swift */,
+				3425A03C24CB0B2C00616F8A /* SoundProvidor.swift */,
+				34AC4DC724CC26D1002EF68E /* Settings.swift */,
+				34AC4DC924CC2723002EF68E /* LocalVideoView.swift */,
+				34AC4DCB24CC2755002EF68E /* StatsView.swift */,
+				34AC4DCD24CC27DB002EF68E /* QuickbloxReachability.swift */,
+				34AC4DCF24CC2E0C002EF68E /* UserTableViewCell.swift */,
+				34AC4DD124CC31A5002EF68E /* UsersViewController.swift */,
+				34AC4DD324CC32A4002EF68E /* SessionSettingsViewController.swift */,
 			);
 			path = chat;
 			sourceTree = "<group>";
@@ -771,6 +847,7 @@
 				8ED6C9C32424E96B007FD5E1 /* Message.swift */,
 				8ED6C9C42424E96B007FD5E1 /* Channel.swift */,
 				8ED6C9C52424E96B007FD5E1 /* DatabaseRepresentation.swift */,
+				3425A02A24CAC07F00616F8A /* QuickBloxProfile.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -856,6 +933,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				345822DC24CE9FF8009AAD5F /* busy.wav in Resources */,
+				345822DD24CE9FF8009AAD5F /* calling.wav in Resources */,
+				345822DE24CE9FF8009AAD5F /* end_of_call.wav in Resources */,
+				345822DF24CE9FF8009AAD5F /* ringtone.wav in Resources */,
 				8E95583E23DCA15F00F72FBC /* FriendCell.xib in Resources */,
 				8E25F36923E2DFA800F909D1 /* OpenSans-SemiboldItalic.ttf in Resources */,
 				8E25F36F23E2DFA800F909D1 /* OpenSans-ExtraBold.ttf in Resources */,
@@ -959,29 +1040,39 @@
 				8EA1C35F23E32A0500A8AA7A /* UIActivityIndicatorView.swift in Sources */,
 				8E81F9F723E0AAF3000A735C /* FriendsViewController.swift in Sources */,
 				8ED697EE2459A3A600559EFE /* MatchesViewController.swift in Sources */,
+				3425A03524CB01E400616F8A /* UsersDataSource.swift in Sources */,
+				3425A03124CAFCD700616F8A /* CallViewController.swift in Sources */,
 				8E25F34E23E2DF5700F909D1 /* IGCache.swift in Sources */,
 				8E25F34B23E2DF5700F909D1 /* IGImageRequestable.swift in Sources */,
 				8EAD368A23DE8B220070A57F /* HaartNavBarController.swift in Sources */,
 				8EB2A16523E48E7D000129B4 /* FeedControl.swift in Sources */,
 				8E95582A23DC8A4F00F72FBC /* SignUpViewController.swift in Sources */,
 				8ED6C9CD2424E96D007FD5E1 /* DatabaseRepresentation.swift in Sources */,
+				34AC4DD424CC32A4002EF68E /* SessionSettingsViewController.swift in Sources */,
+				34AC4DC624CC265E002EF68E /* ButtonsFactory.swift in Sources */,
 				8E25F35923E2DF5700F909D1 /* LayoutAttributesAnimator.swift in Sources */,
 				8EA1C35223E32A0500A8AA7A /* Array.swift in Sources */,
 				8EB8F0CE2417B3060042ACB4 /* DispatchQueue.swift in Sources */,
 				8E95583D23DCA15F00F72FBC /* FriendCell.swift in Sources */,
+				3425A02B24CAC07F00616F8A /* QuickBloxProfile.swift in Sources */,
 				8EA1C35D23E32A0500A8AA7A /* UIImage.swift in Sources */,
+				3425A03B24CB037800616F8A /* UserCell.swift in Sources */,
 				8EA1C33323E3237600A8AA7A /* IGStoryListCell.swift in Sources */,
 				8EA1C33023E3237600A8AA7A /* IGHomeController.swift in Sources */,
+				34AC4DC224CC262D002EF68E /* ToolBar.swift in Sources */,
 				8EBB43F923F172450023BA44 /* DSCircularLayout.m in Sources */,
 				8EC7EAB423F2FED200C1C2D6 /* HaartTextView.swift in Sources */,
 				8EA1C35E23E32A0500A8AA7A /* UIViewController.swift in Sources */,
 				8E25F35323E2DF5700F909D1 /* IGStoryPreviewView.swift in Sources */,
 				8EA6C98B23E5CA6A00BAE477 /* IGHomeView.swift in Sources */,
+				34AC4DC424CC2642002EF68E /* CustomButton.swift in Sources */,
 				8E25F35123E2DF5700F909D1 /* IGConstants.swift in Sources */,
 				8E25F34723E2DF5700F909D1 /* IGUser.swift in Sources */,
 				8E95582823DC8A4F00F72FBC /* AppDelegate.swift in Sources */,
 				8E93765A247BC95C007D290E /* CommentCell.swift in Sources */,
+				34AC4DD224CC31A5002EF68E /* UsersViewController.swift in Sources */,
 				8EA6AFAD2444755E00972F76 /* ChannelsCell.swift in Sources */,
+				34AC4DCA24CC2723002EF68E /* LocalVideoView.swift in Sources */,
 				8EC7EAB923F30F5100C1C2D6 /* VerificationViewController.swift in Sources */,
 				8E25F34023E2DF5700F909D1 /* Color+Additions.swift in Sources */,
 				8ED6C9CE2424E96D007FD5E1 /* UIImage+Additions.swift in Sources */,
@@ -1010,6 +1101,7 @@
 				8EA1C36123E32A0500A8AA7A /* UIScreen.swift in Sources */,
 				8ED6C9CB2424E96D007FD5E1 /* Message.swift in Sources */,
 				8ED6C9D32424E985007FD5E1 /* AppSettings.swift in Sources */,
+				34AC4DCC24CC2755002EF68E /* StatsView.swift in Sources */,
 				8E81F9F423E099C8000A735C /* GallaryCell.swift in Sources */,
 				8E25F34C23E2DF5700F909D1 /* IGError.swift in Sources */,
 				8EA1C33423E3237600A8AA7A /* IGStoryPreviewModel.swift in Sources */,
@@ -1030,15 +1122,19 @@
 				8ED6C9D12424E96D007FD5E1 /* UICollectionView+Additions.swift in Sources */,
 				8EA4D3F223E47AEC0060E274 /* RecommendedViewController.swift in Sources */,
 				8E25F34123E2DF5700F909D1 /* ImageView+Additions.swift in Sources */,
+				3425A02F24CAF8D400616F8A /* CallKitManager.swift in Sources */,
 				8E25F34F23E2DF5700F909D1 /* IGPlayerView.swift in Sources */,
 				8EC4C35723F46A4C0008F062 /* HaartSearchbar.swift in Sources */,
+				3425A03324CB015300616F8A /* OpponentsFlowLayout.swift in Sources */,
 				8EB38B992446DC3200655361 /* LIkedCell.swift in Sources */,
+				34AC4DC824CC26D1002EF68E /* Settings.swift in Sources */,
 				8E95803023E32F6700E7C5F7 /* CPCollectionViewWheelLayout.swift in Sources */,
 				8EA1C36623E32A0500A8AA7A /* UIColor_Ext.swift in Sources */,
 				8E51D70F23F810C1000C0099 /* InterestsCell.swift in Sources */,
 				8E25F34423E2DF5700F909D1 /* IGStory.swift in Sources */,
 				8EA1C35623E32A0500A8AA7A /* UIScrollView.swift in Sources */,
 				8EA1C35823E32A0500A8AA7A /* UIView.swift in Sources */,
+				34AC4DCE24CC27DB002EF68E /* QuickbloxReachability.swift in Sources */,
 				8EA4D3F623E47D190060E274 /* RecommendedCell.swift in Sources */,
 				8E25F35723E2DF5700F909D1 /* AnimatedCollectionViewLayout.swift in Sources */,
 				8EA2499423F05F2C00AF8C7E /* CustomCell.swift in Sources */,
@@ -1051,9 +1147,11 @@
 				8E25F34923E2DF5700F909D1 /* IGResult.swift in Sources */,
 				8EA1C35B23E32A0500A8AA7A /* UIRefreshControl.swift in Sources */,
 				8EC7EAB723F306F700C1C2D6 /* HaartButton.swift in Sources */,
+				345822D724CC60EF009AAD5F /* SharingViewController.swift in Sources */,
 				8EA1C33523E3237600A8AA7A /* IGStoryPreviewController.swift in Sources */,
 				8EADF6AB23FEE0B100A406DB /* SelectedIntrestCell.swift in Sources */,
 				8EA1C36323E32A0500A8AA7A /* UIControl.swift in Sources */,
+				3425A03D24CB0B2C00616F8A /* SoundProvidor.swift in Sources */,
 				8EA1C35423E32A0500A8AA7A /* String.swift in Sources */,
 				8EA1C35C23E32A0500A8AA7A /* UIView_Ext.swift in Sources */,
 				8EA1C36423E32A0500A8AA7A /* UIStoryboard.swift in Sources */,
@@ -1063,6 +1161,7 @@
 				8ED6C9C02424E93E007FD5E1 /* ChannelsViewController.swift in Sources */,
 				8E94457224115D28007D87F5 /* ProfessionsVC.swift in Sources */,
 				8EAD368823DE8AF70070A57F /* ProfileViewController.swift in Sources */,
+				34AC4DD024CC2E0C002EF68E /* UserTableViewCell.swift in Sources */,
 				8E25F34D23E2DF5700F909D1 /* IGURLSession.swift in Sources */,
 				8EA1C33123E3237600A8AA7A /* IGHomeViewModel.swift in Sources */,
 				8E0005EF23DF2A77000F1960 /* AbstractControl.swift in Sources */,
@@ -1075,6 +1174,7 @@
 				8E80109323DE03A700FD740E /* HaartTabViewCotroller.swift in Sources */,
 				8E25F35023E2DF5700F909D1 /* IGCommon.swift in Sources */,
 				8ED6C9C12424E93E007FD5E1 /* ChatViewController.swift in Sources */,
+				3425A02D24CAF82500616F8A /* CallPermissions.swift in Sources */,
 				8E883F8423EAD5AF000436CF /* OthersBioViewController.swift in Sources */,
 				8E93765D247BCB69007D290E /* CommentsViewController.swift in Sources */,
 				8E9CE51124680633007892A3 /* OthersProfileViewController.swift in Sources */,
