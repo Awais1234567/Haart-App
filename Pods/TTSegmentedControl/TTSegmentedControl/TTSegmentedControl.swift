@@ -26,7 +26,7 @@ open class TTSegmentedControl: UIView {
     @IBInspectable open var useShadow:Bool = true
     
     //left and right space between items
-    @IBInspectable open var padding: CGSize = CGSize(width: 30, height: 10)
+    @IBInspectable open var padding: CGSize = CGSize(width: 15, height: 10)
     @IBInspectable open var cornerRadius: CGFloat = -1 // for rounded corner radius use negative value, 0 to disable
     
     public enum DraggingState: Int {
@@ -43,7 +43,7 @@ open class TTSegmentedControl: UIView {
         var options:UIView.AnimationOptions = .curveEaseInOut
     }
     
-    open var itemTitles: [String] = ["Item1", "Item2", "Item3"]
+    open var itemTitles: [String] = ["Item1", "Item2", "Item3", "item4", "item5"]
     
     open var attributedDefaultTitles: [NSAttributedString]!
     open var attributedSelectedTitles: [NSAttributedString]!
@@ -90,6 +90,7 @@ open class TTSegmentedControl: UIView {
     
     open override func awakeFromNib() {
         super.awakeFromNib()
+  
     }
     
     public override init(frame: CGRect) {
@@ -103,7 +104,7 @@ open class TTSegmentedControl: UIView {
     
     open override func layoutSubviews() {
         super.layoutSubviews()
-        
+    
         if !isConfigurated {
             configureItemsConent()
             configureViewBounds()

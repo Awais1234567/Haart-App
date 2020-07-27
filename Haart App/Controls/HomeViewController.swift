@@ -32,9 +32,12 @@ class HomeViewController: AbstractControl, UICollectionViewDelegate,UICollection
         super.viewDidLoad()
         print("hit..min")
         homeCollectionView.register(UINib(nibName: "HomeCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "HomeCollectionViewCell")
-        homeCollectionView.contentInset = UIEdgeInsets(top: 0, left:  22, bottom: 0, right:  22)
+        homeCollectionView.contentInset = UIEdgeInsets(top: 0, left:  0, bottom: 0, right:  0)
+      
         homeCollectionView.decelerationRate = UIScrollView.DecelerationRate.fast
         self.setNavBarButtons(letfImages: [UIImage.init(named: "Filter")!, UIImage.init(named: "lover")!], rightImage: [UIImage.init(), UIImage.init(named: "Matches")!])
+        
+    
         //getAndSetData()
         //                appUsersListener = appUsersReference.addSnapshotListener { querySnapshot, error in
         //                    guard let snapshot = querySnapshot else {

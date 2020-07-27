@@ -18,6 +18,7 @@ enum ListType {
     case suggested
     case pending
     case allUsers
+    case friends
 }
 
 class FriendsViewController: AbstractControl, UITableViewDelegate, UITableViewDataSource {
@@ -35,6 +36,7 @@ class FriendsViewController: AbstractControl, UITableViewDelegate, UITableViewDa
     var followerArr = [QueryDocumentSnapshot]()
     var pendingRequestsArr = [QueryDocumentSnapshot]()
     var requestsSentArr = [QueryDocumentSnapshot]()
+    var friendsArr = [QueryDocumentSnapshot]()
     var tableArr = [QueryDocumentSnapshot]()
     
 //    private let db = Firestore.firestore()
@@ -55,7 +57,7 @@ class FriendsViewController: AbstractControl, UITableViewDelegate, UITableViewDa
         self.setNavBarButtons(letfImages: [UIImage.init(named: "Search_White")!], rightImage: [UIImage.init(), UIImage.init(named: "Chat")!])
         
         segmentedControl.allowChangeThumbWidth = false
-        segmentedControl.frame = CGRect(x: (11/375.0) * UIScreen.main.bounds.size.width, y: 0, width: UIScreen.main.bounds.size.width - 20, height: 45.0/* * UIScreen.main.bounds.size.height) / 896.0*/)
+        segmentedControl.frame = CGRect(x:5, y: 0, width: UIScreen.main.bounds.size.width-10, height: 45.0/* * UIScreen.main.bounds.size.height) / 896.0*/)
         segmentedControl.didSelectItemWith = { (index, title) -> () in
             self.searchTxtField.text = ""
             self.view.endEditing(true)
@@ -79,6 +81,11 @@ class FriendsViewController: AbstractControl, UITableViewDelegate, UITableViewDa
                 self.listType = .pending
                 self.tableArr = self.pendingRequestsArr
             }
+            else if (index == 4) //pending
+                       {
+                        self.listType = .friends
+                           self.tableArr = self.pendingRequestsArr
+                       }
             print("Selected item \(index)")
             self.friendsTblView.reloadData()
         }
@@ -88,12 +95,13 @@ class FriendsViewController: AbstractControl, UITableViewDelegate, UITableViewDa
         segmentedControl.defaultTextFont = UIFont.systemFont(ofSize: 15)
         segmentedControl.selectedTextFont = UIFont.systemFont(ofSize: 15)
         segmentedControl.defaultTextColor = UIColor.white
-        segmentedControl.padding = CGSize.init(width: 20, height: 10)
+        segmentedControl.padding = CGSize.init(width: 2.5, height: 10)
+   
         segmentedControl.selectedTextColor = UIColor.black
         segmentedControl.thumbColor = .white
         segmentedControl.useGradient = false
         segmentedControl.containerBackgroundColor = .clear
-        segmentedControl.itemTitles = ["Followers", "Following", "Suggested", "Pending"]
+        segmentedControl.itemTitles = ["Followers", "Following", "Suggested", "Pending", "Friends"]
         searchTxtField.cornerRadius = searchTxtField.frame.size.height / 2.0
     }
     

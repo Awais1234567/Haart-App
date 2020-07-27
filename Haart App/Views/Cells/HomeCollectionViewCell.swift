@@ -16,6 +16,11 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
     var currentUserDocument:QueryDocumentSnapshot?
     var userDocument:QueryDocumentSnapshot?
 
+    @IBOutlet weak var IgnoreButton: NSLayoutConstraint!
+    @IBOutlet weak var SuggestButton: NSLayoutConstraint!
+    @IBOutlet weak var superLikeButton: NSLayoutConstraint!
+    @IBOutlet weak var likeButton: UIButton!
+    @IBOutlet weak var backButton: UIButton!
     @IBOutlet weak var nameLbl: UILabel!
 
     @IBOutlet weak var distanceLbl: UILabel!
@@ -23,6 +28,7 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
     @IBOutlet weak var addressLbl: UILabel!
     @IBOutlet weak var ageLbl: UILabel!
     
+    @IBOutlet weak var boostButton: UIButton!
     @IBOutlet weak var profileImageCollection: UICollectionView!
     
       func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -30,10 +36,6 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
          }
     
 
-      
-     
-      
-      
       func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
             return 5
         }
@@ -64,7 +66,7 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
     var currentUserUnreadMatchesCount:Int = 0
     var indexPath:IndexPath!
     let maxImages = 5
-    let i = IndexPath(item: 2, section: 0)
+    let i = IndexPath(item: 0, section: 2)
     var imageIndex: NSInteger = 0
     let gesture = UISwipeGestureRecognizer()
       var delegate: MSPeekCollectionViewDelegateImplementation!
@@ -77,7 +79,7 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
         profileImageCollection.configureForPeekingDelegate()
         
      profileImageCollection.register(ProfileImageViewCell.self, forCellWithReuseIdentifier: ProfileImageViewCell.identifier)
-        print("fuck")
+   
         profileImageCollection.configureForPeekingDelegate()
 
         let leftRecognizer = UISwipeGestureRecognizer(target: self, action:
@@ -88,8 +90,8 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
            rightRecognizer.direction = .right
         gesture.addTarget(self, action: #selector(swipe))
         
-
-
+        profileImageCollection.scrollTo(indexPath: i)
+     
         //imgView.roundTop(value:10)
     }
     
@@ -148,7 +150,9 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
         //UIApplication.visibleViewController.navigationController?.pushViewController(vc, animated: true)
     }
     @IBAction func feedBrnPressed(_ sender: Any) {
-        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "FeedControl")
+       
+        let vc = FeedControl()
+        vc.generalFeedBit = true
         UIApplication.visibleViewController.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -183,6 +187,7 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
                 SVProgressHUD.dismiss()
                 if let vc = UIApplication.visibleViewController as? HomeViewController {
                     vc.itemsArr.remove(at: self.indexPath.row)
+              self.profileImageCollection.reloadData()
                     vc.homeCollectionView.reloadData()
                 }
                 
@@ -255,6 +260,7 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
                     SVProgressHUD.dismiss()
                     if let vc = UIApplication.visibleViewController as? HomeViewController {
                         vc.itemsArr.remove(at: self.indexPath.row)
+                        self.profileImageCollection.reloadData()
                         vc.homeCollectionView.reloadData()
                     }
                     
@@ -385,7 +391,7 @@ extension HomeCollectionViewCell : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 339 * appConstant.widthRatio, height: 353 * appConstant.heightRatio )
+        return CGSize(width: UIScreen.main.bounds.width, height: 353 * appConstant.heightRatio )
     }
   
 

@@ -18,18 +18,29 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
     private var viewModel: IGHomeViewModel = IGHomeViewModel()
     var feedsArr = [[String:Any]]()
     var image: UIImage!
+    var generalFeedBit : Bool = false
     @IBOutlet weak var storyContainer: UIView!
     @IBOutlet weak var tblView: UITableView!
     var _storiesView:IGHomeView!
     
     override func loadView() {
         super.loadView()
+        if(generalFeedBit == true){
+            print("General Feed")
+            _storiesView = IGHomeView(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 104))
+            storyContainer.addSubview(_storiesView)
+            _storiesView.collectionView.setCollectionViewLayout(_storiesView.layout, animated: false)
+            
+            _storiesView.collectionView.delegate = self
+            _storiesView.collectionView.dataSource = self
+        }else{
         _storiesView = IGHomeView(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 104))
         storyContainer.addSubview(_storiesView)
         _storiesView.collectionView.setCollectionViewLayout(_storiesView.layout, animated: false)
         
         _storiesView.collectionView.delegate = self
         _storiesView.collectionView.dataSource = self
+        }
     }
     
     override func viewDidLoad() {
