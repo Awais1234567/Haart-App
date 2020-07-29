@@ -102,6 +102,7 @@ final class ChatViewController: MessagesViewController {
         }
         
     }
+    var conferenceType: QBRTCConferenceType!
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -109,6 +110,8 @@ final class ChatViewController: MessagesViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
         view.backgroundColor = UIColor.init(hexString: "#EC2B00")
         let rect = CGRect(x: 0, y: 0, width: 40, height: 35)
         let leftBtn = UIButton.init(frame: rect)
@@ -116,13 +119,23 @@ final class ChatViewController: MessagesViewController {
         leftBtn.addTarget(self, action: #selector(backBtnPressed), for: .touchUpInside)
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftBtn)
         
-        let rightBtn = UIButton.init(frame: rect)
-        rightBtn.setImage(UIImage(named: "Call")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        rightBtn.tintColor = UIColor.white
-        rightBtn.imageView?.contentMode = .scaleAspectFit
-        rightBtn.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 0)
-        rightBtn.addTarget(self, action: #selector(didPressAudioCall(sender:)), for: .touchUpInside)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightBtn)
+        let audioCallButton = UIButton.init(frame: rect)
+        audioCallButton.setImage(UIImage(named: "Call")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        audioCallButton.tintColor = UIColor.white
+        audioCallButton.imageView?.contentMode = .scaleAspectFit
+        audioCallButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 0)
+        audioCallButton.addTarget(self, action: #selector(didPressAudioCall(sender:)), for: .touchUpInside)
+
+
+        let videoCallButton = UIButton.init(frame: rect)
+        videoCallButton.setImage(UIImage(named: "camera_on_ic")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        videoCallButton.tintColor = UIColor.white
+        videoCallButton.imageView?.contentMode = .scaleAspectFit
+        videoCallButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 0)
+        videoCallButton.addTarget(self, action: #selector(didPressVideoCall(sender:)), for: .touchUpInside)
+        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: audioCallButton), UIBarButtonItem(customView: videoCallButton)]
+        
+        
         
         guard let id = channel.id else {
             navigationController?.popViewController(animated: true)
@@ -625,7 +638,14 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
     }
     @objc func didPressAudioCall(sender: UIButton){
         if let user = Auth.auth().currentUser{
-            login(fullName: user.uid, login: user.uid, password: user.uid)
+            conferenceType = .audio
+            login(fullName: AppSettings.fullName, login: user.uid, password: user.uid)
+        }
+    }
+    @objc func didPressVideoCall(sender: UIButton){
+        if let user = Auth.auth().currentUser{
+            conferenceType = .video
+            login(fullName: AppSettings.fullName, login: user.uid, password: user.uid)
         }
     }
 }
@@ -645,7 +665,7 @@ extension ChatViewController{
                             QuickBloxProfile.synchronize(user)
                             
                             if user.fullName != fullName {
-                                //self?.updateFullName(fullName: fullName, login: login)
+                                self?.updateFullName(fullName: fullName, login: login)
                             } else {
                                 self?.connectToChat(user: user)
                             }
@@ -656,6 +676,18 @@ extension ChatViewController{
                     QuickBloxProfile.clearProfile()
                     //self?.defaultConfiguration()
                 }
+        })
+    }
+    
+    private func updateFullName(fullName: String, login: String) {
+        let updateUserParameter = QBUpdateUserParameters()
+        updateUserParameter.fullName = fullName
+        QBRequest.updateCurrentUser(updateUserParameter, successBlock: {  [weak self] response, user in
+            user.updatedAt = Date()
+            QuickBloxProfile.update(user)
+            self?.connectToChat(user: user)
+            }, errorBlock: { [weak self] response in
+                //self?.handleError(response.error?.error, domain: ErrorDomain.signUp)
         })
     }
     
@@ -695,7 +727,7 @@ extension ChatViewController{
                         successBlock: { [weak self] (response, page, users) in
                             self?.dataSource.update(users: users)
                             if let toCallUsers = self?.selectedUser(users: users){
-                                self?.call(with: .audio, toUser: toCallUsers)
+                                self?.call(with: (self?.conferenceType!)!, toUser: toCallUsers)
                             }else{
                                 SVProgressHUD.showError(withStatus: "User is not yet registered to receive calls")
                             }
@@ -736,21 +768,22 @@ extension ChatViewController{
                         }
 
                         CallKitManager.instance.startCall(withUserIDs: opponentsIDs, session: session, uuid: uuid)
-
-                            let callViewController = CallViewController()
-                            callViewController.session = self.session
-                            callViewController.usersDataSource = self.dataSource
-                            callViewController.callUUID = uuid
-                            callViewController.sessionConferenceType = conferenceType
-                            let nav = UINavigationController(rootViewController: callViewController)
-                            nav.modalTransitionStyle = .crossDissolve
-                            nav.modalPresentationStyle = .fullScreen
-                            UIApplication.visibleNavigationController.pushViewController(callViewController, animated: true)
-                            //self.present(nav, animated: false)
-                            //self.audioCallButton.isEnabled = false
-                            //self.videoCallButton.isEnabled = false
-                            //self.navViewController = nav
-
+                        
+                        let callViewController = CallViewController()
+                        callViewController.session = self.session
+                        callViewController.usersDataSource = self.dataSource
+                        callViewController.callUUID = uuid
+                        callViewController.sessionConferenceType = conferenceType
+                        callViewController.channel = self.channel
+                        let nav = UINavigationController(rootViewController: callViewController)
+                        nav.modalTransitionStyle = .crossDissolve
+                        nav.modalPresentationStyle = .fullScreen
+                        UIApplication.visibleNavigationController.pushViewController(callViewController, animated: true)
+                        //self.present(nav, animated: false)
+                        //self.audioCallButton.isEnabled = false
+                        //self.videoCallButton.isEnabled = false
+                        //self.navViewController = nav
+                        
                         let opponentsNamesString = opponentsNames.joined(separator: ",")
                         let allUsersNamesString = "\(profile.fullName)," + opponentsNamesString
                         let arrayUserIDs = opponentsIDs.map({"\($0)"})
@@ -1006,6 +1039,7 @@ extension ChatViewController: PKPushRegistryDelegate {
             })
         }
     }
+    
     private func setupAnswerTimerWithTimeInterval(_ timeInterval: TimeInterval) {
         if self.answerTimer != nil {
             self.answerTimer?.invalidate()
@@ -1025,6 +1059,7 @@ extension ChatViewController: PKPushRegistryDelegate {
             self.answerTimer = nil
         }
     }
+    
     private func showAlertView(message: String?) {
         let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: UsersAlertConstant.okAction, style: .default,

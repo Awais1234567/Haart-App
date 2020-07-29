@@ -18,6 +18,7 @@ import CoreLocation
 import YPImagePicker
 import SDWebImage
 import GoogleMaps
+import Quickblox
 
 class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
     var randomStr:String?
@@ -501,6 +502,10 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
         if(fullNameTxtField.text?.count ?? 0 > 0 && userNameTxtField.text?.count ?? 0 > 0) {
             saveUser()
             AppSettings.displayName = fullNameTxtField.text ?? ""
+            if let user = Auth.auth().currentUser{
+                quickBloxSignUp(fullName: AppSettings.displayName, login: user.uid)
+                //updateFullName(fullName: AppSettings.displayName, login: user.uid)
+            }
         }
         else {
             showMessageToEnterFullName()
@@ -823,5 +828,34 @@ extension BioViewController {
     
     
 }
-
-
+//MARK:- Quickblox
+extension BioViewController{
+    private func quickBloxSignUp(fullName: String, login: String) {
+        let newUser = QBUUser()
+        newUser.login = login
+        newUser.fullName = fullName
+        newUser.password = login
+        QBRequest.signUp(newUser, successBlock: { [weak self] response, user in
+            
+                print("Quickblox signup successful")
+            
+            }, errorBlock: { [weak self] response in
+                
+                if response.status == QBResponseStatusCode.validationFailed {
+                    self?.updateFullName(fullName: fullName, login: login)
+                    return
+                }
+                //self?.handleError(response.error?.error, domain: ErrorDomain.signUp)
+        })
+    }
+    private func updateFullName(fullName: String, login: String) {
+        let updateUserParameter = QBUpdateUserParameters()
+        updateUserParameter.fullName = fullName
+        QBRequest.updateCurrentUser(updateUserParameter, successBlock: {  [weak self] response, user in
+            user.updatedAt = Date()
+            QuickBloxProfile.update(user)
+            }, errorBlock: { [weak self] response in
+                //self?.handleError(response.error?.error, domain: ErrorDomain.signUp)
+        })
+    }
+}

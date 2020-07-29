@@ -40,9 +40,6 @@ class AddAccountsViewController: UIViewController {
         let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let viewController = mainStoryboard.instantiateViewController(withIdentifier: "BioViewController")
         self.present(viewController, animated: true, completion: nil)
-        if let user = Auth.auth().currentUser{
-            quickBloxSignUp(fullName: user.uid, login: user.uid)
-        }
     }
     
     @IBAction func skipBtnPressed(_ sender: Any) {
@@ -50,23 +47,5 @@ class AddAccountsViewController: UIViewController {
         let viewController = mainStoryboard.instantiateViewController(withIdentifier: "BioViewController")
         self.present(viewController, animated: true, completion: nil)
     }
-    private func quickBloxSignUp(fullName: String, login: String) {
-        let newUser = QBUUser()
-        newUser.login = login
-        newUser.fullName = fullName
-        newUser.password = login
-        QBRequest.signUp(newUser, successBlock: { [weak self] response, user in
-            
-                print("Quickblox signup successful")
-            
-            }, errorBlock: { [weak self] response in
-                
-                if response.status == QBResponseStatusCode.validationFailed {
-                    // The user with existent login was created earlier
-                    //self?.login(fullName: fullName, login: login)
-                    return
-                }
-                //self?.handleError(response.error?.error, domain: ErrorDomain.signUp)
-        })
-    }
+    
 }

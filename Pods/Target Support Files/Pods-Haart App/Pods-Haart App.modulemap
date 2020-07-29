@@ -1,6 +1,0 @@
-framework module Pods_Haart_App {
-  umbrella header "Pods-Haart App-umbrella.h"
-
-  export *
-  module * { export * }
-}

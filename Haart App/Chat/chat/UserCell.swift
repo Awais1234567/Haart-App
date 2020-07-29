@@ -102,24 +102,37 @@ import UIKit
 //}
 
 class UserCell: UICollectionViewCell{
+    let backgroundImageView: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "img2")
+        view.contentMode = .scaleAspectFill
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    let layerOverBackgroundView: UIView = {
+       let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+        return view
+    }()
+    let userImageView: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "img2")
+        view.layer.borderWidth = 5
+        view.contentMode = .scaleAspectFill
+        view.clipsToBounds = true
+        view.layer.borderColor = UIColor.lightGray.cgColor
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 75
+        return view
+    }()
     var nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Awais"
-        label.textColor = UIColor.darkGray
-        return label
-    }()
-    var containerView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.lightGray
-        return view
-    }()
-    var bitrateLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Awais"
-        label.textColor = UIColor.yellow
+        label.text = "nameLabel"
+        label.textAlignment = .center
+        label.font = label.font.withSize(32)
+        label.textColor = UIColor.white
         return label
     }()
     var muteButton: UIButton = {
@@ -132,24 +145,24 @@ class UserCell: UICollectionViewCell{
     var statusLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Awais"
-        label.textColor = UIColor.darkGray
+        label.text = "statusLabel"
+        label.textAlignment = .center
+        label.textColor = UIColor.white
         return label
-    }()
-    
+    }()    
     var videoView: UIView? {
         didSet {
             guard let view = videoView else {
                 return
             }
             
-            containerView.insertSubview(view, at: 0)
-            
+            layerOverBackgroundView.insertSubview(view, at: 0)
+            view.contentMode = .scaleAspectFit
             view.translatesAutoresizingMaskIntoConstraints = false
-            view.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
-            view.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-            view.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
+            view.leadingAnchor.constraint(equalTo: layerOverBackgroundView.leadingAnchor).isActive = true
+            view.trailingAnchor.constraint(equalTo: layerOverBackgroundView.trailingAnchor).isActive = true
+            view.topAnchor.constraint(equalTo: layerOverBackgroundView.topAnchor).isActive = true
+            view.bottomAnchor.constraint(equalTo: layerOverBackgroundView.bottomAnchor).isActive = true
         }
     }
     
@@ -171,7 +184,7 @@ class UserCell: UICollectionViewCell{
             case .noAnswer: statusLabel.text = "No Answer"
             case .disconnectTimeout: statusLabel.text = "Time out"
             case .disconnected: statusLabel.text = "Disconnected"
-            case .unknown: statusLabel.text = ""
+            case .unknown: statusLabel.text = "Calling"
             default: statusLabel.text = ""
             }
             muteButton.isHidden = !(connectionState == .connected)
@@ -182,18 +195,8 @@ class UserCell: UICollectionViewCell{
         didSet {
             nameLabel.text = name
             //nameView.isHidden = name.isEmpty
-            nameLabel.backgroundColor = PlaceholderGenerator.color(index: name.count)
+            //nameLabel.backgroundColor = PlaceholderGenerator.color(index: name.count)
             muteButton.isHidden = name.isEmpty
-        }
-    }
-    
-    var bitrate: Double = 0.0 {
-        didSet {
-            if bitrate == 0.0 {
-                bitrateLabel.text = ""
-            } else if bitrate > 0.0 {
-                bitrateLabel.text = String(format: "%.0f kbits/sec", bitrate * 1e-3)
-            }
         }
     }
     
@@ -203,44 +206,52 @@ class UserCell: UICollectionViewCell{
         super.init(frame: frame)
         setupViews()
         backgroundColor = UIColor.clear
-        bitrateLabel.backgroundColor = UIColor(red: 0.9441, green: 0.9441, blue: 0.9441, alpha: 0.350031672297297)
         muteButton.setImage(unmutedImage, for: .normal)
         muteButton.setImage(mutedImage, for: .selected)
-        muteButton.isHidden = true
+        muteButton.isHidden = false
         muteButton.isSelected = false
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     func setupViews(){
-        addSubview(containerView)
-        addSubview(nameLabel)
+        addSubview(backgroundImageView)
+        addSubview(layerOverBackgroundView)
+        addSubview(userImageView)
         addSubview(statusLabel)
+        addSubview(nameLabel)
         addSubview(muteButton)
-        addSubview(bitrateLabel)
         
         NSLayoutConstraint.activate([
-            containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            containerView.topAnchor.constraint(equalTo: self.topAnchor),
+            backgroundImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            backgroundImageView.topAnchor.constraint(equalTo: self.topAnchor),
             
-            nameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
-            nameLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
+            layerOverBackgroundView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            layerOverBackgroundView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            layerOverBackgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            layerOverBackgroundView.topAnchor.constraint(equalTo: self.topAnchor),
+            
+            userImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            userImageView.widthAnchor.constraint(equalToConstant: 150),
+            userImageView.heightAnchor.constraint(equalToConstant: 150),
+            userImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 50),
             
             statusLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
-            statusLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            statusLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
+            statusLabel.topAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 10),
             
-            muteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            muteButton.bottomAnchor.constraint(equalTo: bitrateLabel.topAnchor),
+            nameLabel.leadingAnchor.constraint(equalTo: layerOverBackgroundView.leadingAnchor, constant: 20),
+            nameLabel.trailingAnchor.constraint(equalTo: layerOverBackgroundView.trailingAnchor, constant: -20),
+            nameLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 15),
+            
+            
+            
+            muteButton.trailingAnchor.constraint(equalTo: layerOverBackgroundView.trailingAnchor),
+            muteButton.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor),
             muteButton.widthAnchor.constraint(equalToConstant: 40),
             muteButton.heightAnchor.constraint(equalToConstant: 40),
-            
-            bitrateLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            bitrateLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            bitrateLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            bitrateLabel.heightAnchor.constraint(equalToConstant: 24)
-            
         ])
     }
     //MARK: - Actions

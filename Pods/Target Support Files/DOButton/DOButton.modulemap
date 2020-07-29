@@ -1,6 +1,0 @@
-framework module DOButton {
-  umbrella header "DOButton-umbrella.h"
-
-  export *
-  module * { export * }
-}

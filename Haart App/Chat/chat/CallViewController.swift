@@ -10,6 +10,7 @@ import UIKit
 import Quickblox
 import QuickbloxWebRTC
 import SVProgressHUD
+import FirebaseAuth
 
 enum CallViewControllerState : Int {
     case disconnected
@@ -29,11 +30,14 @@ struct CallStateConstant {
 class CallViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     //MARK: - IBOutlets
     lazy var opponentsCollectionView: UICollectionView = {
-        let layout = OpponentsFlowLayout()
+        let layout = UICollectionViewFlowLayout()
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = UIColor.lightGray.withAlphaComponent(0.9)
         cv.translatesAutoresizingMaskIntoConstraints = false
         cv.showsVerticalScrollIndicator = false
+        //cv.contentInset = UIEdgeInsets(top: -20, left: 0, bottom: 21, right: 0)
         cv.delaysContentTouches = false
+        cv.isScrollEnabled = false
         cv.delegate = self
         cv.dataSource = self
         return cv
@@ -41,6 +45,7 @@ class CallViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     var toolbar: ToolBar = {
         let bar = ToolBar(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         bar.translatesAutoresizingMaskIntoConstraints = false
+        bar.backgroundColor = UIColor.clear
         return bar
     }()
     
@@ -120,6 +125,8 @@ class CallViewController: UIViewController, UICollectionViewDelegateFlowLayout {
         }
     }
     
+    var channel: Channel!
+    
     //MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -152,10 +159,8 @@ class CallViewController: UIViewController, UICollectionViewDelegateFlowLayout {
         
         configureGUI()
         
-        opponentsCollectionView.collectionViewLayout = OpponentsFlowLayout()
-        opponentsCollectionView.backgroundColor = UIColor.white
+        opponentsCollectionView.collectionViewLayout = UICollectionViewFlowLayout()
         opponentsCollectionView.register(UserCell.self, forCellWithReuseIdentifier: CallConstant.opponentCollectionViewCellIdentifier)
-        view.backgroundColor = UIColor.red
         
         users.insert(currentConferenceUser, at: 0)
         title = CallStateConstant.connecting
@@ -173,11 +178,11 @@ class CallViewController: UIViewController, UICollectionViewDelegateFlowLayout {
             opponentsCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             opponentsCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             opponentsCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
-            opponentsCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant:  0),
+            opponentsCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             toolbar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             toolbar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            toolbar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            toolbar.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 50),
             toolbar.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
@@ -185,6 +190,7 @@ class CallViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         
         //MARK: - Reachability
         let updateConnectionStatus: ((_ status: NetworkConnectionStatus) -> Void)? = { [weak self] status in
@@ -202,6 +208,9 @@ class CallViewController: UIViewController, UICollectionViewDelegateFlowLayout {
         }
         session?.localMediaStream.videoTrack.videoCapture = cameraCapture
         reloadContent()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -630,7 +639,7 @@ extension CallViewController: QBRTCClientDelegate {
             
            if let userIndexPath = self.userIndexPath(userID: user.userID),
             let cell = self.opponentsCollectionView.cellForItem(at: userIndexPath) as? UserCell {
-                cell.bitrate = user.bitrate
+                //cell.bitrate = user.bitrate
             }
         }
         
@@ -828,21 +837,35 @@ extension CallViewController: UICollectionViewDataSource {
         }
         
         cell.videoView = userView(userID: user.userID)
+        if let channel = self.channel{
+            if(channel.createrId == Auth.auth().currentUser?.uid) {
+                cell.name = channel.name
+            }else{
+                cell.name = channel.createrName
+            }
+        }
         
-        cell.name = ""
+        if let channel = self.channel{
+            cell.backgroundImageView.sd_setImage(with: URL(string:channel.profilePicUrl), placeholderImage: nil)
+            cell.userImageView.sd_setImage(with: URL(string:channel.profilePicUrl), placeholderImage: nil)
+        }
+        //cell.backgroundImageView.image =
         cell.connectionState = .unknown
         guard let currentUser = QBSession.current.currentUser, user.userID != currentUser.id else {
             return cell
         }
         
-        if user.bitrate > 0.0 {
-            cell.bitrate = user.bitrate
-        }
         cell.connectionState = user.connectionState
         let title = user.userName
         cell.name = title
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let screenWidth = self.view.frame.width
+        let screenHeight = self.view.frame.height
+        return CGSize(width: screenWidth, height: screenHeight)
     }
 }
 
@@ -884,3 +907,4 @@ extension CallViewController: CallKitManagerDelegate {
         }
     }
 }
+ 
