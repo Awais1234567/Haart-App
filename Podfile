@@ -6,7 +6,7 @@ target 'Haart App' do
   use_frameworks!
 
 pod 'QuickBlox', '~> 2.17.4'
-pod 'Quickblox-WebRTC', '~> 2.7.4'
+#pod 'Quickblox-WebRTC', '~> 2.7.4'
 
 pod "ScaledVisibleCellsCollectionView"
 
