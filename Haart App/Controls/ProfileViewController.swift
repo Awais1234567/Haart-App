@@ -13,6 +13,9 @@ import SDWebImage
 import YPImagePicker
 import Firebase
 import Lightbox
+import Quickblox
+import QuickbloxWebRTC
+import PushKit
 
 class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, IGAddStoryCellDelegate {
    
@@ -34,6 +37,25 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
     var galleryItemsArr:[[String:Any]] = [["void":""]]
     
     var _storiesView:IGHomeView!
+    private var isUpdatedPayload = true
+    private var voipRegistry: PKPushRegistry = PKPushRegistry(queue: DispatchQueue.main)
+    private weak var session: QBRTCSession?
+    private var sessionID: String?
+    lazy private var backgroundTask: UIBackgroundTaskIdentifier = {
+        let backgroundTask = UIBackgroundTaskIdentifier.invalid
+        return backgroundTask
+    }()
+    lazy private var dataSource: UsersDataSource = {
+        let dataSource = UsersDataSource()
+        return dataSource
+    }()
+    lazy private var navViewController: UINavigationController = {
+        let navViewController = UINavigationController()
+        return navViewController
+        
+    }()
+    private var callUUID: UUID?
+    private var answerTimer: Timer?
     //MARK: - Overridden functions
     override func loadView() {
         super.loadView()
@@ -67,6 +89,11 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
         
         self.setNavBarButtons(letfImages: [UIImage.init(named: "Filter")!], rightImage: [ UIImage.init(named: "Chat")!])
         grayView.grayViewRadiousBottm(value:36)
+        
+        QBRTCClient.instance().add(self)
+               
+        voipRegistry.delegate = self
+        voipRegistry.desiredPushTypes = Set<PKPushType>([.voIP])
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -399,6 +426,535 @@ extension ProfileViewController:AddPostViewControllerDelegate {
         storage.child(path).downloadURL(completion: completion)
     }
     
+}
+extension ProfileViewController: PKPushRegistryDelegate {
+    // MARK: - PKPushRegistryDelegate
+    func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
+        guard let voipToken = registry.pushToken(for: .voIP) else {
+            return
+        }
+        guard let deviceIdentifier = UIDevice.current.identifierForVendor?.uuidString else {
+            return
+        }
+        let subscription = QBMSubscription()
+        subscription.notificationChannel = .APNSVOIP
+        subscription.deviceUDID = deviceIdentifier
+        subscription.deviceToken = voipToken
+
+        QBRequest.createSubscription(subscription, successBlock: { response, objects in
+            debugPrint("[ProfileViewController] Create Subscription request - Success")
+        }, errorBlock: { response in
+            debugPrint("[ProfileViewController] Create Subscription request - Error")
+        })
+    }
+
+    func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
+        guard let deviceIdentifier = UIDevice.current.identifierForVendor?.uuidString else {
+            return
+        }
+        QBRequest.unregisterSubscription(forUniqueDeviceIdentifier: deviceIdentifier, successBlock: { response in
+            UIApplication.shared.unregisterForRemoteNotifications()
+            debugPrint("[ProfileViewController] Unregister Subscription request - Success")
+        }, errorBlock: { error in
+            debugPrint("[ProfileViewController] Unregister Subscription request - Error")
+        })
+    }
+
+    func pushRegistry(_ registry: PKPushRegistry,
+                      didReceiveIncomingPushWith payload: PKPushPayload,
+                      for type: PKPushType,
+                      completion: @escaping () -> Void) {
+
+
+        //in case of bad internet we check how long the VOIP Push was delivered for call(1-1)
+        //if time delivery is more than “answerTimeInterval” - return
+        if type == .voIP,
+            payload.dictionaryPayload[UsersConstant.voipEvent] != nil {
+            if let timeStampString = payload.dictionaryPayload["timestamp"] as? String,
+                let opponentsIDsString = payload.dictionaryPayload["opponentsIDs"] as? String {
+                let opponentsIDsArray = opponentsIDsString.components(separatedBy: ",")
+                if opponentsIDsArray.count == 2 {
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                    if let startCallDate = formatter.date(from: timeStampString) {
+                        if Date().timeIntervalSince(startCallDate) > QBRTCConfig.answerTimeInterval() {
+                            debugPrint("[UsersViewController] timeIntervalSinceStartCall > QBRTCConfig.answerTimeInterval")
+                            return
+                        }
+                    }
+                }
+            }
+        }
+
+        let application = UIApplication.shared
+        if type == .voIP,
+            payload.dictionaryPayload[UsersConstant.voipEvent] != nil,
+            application.applicationState == .background {
+            var opponentsIDs: [String]? = nil
+            var opponentsNumberIDs: [NSNumber] = []
+            var opponentsNamesString = "incoming call. Connecting..."
+            var sessionID: String? = nil
+            var callUUID = UUID()
+            var sessionConferenceType = QBRTCConferenceType.audio
+            self.isUpdatedPayload = false
+
+            if let opponentsIDsString = payload.dictionaryPayload["opponentsIDs"] as? String,
+                let allOpponentsNamesString = payload.dictionaryPayload["contactIdentifier"] as? String,
+                let sessionIDString = payload.dictionaryPayload["sessionID"] as? String,
+                let callUUIDPayload = UUID(uuidString: sessionIDString) {
+                self.isUpdatedPayload = true
+                self.sessionID = sessionIDString
+                sessionID = sessionIDString
+                callUUID = callUUIDPayload
+                if let conferenceTypeString = payload.dictionaryPayload["conferenceType"] as? String {
+                    sessionConferenceType = conferenceTypeString == "1" ? QBRTCConferenceType.video : QBRTCConferenceType.audio
+                }
+
+                let profile = QuickBloxProfile()
+                guard profile.isFull == true else {
+                    return
+                }
+                let opponentsIDsArray = opponentsIDsString.components(separatedBy: ",")
+
+                var opponentsNumberIDsArray = opponentsIDsArray.compactMap({NSNumber(value: Int($0)!)})
+                var allOpponentsNamesArray = allOpponentsNamesString.components(separatedBy: ",")
+                for i in 0...opponentsNumberIDsArray.count - 1 {
+                    if opponentsNumberIDsArray[i].uintValue == profile.ID {
+                        opponentsNumberIDsArray.remove(at: i)
+                        allOpponentsNamesArray.remove(at: i)
+                        break
+                    }
+                }
+                opponentsNumberIDs = opponentsNumberIDsArray
+                opponentsIDs = opponentsNumberIDs.compactMap({ $0.stringValue })
+                opponentsNamesString = allOpponentsNamesArray.joined(separator: ", ")
+            }
+
+            let fetchUsersCompletion = { [weak self] (usersIDs: [String]?) -> Void in
+                if let opponentsIDs = usersIDs {
+                    QBRequest.users(withIDs: opponentsIDs, page: nil, successBlock: { [weak self] (respose, page, users) in
+                        if users.isEmpty == false {
+                            //self?.dataSource.update(users: users)
+                        }
+                    }) { (response) in
+                        debugPrint("[UsersViewController] error fetch usersWithIDs")
+                    }
+                }
+            }
+
+            self.setupAnswerTimerWithTimeInterval(QBRTCConfig.answerTimeInterval())
+            CallKitManager.instance.reportIncomingCall(withUserIDs: opponentsNumberIDs,
+                                                       outCallerName: opponentsNamesString,
+                                                       session: nil,
+                                                       sessionID: sessionID,
+                                                       sessionConferenceType: sessionConferenceType,
+                                                       uuid: callUUID,
+                                                       onAcceptAction: { [weak self] (isAccept) in
+                                                        guard let self = self else {
+                                                            return
+                                                        }
+
+                                                        if let session = self.session {
+                                                            if isAccept == true {
+                                                                self.openCall(withSession: session,
+                                                                              uuid: callUUID,
+                                                                              sessionConferenceType: sessionConferenceType)
+                                                                debugPrint("[UsersViewController]  onAcceptAction")
+                                                            } else {
+                                                                session.rejectCall(["reject": "busy"])
+                                                                debugPrint("[UsersViewController] endCallAction")
+                                                            }
+                                                        } else {
+                                                            if isAccept == true {
+                                                                self.openCall(withSession: nil,
+                                                                              uuid: callUUID,
+                                                                              sessionConferenceType: sessionConferenceType)
+                                                                debugPrint("[UsersViewController]  onAcceptAction")
+                                                            } else {
+
+                                                                debugPrint("[UsersViewController] endCallAction")
+                                                            }
+                                                            self.setupAnswerTimerWithTimeInterval(UsersConstant.answerInterval)
+                                                            self.prepareBackgroundTask()
+                                                        }
+                                                        completion()
+
+                }, completion: { (isOpen) in
+                    self.prepareBackgroundTask()
+                    self.setupAnswerTimerWithTimeInterval(QBRTCConfig.answerTimeInterval())
+                    if QBChat.instance.isConnected == false {
+                        self.connectToChat { (error) in
+                            if error == nil {
+                                fetchUsersCompletion(opponentsIDs)
+                            }
+                        }
+                    } else {
+                        fetchUsersCompletion(opponentsIDs)
+                    }
+                    debugPrint("[UsersViewController] callKit did presented")
+            })
+        }
+    }
+
+    private func prepareBackgroundTask() {
+        let application = UIApplication.shared
+        if application.applicationState == .background && self.backgroundTask == .invalid {
+            self.backgroundTask = application.beginBackgroundTask(expirationHandler: {
+                application.endBackgroundTask(self.backgroundTask)
+                self.backgroundTask = UIBackgroundTaskIdentifier.invalid
+            })
+        }
+    }
+
+    private func setupAnswerTimerWithTimeInterval(_ timeInterval: TimeInterval) {
+        if self.answerTimer != nil {
+            self.answerTimer?.invalidate()
+            self.answerTimer = nil
+        }
+
+        self.answerTimer = Timer.scheduledTimer(timeInterval: timeInterval,
+                                                target: self,
+                                                selector: #selector(endCallByTimer),
+                                                userInfo: nil,
+                                                repeats: false)
+    }
+
+    private func invalidateAnswerTimer() {
+        if self.answerTimer != nil {
+            self.answerTimer?.invalidate()
+            self.answerTimer = nil
+        }
+    }
+
+    private func showAlertView(message: String?) {
+        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: UsersAlertConstant.okAction, style: .default,
+                                                handler: nil))
+        present(alertController, animated: true)
+    }
+
+    @objc private func endCallByTimer() {
+        invalidateAnswerTimer()
+
+        if let endCall = CallKitManager.instance.currentCall() {
+            CallKitManager.instance.endCall(with: endCall.uuid) {
+                debugPrint("[UsersViewController] endCall sessionDidClose")
+            }
+        }
+        prepareCloseCall()
+    }
+
+
+}
+// MARK: - QBRTCClientDelegate
+extension ProfileViewController: QBRTCClientDelegate {
+    func session(_ session: QBRTCSession, hungUpByUser userID: NSNumber, userInfo: [String : String]? = nil) {
+        if CallKitManager.instance.isCallStarted() == false,
+            let sessionID = self.sessionID,
+            sessionID == session.id,
+            session.initiatorID == userID || isUpdatedPayload == false {
+            CallKitManager.instance.endCall(with: callUUID)
+            prepareCloseCall()
+        }
+    }
+
+    func didReceiveNewSession(_ session: QBRTCSession, userInfo: [String : String]? = nil) {
+        if self.session != nil {
+            session.rejectCall(["reject": "busy"])
+            return
+        }
+        invalidateAnswerTimer()
+
+        self.session = session
+
+        if let currentCall = CallKitManager.instance.currentCall() {
+            //open by VOIP Push
+
+            CallKitManager.instance.setupSession(session)
+            if currentCall.status == .ended {
+                CallKitManager.instance.setupSession(session)
+                CallKitManager.instance.endCall(with: currentCall.uuid)
+                session.rejectCall(["reject": "busy"])
+                prepareCloseCall()
+                } else {
+                var opponentIDs = [session.initiatorID]
+                let profile = QuickBloxProfile()
+                guard profile.isFull == true else {
+                    return
+                }
+                for userID in session.opponentsIDs {
+                    if userID.uintValue != profile.ID {
+                        opponentIDs.append(userID)
+                    }
+                }
+
+                prepareCallerNameForOpponentIDs(opponentIDs) { (callerName) in
+                    CallKitManager.instance.updateIncomingCall(withUserIDs: session.opponentsIDs,
+                                                               outCallerName: callerName,
+                                                               session: session,
+                                                               uuid: currentCall.uuid)
+                }
+            }
+        } else {
+            //open by call
+
+            if let uuid = UUID(uuidString: session.id) {
+                callUUID = uuid
+                sessionID = session.id
+
+                var opponentIDs = [session.initiatorID]
+                let profile = QuickBloxProfile()
+                guard profile.isFull == true else {
+                    return
+                }
+                for userID in session.opponentsIDs {
+                    if userID.uintValue != profile.ID {
+                        opponentIDs.append(userID)
+                    }
+                }
+
+                prepareCallerNameForOpponentIDs(opponentIDs) { [weak self] (callerName) in
+                    self?.reportIncomingCall(withUserIDs: opponentIDs,
+                                             outCallerName: callerName,
+                                             session: session,
+                                             uuid: uuid)
+                }
+            }
+        }
+    }
+
+    private func prepareCallerNameForOpponentIDs(_ opponentIDs: [NSNumber], completion: @escaping (String) -> Void)  {
+        var callerName = ""
+        var opponentNames = [String]()
+        var newUsers = [String]()
+        for userID in opponentIDs {
+
+            // Getting recipient from users.
+            if let user = dataSource.user(withID: userID.uintValue),
+                let fullName = user.fullName {
+                opponentNames.append(fullName)
+            } else {
+                newUsers.append(userID.stringValue)
+            }
+        }
+
+        if newUsers.isEmpty == false {
+
+            QBRequest.users(withIDs: newUsers, page: nil, successBlock: { [weak self] (respose, page, users) in
+                if users.isEmpty == false {
+                    self?.dataSource.update(users: users)
+                    for user in users {
+                        opponentNames.append(user.fullName ?? user.login ?? "")
+                    }
+                    callerName = opponentNames.joined(separator: ", ")
+                    completion(callerName)
+                }
+            }) { (respose) in
+                for userID in newUsers {
+                    opponentNames.append(userID)
+                }
+                callerName = opponentNames.joined(separator: ", ")
+                completion(callerName)
+            }
+        } else {
+            callerName = opponentNames.joined(separator: ", ")
+            completion(callerName)
+        }
+    }
+
+    private func reportIncomingCall(withUserIDs userIDs: [NSNumber], outCallerName: String, session: QBRTCSession, uuid: UUID) {
+        if hasConnectivity() {
+            CallKitManager.instance.reportIncomingCall(withUserIDs: userIDs,
+                                                       outCallerName: outCallerName,
+                                                       session: session,
+                                                       sessionID: session.id,
+                                                       sessionConferenceType: session.conferenceType,
+                                                       uuid: uuid,
+                                                       onAcceptAction: { [weak self] (isAccept) in
+                                                        guard let self = self else {
+                                                            return
+                                                        }
+                                                        if isAccept == true {
+                                                            self.openCall(withSession: session, uuid: uuid, sessionConferenceType: session.conferenceType)
+                                                        } else {
+                                                            debugPrint("[UsersViewController] endCall reportIncomingCall")
+                                                        }
+
+                }, completion: { (isOpen) in
+                    debugPrint("[UsersViewController] callKit did presented")
+            })
+        } else {
+
+        }
+    }
+
+    private func openCall(withSession session: QBRTCSession?, uuid: UUID, sessionConferenceType: QBRTCConferenceType) {
+        if hasConnectivity() {
+            let callViewController = CallViewController()
+            if let qbSession = session{
+                callViewController.session = qbSession
+            }
+            callViewController.usersDataSource = self.dataSource
+            callViewController.callUUID = uuid
+            callViewController.sessionConferenceType = sessionConferenceType
+            self.navViewController = UINavigationController(rootViewController: callViewController)
+            self.navViewController.modalPresentationStyle = .fullScreen
+            self.navViewController.modalTransitionStyle = .crossDissolve
+            self.present(self.navViewController, animated: false)
+        } else {
+            return
+        }
+    }
+
+    func sessionDidClose(_ session: QBRTCSession) {
+        if let sessionID = self.session?.id,
+            sessionID == session.id {
+            if let endedCall = CallKitManager.instance.currentCall() {
+                CallKitManager.instance.endCall(with: endedCall.uuid) {
+                    debugPrint("[UsersViewController] endCall sessionDidClose")
+                }
+            }
+            prepareCloseCall()
+        }
+    }
+
+    private func prepareCloseCall() {
+        if self.navViewController.presentingViewController?.presentedViewController == self.navViewController {
+            self.navViewController.view.isUserInteractionEnabled = false
+            self.navViewController.dismiss(animated: false)
+        }
+        self.callUUID = nil
+        self.session = nil
+        self.sessionID = nil
+        if QBChat.instance.isConnected == false {
+            self.connectToChat()
+        }
+        //self.setupToolbarButtons()
+    }
+
+    private func connectToChat(success:QBChatCompletionBlock? = nil) {
+        let profile = QuickBloxProfile()
+        guard profile.isFull == true else {
+            return
+        }
+
+        print(profile)
+
+        QBChat.instance.connect(withUserID: profile.ID,
+                                password: profile.password,
+                                completion: { [weak self] error in
+                                    guard let self = self else { return }
+                                    if let error = error {
+                                        if error._code == QBResponseStatusCode.unAuthorized.rawValue {
+                                            self.logoutAction()
+                                        } else {
+                                            debugPrint("[UsersViewController] login error response:\n \(error.localizedDescription)")
+                                        }
+                                        success?(error)
+                                    } else {
+                                        success?(nil)
+                                        //did Login action
+                                        SVProgressHUD.dismiss()
+                                    }
+        })
+    }
+    
+    private func hasConnectivity() -> Bool {
+        let status = QuickbloxReachability.instance.networkConnectionStatus()
+        guard status != NetworkConnectionStatus.notConnection else {
+            //showAlertView(message: "Please check your Internet connection")
+            print("Please check your Internet connection")
+            if CallKitManager.instance.isCallStarted() == false {
+                CallKitManager.instance.endCall(with: callUUID) {
+                    debugPrint("[UsersViewController] endCall func hasConnectivity")
+                }
+            }
+            return false
+        }
+        return true
+    }
+}
+// MARK: - SettingsViewControllerDelegate
+extension ProfileViewController: SettingsViewControllerDelegate {
+    func settingsViewController(_ vc: SessionSettingsViewController, didPressLogout sender: Any) {
+        logoutAction()
+    }
+
+    private func logoutAction() {
+        if QBChat.instance.isConnected == false {
+            SVProgressHUD.showError(withStatus: "Error")
+            return
+        }
+        SVProgressHUD.show(withStatus: UsersAlertConstant.logout)
+        SVProgressHUD.setDefaultMaskType(.clear)
+
+        guard let identifierForVendor = UIDevice.current.identifierForVendor else {
+            return
+        }
+        let uuidString = identifierForVendor.uuidString
+        #if targetEnvironment(simulator)
+        disconnectUser()
+        #else
+        QBRequest.subscriptions(successBlock: { (response, subscriptions) in
+
+            if let subscriptions = subscriptions {
+                for subscription in subscriptions {
+                    if let subscriptionsUIUD = subscriptions.first?.deviceUDID,
+                        subscriptionsUIUD == uuidString,
+                        subscription.notificationChannel == .APNSVOIP {
+                        self.unregisterSubscription(forUniqueDeviceIdentifier: uuidString)
+                        return
+                    }
+                }
+            }
+            self.disconnectUser()
+
+        }) { response in
+            if response.status.rawValue == 404 {
+                self.disconnectUser()
+            }
+        }
+        #endif
+    }
+
+    private func disconnectUser() {
+        QBChat.instance.disconnect(completionBlock: { error in
+            if let error = error {
+                SVProgressHUD.showError(withStatus: error.localizedDescription)
+                return
+            }
+            self.logOut()
+        })
+    }
+
+    private func unregisterSubscription(forUniqueDeviceIdentifier uuidString: String) {
+        QBRequest.unregisterSubscription(forUniqueDeviceIdentifier: uuidString, successBlock: { response in
+            UIApplication.shared.unregisterForRemoteNotifications()
+            self.disconnectUser()
+        }, errorBlock: { error in
+            if let error = error.error {
+                SVProgressHUD.showError(withStatus: error.localizedDescription)
+                return
+            }
+            SVProgressHUD.dismiss()
+        })
+    }
+
+    private func logOut() {
+        QBRequest.logOut(successBlock: { [weak self] response in
+            //ClearProfile
+            QuickBloxProfile.clearProfile()
+            SVProgressHUD.dismiss()
+            //Dismiss Settings view controller
+            self?.dismiss(animated: false)
+
+            DispatchQueue.main.async(execute: {
+                self?.navigationController?.popToRootViewController(animated: false)
+            })
+        }) { response in
+            debugPrint("QBRequest.logOut error\(response)")
+        }
+    }
 }
 
 

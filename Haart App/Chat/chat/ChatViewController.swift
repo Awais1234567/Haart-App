@@ -83,6 +83,16 @@ final class ChatViewController: MessagesViewController {
         let backgroundTask = UIBackgroundTaskIdentifier.invalid
         return backgroundTask
     }()
+    let subtitleLabel: UILabel = {
+        let subtitleLabel = UILabel(frame: CGRect(x: 0, y: 18, width: 0, height: 0))
+        subtitleLabel.backgroundColor = UIColor.clear
+        subtitleLabel.textColor = UIColor.green
+        subtitleLabel.font = UIFont.systemFont(ofSize: 12)
+        subtitleLabel.text = "typing..."
+        subtitleLabel.sizeToFit()
+        subtitleLabel.textAlignment = .center
+        return subtitleLabel
+    }()
     private var voipRegistry: PKPushRegistry = PKPushRegistry(queue: DispatchQueue.main)
     
     deinit {
@@ -96,6 +106,7 @@ final class ChatViewController: MessagesViewController {
         super.init(nibName: nil, bundle: nil)
         if(channel.createrId == Auth.auth().currentUser?.uid) {
             title = channel.name
+            
         }
         else {
             title = channel.createrName
@@ -111,8 +122,10 @@ final class ChatViewController: MessagesViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupViews()
         
-        view.backgroundColor = UIColor.init(hexString: "#EC2B00")
+        
+        view.backgroundColor = UIColor.haartRed
         let rect = CGRect(x: 0, y: 0, width: 40, height: 35)
         let leftBtn = UIButton.init(frame: rect)
         leftBtn.setImage(UIImage.init(named: "Back")!, for: .normal)
@@ -120,18 +133,24 @@ final class ChatViewController: MessagesViewController {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftBtn)
         
         let audioCallButton = UIButton.init(frame: rect)
-        audioCallButton.setImage(UIImage(named: "Call")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        if #available(iOS 13.0, *) {
+            audioCallButton.setImage(UIImage(systemName: "phone.fill")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        } else {
+            audioCallButton.setImage(UIImage(named: "Call")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        }
         audioCallButton.tintColor = UIColor.white
-        audioCallButton.imageView?.contentMode = .scaleAspectFit
-        audioCallButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 0)
+        audioCallButton.imageView?.contentMode = . center
         audioCallButton.addTarget(self, action: #selector(didPressAudioCall(sender:)), for: .touchUpInside)
 
 
         let videoCallButton = UIButton.init(frame: rect)
-        videoCallButton.setImage(UIImage(named: "camera_on_ic")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        if #available(iOS 13.0, *) {
+            videoCallButton.setImage(UIImage(systemName: "video.fill")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        } else {
+            videoCallButton.setImage(UIImage(named: "camera_on_ic")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        }
         videoCallButton.tintColor = UIColor.white
-        videoCallButton.imageView?.contentMode = .scaleAspectFit
-        videoCallButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 0)
+        videoCallButton.imageView?.contentMode = .center
         videoCallButton.addTarget(self, action: #selector(didPressVideoCall(sender:)), for: .touchUpInside)
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: audioCallButton), UIBarButtonItem(customView: videoCallButton)]
         
@@ -177,34 +196,84 @@ final class ChatViewController: MessagesViewController {
         
         maintainPositionOnKeyboardFrameChanged = true
         messageInputBar.inputTextView.tintColor = .primary
+        
         messageInputBar.sendButton.setTitleColor(.primary, for: .normal)
+        messageInputBar.sendButton.title = ""
+        messageInputBar.sendButton.image = UIImage(named: "send")
+        
         
         messageInputBar.delegate = self
+        messageInputBar.inputTextView.delegate = self
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         
         let cameraItem = InputBarButtonItem(type: .system) // 1
         cameraItem.tintColor = .primary
-        cameraItem.image = UIImage.init(named: "ic_camera")
+        if #available(iOS 13.0, *) {
+            cameraItem.image = UIImage(systemName: "plus.circle")
+        } else {
+            // Fallback on earlier versions
+            cameraItem.image = UIImage.init(named: "ic_camera")
+        }
         cameraItem.addTarget(
             self,
             action: #selector(cameraButtonPressed), // 2
             for: .primaryActionTriggered
         )
-        cameraItem.setSize(CGSize(width: 60, height: 30), animated: false)
         
+        let audioButton = InputBarButtonItem(type: .system) // 1
+        audioButton.tintColor = .primary
+        if #available(iOS 13.0, *) {
+            audioButton.image = UIImage(systemName: "mic.circle")
+        } else {
+            // Fallback on earlier versions
+            audioButton.image = UIImage.init(named: "ic_camera")
+        }
+        audioButton.setSize(CGSize(width: 25, height: 25), animated: false)
+        cameraItem.setSize(CGSize(width: 25, height: 25), animated: false)
+        messageInputBar.inputTextView.placeholder = "Type a message"
+        messageInputBar.inputTextView.layer.cornerRadius = 15
+        messageInputBar.inputTextView.layer.borderColor = UIColor.clear.cgColor
+        messageInputBar.inputTextView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
+        messageInputBar.separatorLine.isHidden = true
         messageInputBar.leftStackView.alignment = .center
-        messageInputBar.setLeftStackViewWidthConstant(to: 50, animated: false)
-        messageInputBar.setStackViewItems([cameraItem], forStack: .left, animated: false) // 3
+        messageInputBar.setLeftStackViewWidthConstant(to: 60, animated: false)
+        messageInputBar.setStackViewItems([cameraItem, audioButton], forStack: .left, animated: false) // 3
         
         messagesCollectionView.topConstraint?.isActive = false
-        messagesCollectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20).isActive = true
+        messagesCollectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         
-        QBRTCClient.instance().add(self)
         
-        voipRegistry.delegate = self
-        voipRegistry.desiredPushTypes = Set<PKPushType>([.voIP])
+        getUserTypingState()
+        
+    }
+    
+    func setupViews(){
+        let titleLabel = UILabel(frame: CGRect(x: 0, y: -2, width: 0, height: 0))
+
+        titleLabel.backgroundColor = UIColor.clear
+        titleLabel.textColor = UIColor.white
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 17)//boldSystemFontOfSize(17)
+        titleLabel.text = title
+        titleLabel.sizeToFit()
+
+
+        let titleView = UIView(frame: CGRect(x: 0, y: 0, width: max(titleLabel.frame.size.width, subtitleLabel.frame.size.width), height: 30))
+        titleView.addSubview(titleLabel)
+        titleView.addSubview(subtitleLabel)
+
+        let widthDiff = subtitleLabel.frame.size.width - titleLabel.frame.size.width
+
+        if widthDiff < 0 {
+            let newX = widthDiff / 2
+            subtitleLabel.frame.origin.x = abs(newX)
+        } else {
+            let newX = widthDiff / 2
+            titleLabel.frame.origin.x = newX
+        }
+
+        self.navigationItem.titleView = titleView
     }
     
     override func viewDidLayoutSubviews() {
@@ -442,6 +511,60 @@ final class ChatViewController: MessagesViewController {
         }
     }
     
+    func addTypingLabel(){
+        let titleLabel = UILabel(frame: CGRect(x: 0, y: -2, width:0, height:0))
+        titleLabel.backgroundColor = UIColor.clear
+        titleLabel.textColor = UIColor.white
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
+        titleLabel.text = title!
+        titleLabel.sizeToFit()
+
+        
+
+        let titleView = UIView(frame: CGRect(x:0, y:0, width: max(titleLabel.frame.size.width, subtitleLabel.frame.size.width), height: 30))
+        titleView.addSubview(titleLabel)
+        titleView.addSubview(subtitleLabel)
+
+        let widthDiff = subtitleLabel.frame.size.width - titleLabel.frame.size.width
+
+        if widthDiff < 0 {
+            let newX = widthDiff / 2
+            subtitleLabel.frame.origin.x = abs(newX)
+        } else {
+            let newX = widthDiff / 2
+            titleLabel.frame.origin.x = newX
+        }
+        self.navigationItem.titleView = titleView
+        
+    }
+    
+    func setUser(isTyping: String){
+        if let currentUser = Auth.auth().currentUser{
+            let controller = AbstractControl()
+            let ref = controller.db.collection("users").whereField("userId", isEqualTo: currentUser.uid)
+            ref.getDocuments { (snapshot, error) in
+                let userData = ["isTyping":isTyping] as [String : Any]
+                snapshot?.documents[0].reference.updateData(userData, completion: {error in
+                })
+            }
+        }
+    }
+    func getUserTypingState(){
+        for i in channel.userIds{
+            if i != Auth.auth().currentUser?.uid{
+                let controller = AbstractControl()
+                let ref = controller.db.collection("users").whereField("userId", isEqualTo: i)
+                ref.addSnapshotListener({(snapshot, error)in
+                    let state = snapshot?.documents[0].data()["isTyping"] as? String ?? "0"
+                    if state == "0"{
+                        self.subtitleLabel.text = ""
+                    }else{
+                        self.subtitleLabel.text = "typing..."
+                    }
+                })
+            }
+        }
+    }
 }
 
 // MARK: - MessagesDisplayDelegate
@@ -589,7 +712,7 @@ extension ChatViewController: MessagesDataSource {
 
 // MARK: - MessageInputBarDelegate
 
-extension ChatViewController: MessageInputBarDelegate {
+extension ChatViewController: MessageInputBarDelegate, UITextViewDelegate {
     
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
         let message = Message(user: user, content: text)
@@ -598,6 +721,21 @@ extension ChatViewController: MessageInputBarDelegate {
         inputBar.inputTextView.text = ""
     }
     
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        print("textViewDidBeginEditing", textView.text)
+    }
+    func textViewDidEndEditing(_ textView: UITextView) {
+        setUser(isTyping: "0")
+    }
+    func textViewDidChange(_ textView: UITextView) {
+        
+        if textView.text != ""{
+            setUser(isTyping: "1")
+        }else{
+            setUser(isTyping: "0")
+            
+        }
+    }
 }
 
 // MARK: - UIImagePickerControllerDelegate
@@ -637,12 +775,15 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
         }
     }
     @objc func didPressAudioCall(sender: UIButton){
+        SVProgressHUD.show(withStatus: "Connecting to call...")
         if let user = Auth.auth().currentUser{
             conferenceType = .audio
             login(fullName: AppSettings.fullName, login: user.uid, password: user.uid)
         }
     }
+    
     @objc func didPressVideoCall(sender: UIButton){
+        SVProgressHUD.show(withStatus: "Connecting to call...")
         if let user = Auth.auth().currentUser{
             conferenceType = .video
             login(fullName: AppSettings.fullName, login: user.uid, password: user.uid)
@@ -709,6 +850,14 @@ extension ChatViewController{
                                                 // Reachability
                                                 if QuickbloxReachability.instance.networkConnectionStatus() != NetworkConnectionStatus.notConnection {
                                                     self!.loadUsers()
+                                                    SVProgressHUD.dismiss()
+                                                    let controller = UsersViewController()
+                                                    UIApplication.shared.keyWindow?.rootViewController = controller
+                                                    
+                                                    
+//                                                    let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+//                                                    let viewController = mainStoryboard.instantiateViewController(withIdentifier: "HaartTabViewCotroller") as! UITabBarController
+//                                                    UIApplication.shared.keyWindow?.rootViewController = viewController
                                                 }
                                             }
                 })
@@ -768,7 +917,7 @@ extension ChatViewController{
                         }
 
                         CallKitManager.instance.startCall(withUserIDs: opponentsIDs, session: session, uuid: uuid)
-                        
+                        SVProgressHUD.dismiss()
                         let callViewController = CallViewController()
                         callViewController.session = self.session
                         callViewController.usersDataSource = self.dataSource
@@ -815,9 +964,9 @@ extension ChatViewController{
                         event.type = QBMEventType.oneShot
                         event.message = message
                         QBRequest.createEvent(event, successBlock: { response, events in
-                            debugPrint("[UsersViewController] Send voip push - Success")
+                            debugPrint("[ChatViewController] Send voip push - Success")
                         }, errorBlock: { response in
-                            debugPrint("[UsersViewController] Send voip push - Error")
+                            debugPrint("[ChatViewController] Send voip push - Error", response.error.debugDescription)
                         })
                     } else {
                         SVProgressHUD.showError(withStatus: "You should login to use VideoChat API. Session hasn’t been created. Please try to relogin.")
@@ -857,525 +1006,6 @@ extension ChatViewController{
             return false
         }
         return true
-    }
-}
-
-
-extension ChatViewController: PKPushRegistryDelegate {
-    // MARK: - PKPushRegistryDelegate
-    func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
-        guard let voipToken = registry.pushToken(for: .voIP) else {
-            return
-        }
-        guard let deviceIdentifier = UIDevice.current.identifierForVendor?.uuidString else {
-            return
-        }
-        let subscription = QBMSubscription()
-        subscription.notificationChannel = .APNSVOIP
-        subscription.deviceUDID = deviceIdentifier
-        subscription.deviceToken = voipToken
-        
-        QBRequest.createSubscription(subscription, successBlock: { response, objects in
-            debugPrint("[UsersViewController] Create Subscription request - Success")
-        }, errorBlock: { response in
-            debugPrint("[UsersViewController] Create Subscription request - Error")
-        })
-    }
-    
-    func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
-        guard let deviceIdentifier = UIDevice.current.identifierForVendor?.uuidString else {
-            return
-        }
-        QBRequest.unregisterSubscription(forUniqueDeviceIdentifier: deviceIdentifier, successBlock: { response in
-            UIApplication.shared.unregisterForRemoteNotifications()
-            debugPrint("[UsersViewController] Unregister Subscription request - Success")
-        }, errorBlock: { error in
-            debugPrint("[UsersViewController] Unregister Subscription request - Error")
-        })
-    }
-    
-    func pushRegistry(_ registry: PKPushRegistry,
-                      didReceiveIncomingPushWith payload: PKPushPayload,
-                      for type: PKPushType,
-                      completion: @escaping () -> Void) {
-        
-        
-        //in case of bad internet we check how long the VOIP Push was delivered for call(1-1)
-        //if time delivery is more than “answerTimeInterval” - return
-        if type == .voIP,
-            payload.dictionaryPayload[UsersConstant.voipEvent] != nil {
-            if let timeStampString = payload.dictionaryPayload["timestamp"] as? String,
-                let opponentsIDsString = payload.dictionaryPayload["opponentsIDs"] as? String {
-                let opponentsIDsArray = opponentsIDsString.components(separatedBy: ",")
-                if opponentsIDsArray.count == 2 {
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                    if let startCallDate = formatter.date(from: timeStampString) {
-                        if Date().timeIntervalSince(startCallDate) > QBRTCConfig.answerTimeInterval() {
-                            debugPrint("[UsersViewController] timeIntervalSinceStartCall > QBRTCConfig.answerTimeInterval")
-                            return
-                        }
-                    }
-                }
-            }
-        }
-
-        let application = UIApplication.shared
-        if type == .voIP,
-            payload.dictionaryPayload[UsersConstant.voipEvent] != nil,
-            application.applicationState == .background {
-            var opponentsIDs: [String]? = nil
-            var opponentsNumberIDs: [NSNumber] = []
-            var opponentsNamesString = "incoming call. Connecting..."
-            var sessionID: String? = nil
-            var callUUID = UUID()
-            var sessionConferenceType = QBRTCConferenceType.audio
-            self.isUpdatedPayload = false
-            
-            if let opponentsIDsString = payload.dictionaryPayload["opponentsIDs"] as? String,
-                let allOpponentsNamesString = payload.dictionaryPayload["contactIdentifier"] as? String,
-                let sessionIDString = payload.dictionaryPayload["sessionID"] as? String,
-                let callUUIDPayload = UUID(uuidString: sessionIDString) {
-                self.isUpdatedPayload = true
-                self.sessionID = sessionIDString
-                sessionID = sessionIDString
-                callUUID = callUUIDPayload
-                if let conferenceTypeString = payload.dictionaryPayload["conferenceType"] as? String {
-                    sessionConferenceType = conferenceTypeString == "1" ? QBRTCConferenceType.video : QBRTCConferenceType.audio
-                }
-                
-                let profile = QuickBloxProfile()
-                guard profile.isFull == true else {
-                    return
-                }
-                let opponentsIDsArray = opponentsIDsString.components(separatedBy: ",")
-                
-                var opponentsNumberIDsArray = opponentsIDsArray.compactMap({NSNumber(value: Int($0)!)})
-                var allOpponentsNamesArray = allOpponentsNamesString.components(separatedBy: ",")
-                for i in 0...opponentsNumberIDsArray.count - 1 {
-                    if opponentsNumberIDsArray[i].uintValue == profile.ID {
-                        opponentsNumberIDsArray.remove(at: i)
-                        allOpponentsNamesArray.remove(at: i)
-                        break
-                    }
-                }
-                opponentsNumberIDs = opponentsNumberIDsArray
-                opponentsIDs = opponentsNumberIDs.compactMap({ $0.stringValue })
-                opponentsNamesString = allOpponentsNamesArray.joined(separator: ", ")
-            }
-            
-            let fetchUsersCompletion = { [weak self] (usersIDs: [String]?) -> Void in
-                if let opponentsIDs = usersIDs {
-                    QBRequest.users(withIDs: opponentsIDs, page: nil, successBlock: { [weak self] (respose, page, users) in
-                        if users.isEmpty == false {
-                            self?.dataSource.update(users: users)
-                        }
-                    }) { (response) in
-                        debugPrint("[UsersViewController] error fetch usersWithIDs")
-                    }
-                }
-            }
-
-            self.setupAnswerTimerWithTimeInterval(QBRTCConfig.answerTimeInterval())
-            CallKitManager.instance.reportIncomingCall(withUserIDs: opponentsNumberIDs,
-                                                       outCallerName: opponentsNamesString,
-                                                       session: nil,
-                                                       sessionID: sessionID,
-                                                       sessionConferenceType: sessionConferenceType,
-                                                       uuid: callUUID,
-                                                       onAcceptAction: { [weak self] (isAccept) in
-                                                        guard let self = self else {
-                                                            return
-                                                        }
-                                                        
-                                                        if let session = self.session {
-                                                            if isAccept == true {
-                                                                self.openCall(withSession: session,
-                                                                              uuid: callUUID,
-                                                                              sessionConferenceType: sessionConferenceType)
-                                                                debugPrint("[UsersViewController]  onAcceptAction")
-                                                            } else {
-                                                                session.rejectCall(["reject": "busy"])
-                                                                debugPrint("[UsersViewController] endCallAction")
-                                                            }
-                                                        } else {
-                                                            if isAccept == true {
-                                                                self.openCall(withSession: nil,
-                                                                              uuid: callUUID,
-                                                                              sessionConferenceType: sessionConferenceType)
-                                                                debugPrint("[UsersViewController]  onAcceptAction")
-                                                            } else {
-                                                                
-                                                                debugPrint("[UsersViewController] endCallAction")
-                                                            }
-                                                            self.setupAnswerTimerWithTimeInterval(UsersConstant.answerInterval)
-                                                            self.prepareBackgroundTask()
-                                                        }
-                                                        completion()
-                                                        
-                }, completion: { (isOpen) in
-                    self.prepareBackgroundTask()
-                    self.setupAnswerTimerWithTimeInterval(QBRTCConfig.answerTimeInterval())
-                    if QBChat.instance.isConnected == false {
-                        self.connectToChat { (error) in
-                            if error == nil {
-                                fetchUsersCompletion(opponentsIDs)
-                            }
-                        }
-                    } else {
-                        fetchUsersCompletion(opponentsIDs)
-                    }
-                    debugPrint("[UsersViewController] callKit did presented")
-            })
-        }
-    }
-    
-    private func prepareBackgroundTask() {
-        let application = UIApplication.shared
-        if application.applicationState == .background && self.backgroundTask == .invalid {
-            self.backgroundTask = application.beginBackgroundTask(expirationHandler: {
-                application.endBackgroundTask(self.backgroundTask)
-                self.backgroundTask = UIBackgroundTaskIdentifier.invalid
-            })
-        }
-    }
-    
-    private func setupAnswerTimerWithTimeInterval(_ timeInterval: TimeInterval) {
-        if self.answerTimer != nil {
-            self.answerTimer?.invalidate()
-            self.answerTimer = nil
-        }
-        
-        self.answerTimer = Timer.scheduledTimer(timeInterval: timeInterval,
-                                                target: self,
-                                                selector: #selector(endCallByTimer),
-                                                userInfo: nil,
-                                                repeats: false)
-    }
-    
-    private func invalidateAnswerTimer() {
-        if self.answerTimer != nil {
-            self.answerTimer?.invalidate()
-            self.answerTimer = nil
-        }
-    }
-    
-    private func showAlertView(message: String?) {
-        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: UsersAlertConstant.okAction, style: .default,
-                                                handler: nil))
-        present(alertController, animated: true)
-    }
-    
-    @objc private func endCallByTimer() {
-        invalidateAnswerTimer()
-        
-        if let endCall = CallKitManager.instance.currentCall() {
-            CallKitManager.instance.endCall(with: endCall.uuid) {
-                debugPrint("[UsersViewController] endCall sessionDidClose")
-            }
-        }
-        prepareCloseCall()
-    }
-
-    
-}
-// MARK: - QBRTCClientDelegate
-extension ChatViewController: QBRTCClientDelegate {
-    func session(_ session: QBRTCSession, hungUpByUser userID: NSNumber, userInfo: [String : String]? = nil) {
-        if CallKitManager.instance.isCallStarted() == false,
-            let sessionID = self.sessionID,
-            sessionID == session.id,
-            session.initiatorID == userID || isUpdatedPayload == false {
-            CallKitManager.instance.endCall(with: callUUID)
-            prepareCloseCall()
-        }
-    }
-    
-    func didReceiveNewSession(_ session: QBRTCSession, userInfo: [String : String]? = nil) {
-        if self.session != nil {
-            session.rejectCall(["reject": "busy"])
-            return
-        }
-        invalidateAnswerTimer()
-        
-        self.session = session
-        
-        if let currentCall = CallKitManager.instance.currentCall() {
-            //open by VOIP Push
-
-            CallKitManager.instance.setupSession(session)
-            if currentCall.status == .ended {
-                CallKitManager.instance.setupSession(session)
-                CallKitManager.instance.endCall(with: currentCall.uuid)
-                session.rejectCall(["reject": "busy"])
-                prepareCloseCall()
-                } else {
-                var opponentIDs = [session.initiatorID]
-                let profile = QuickBloxProfile()
-                guard profile.isFull == true else {
-                    return
-                }
-                for userID in session.opponentsIDs {
-                    if userID.uintValue != profile.ID {
-                        opponentIDs.append(userID)
-                    }
-                }
-                
-                prepareCallerNameForOpponentIDs(opponentIDs) { (callerName) in
-                    CallKitManager.instance.updateIncomingCall(withUserIDs: session.opponentsIDs,
-                                                               outCallerName: callerName,
-                                                               session: session,
-                                                               uuid: currentCall.uuid)
-                }
-            }
-        } else {
-            //open by call
-            
-            if let uuid = UUID(uuidString: session.id) {
-                callUUID = uuid
-                sessionID = session.id
-                
-                var opponentIDs = [session.initiatorID]
-                let profile = QuickBloxProfile()
-                guard profile.isFull == true else {
-                    return
-                }
-                for userID in session.opponentsIDs {
-                    if userID.uintValue != profile.ID {
-                        opponentIDs.append(userID)
-                    }
-                }
-                
-                prepareCallerNameForOpponentIDs(opponentIDs) { [weak self] (callerName) in
-                    self?.reportIncomingCall(withUserIDs: opponentIDs,
-                                             outCallerName: callerName,
-                                             session: session,
-                                             uuid: uuid)
-                }
-            }
-        }
-    }
-    
-    private func prepareCallerNameForOpponentIDs(_ opponentIDs: [NSNumber], completion: @escaping (String) -> Void)  {
-        var callerName = ""
-        var opponentNames = [String]()
-        var newUsers = [String]()
-        for userID in opponentIDs {
-            
-            // Getting recipient from users.
-            if let user = dataSource.user(withID: userID.uintValue),
-                let fullName = user.fullName {
-                opponentNames.append(fullName)
-            } else {
-                newUsers.append(userID.stringValue)
-            }
-        }
-        
-        if newUsers.isEmpty == false {
-            
-            QBRequest.users(withIDs: newUsers, page: nil, successBlock: { [weak self] (respose, page, users) in
-                if users.isEmpty == false {
-                    self?.dataSource.update(users: users)
-                    for user in users {
-                        opponentNames.append(user.fullName ?? user.login ?? "")
-                    }
-                    callerName = opponentNames.joined(separator: ", ")
-                    completion(callerName)
-                }
-            }) { (respose) in
-                for userID in newUsers {
-                    opponentNames.append(userID)
-                }
-                callerName = opponentNames.joined(separator: ", ")
-                completion(callerName)
-            }
-        } else {
-            callerName = opponentNames.joined(separator: ", ")
-            completion(callerName)
-        }
-    }
-    
-    private func reportIncomingCall(withUserIDs userIDs: [NSNumber], outCallerName: String, session: QBRTCSession, uuid: UUID) {
-        if hasConnectivity() {
-            CallKitManager.instance.reportIncomingCall(withUserIDs: userIDs,
-                                                       outCallerName: outCallerName,
-                                                       session: session,
-                                                       sessionID: session.id,
-                                                       sessionConferenceType: session.conferenceType,
-                                                       uuid: uuid,
-                                                       onAcceptAction: { [weak self] (isAccept) in
-                                                        guard let self = self else {
-                                                            return
-                                                        }
-                                                        if isAccept == true {
-                                                            self.openCall(withSession: session, uuid: uuid, sessionConferenceType: session.conferenceType)
-                                                        } else {
-                                                            debugPrint("[UsersViewController] endCall reportIncomingCall")
-                                                        }
-                                                        
-                }, completion: { (isOpen) in
-                    debugPrint("[UsersViewController] callKit did presented")
-            })
-        } else {
-            
-        }
-    }
-    
-    private func openCall(withSession session: QBRTCSession?, uuid: UUID, sessionConferenceType: QBRTCConferenceType) {
-        if hasConnectivity() {
-            if let callViewController = self.storyboard?.instantiateViewController(withIdentifier: UsersSegueConstant.call) as? CallViewController {
-                if let qbSession = session {
-                    callViewController.session = qbSession
-                }
-                callViewController.usersDataSource = self.dataSource
-                callViewController.callUUID = uuid
-                callViewController.sessionConferenceType = sessionConferenceType
-                self.navViewController = UINavigationController(rootViewController: callViewController)
-                self.navViewController.modalPresentationStyle = .fullScreen
-                self.navViewController.modalTransitionStyle = .crossDissolve
-                self.present(self.navViewController, animated: false)
-            } else {
-                return
-            }
-        } else {
-            return
-        }
-    }
-    
-    func sessionDidClose(_ session: QBRTCSession) {
-        if let sessionID = self.session?.id,
-            sessionID == session.id {
-            if let endedCall = CallKitManager.instance.currentCall() {
-                CallKitManager.instance.endCall(with: endedCall.uuid) {
-                    debugPrint("[UsersViewController] endCall sessionDidClose")
-                }
-            }
-            prepareCloseCall()
-        }
-    }
-    
-    private func prepareCloseCall() {
-        if self.navViewController.presentingViewController?.presentedViewController == self.navViewController {
-            self.navViewController.view.isUserInteractionEnabled = false
-            self.navViewController.dismiss(animated: false)
-        }
-        self.callUUID = nil
-        self.session = nil
-        self.sessionID = nil
-        if QBChat.instance.isConnected == false {
-            self.connectToChat()
-        }
-        //self.setupToolbarButtons()
-    }
-    
-    private func connectToChat(success:QBChatCompletionBlock? = nil) {
-        let profile = QuickBloxProfile()
-        guard profile.isFull == true else {
-            return
-        }
-        
-        print(profile)
-        
-        QBChat.instance.connect(withUserID: profile.ID,
-                                password: profile.password,
-                                completion: { [weak self] error in
-                                    guard let self = self else { return }
-                                    if let error = error {
-                                        if error._code == QBResponseStatusCode.unAuthorized.rawValue {
-                                            self.logoutAction()
-                                        } else {
-                                            debugPrint("[UsersViewController] login error response:\n \(error.localizedDescription)")
-                                        }
-                                        success?(error)
-                                    } else {
-                                        success?(nil)
-                                        //did Login action
-                                        SVProgressHUD.dismiss()
-                                    }
-        })
-    }
-}
-// MARK: - SettingsViewControllerDelegate
-extension ChatViewController: SettingsViewControllerDelegate {
-    func settingsViewController(_ vc: SessionSettingsViewController, didPressLogout sender: Any) {
-        logoutAction()
-    }
-    
-    private func logoutAction() {
-        if QBChat.instance.isConnected == false {
-            SVProgressHUD.showError(withStatus: "Error")
-            return
-        }
-        SVProgressHUD.show(withStatus: UsersAlertConstant.logout)
-        SVProgressHUD.setDefaultMaskType(.clear)
-        
-        guard let identifierForVendor = UIDevice.current.identifierForVendor else {
-            return
-        }
-        let uuidString = identifierForVendor.uuidString
-        #if targetEnvironment(simulator)
-        disconnectUser()
-        #else
-        QBRequest.subscriptions(successBlock: { (response, subscriptions) in
-            
-            if let subscriptions = subscriptions {
-                for subscription in subscriptions {
-                    if let subscriptionsUIUD = subscriptions.first?.deviceUDID,
-                        subscriptionsUIUD == uuidString,
-                        subscription.notificationChannel == .APNSVOIP {
-                        self.unregisterSubscription(forUniqueDeviceIdentifier: uuidString)
-                        return
-                    }
-                }
-            }
-            self.disconnectUser()
-            
-        }) { response in
-            if response.status.rawValue == 404 {
-                self.disconnectUser()
-            }
-        }
-        #endif
-    }
-    
-    private func disconnectUser() {
-        QBChat.instance.disconnect(completionBlock: { error in
-            if let error = error {
-                SVProgressHUD.showError(withStatus: error.localizedDescription)
-                return
-            }
-            self.logOut()
-        })
-    }
-    
-    private func unregisterSubscription(forUniqueDeviceIdentifier uuidString: String) {
-        QBRequest.unregisterSubscription(forUniqueDeviceIdentifier: uuidString, successBlock: { response in
-            UIApplication.shared.unregisterForRemoteNotifications()
-            self.disconnectUser()
-        }, errorBlock: { error in
-            if let error = error.error {
-                SVProgressHUD.showError(withStatus: error.localizedDescription)
-                return
-            }
-            SVProgressHUD.dismiss()
-        })
-    }
-    
-    private func logOut() {
-        QBRequest.logOut(successBlock: { [weak self] response in
-            //ClearProfile
-            QuickBloxProfile.clearProfile()
-            SVProgressHUD.dismiss()
-            //Dismiss Settings view controller
-            self?.dismiss(animated: false)
-            
-            DispatchQueue.main.async(execute: {
-                self?.navigationController?.popToRootViewController(animated: false)
-            })
-        }) { response in
-            debugPrint("QBRequest.logOut error\(response)")
-        }
     }
 }
 

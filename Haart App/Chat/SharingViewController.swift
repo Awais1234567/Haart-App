@@ -24,7 +24,9 @@ class SharingViewController: UICollectionViewController, UICollectionViewDelegat
         super.viewDidLoad()
         
         collectionView.isPagingEnabled = true
-        images = ["pres_img_1", "pres_img_2", "pres_img_3"]
+        collectionView.register(SharingCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        
+        images = ["Main logo", "Main logo", "Main logo"]
         view.backgroundColor = .black
         if let session = session {
             enabled = session.localMediaStream.videoTrack.isEnabled
@@ -294,10 +296,6 @@ class SharingCell: UICollectionViewCell {
             imagePreview.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             imagePreview.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             imagePreview.topAnchor.constraint(equalTo: self.topAnchor),
-            
-           
-            
-            
         ])
     }
 }

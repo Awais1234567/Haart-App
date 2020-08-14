@@ -36,7 +36,7 @@ import NotificationView
 import Quickblox
 import QuickbloxWebRTC
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDelegate,MessagingDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDelegate, MessagingDelegate {
     
     var window: UIWindow?
 

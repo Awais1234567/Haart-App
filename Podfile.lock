@@ -193,7 +193,6 @@ PODS:
     - DynamicBlurView (~> 3.0.1)
   - Protobuf (3.9.0)
   - PryntTrimmerView (3.0.0)
-  - QuickBlox (2.17.4)
   - RangeSeekSlider (1.8.0)
   - ScaledVisibleCellsCollectionView (0.2.1)
   - SDWebImage (5.0.6):
@@ -242,7 +241,6 @@ DEPENDENCIES:
   - MessageKit (= 0.13.1)
   - NotificationView
   - PopupDialog (~> 1.1)
-  - QuickBlox (~> 2.17.4)
   - RangeSeekSlider
   - ScaledVisibleCellsCollectionView
   - SDWebImage (~> 5.0)
@@ -311,8 +309,6 @@ SPEC REPOS:
     - ViewAnimator
     - YPImagePicker
     - ZLSwipeableView
-  trunk:
-    - QuickBlox
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
@@ -361,7 +357,6 @@ SPEC CHECKSUMS:
   PopupDialog: 42fb7a0bc4fafdf89fef8b5b2b127a6023f3e1cc
   Protobuf: 1097ca58584c8d9be81bfbf2c5ff5975648dd87a
   PryntTrimmerView: 53ac64053c7ce63cb3e27f54090f52da0734891d
-  QuickBlox: 992be26bc127313991a1337dfd98c9359832c147
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   ScaledVisibleCellsCollectionView: a9265adc56f905502fe02f2ec00cef4a220e806a
   SDWebImage: 920f1a2ff1ca8296ad34f6e0510a1ef1d70ac965
@@ -373,6 +368,6 @@ SPEC CHECKSUMS:
   YPImagePicker: 8039f89ad79281545fa868486f32d9bf5d65ede1
   ZLSwipeableView: df385760ff4838935cdbcb62878ac5acd7355949
 
-PODFILE CHECKSUM: 8360543e82f78b368aba69a9dd3a160400616c35
+PODFILE CHECKSUM: c58e96a79edc2cd5ae13fece4a68b975165cf280
 
 COCOAPODS: 1.9.3

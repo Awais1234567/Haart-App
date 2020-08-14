@@ -256,7 +256,8 @@ class UsersViewController: UITableViewController {
     }
     
     @objc func didPressAudioCall(_ sender: UIBarButtonItem?) {
-        call(with: QBRTCConferenceType.audio)
+        //call(with: QBRTCConferenceType.audio)
+        self.navigationController?.popViewController(animated: true)
     }
     
     @objc func didPressVideoCall(_ sender: UIBarButtonItem?) {

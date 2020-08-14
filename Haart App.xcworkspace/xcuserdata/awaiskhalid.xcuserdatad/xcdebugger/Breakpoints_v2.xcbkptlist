@@ -7,15 +7,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "48104134-5B8B-4FEB-8BCB-25FF16C42050"
+            uuid = "EB5AADF6-2836-490E-B9CF-FC25F6C7B038"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Haart App/Chat/chat/ChatViewController.swift"
+            filePath = "Haart App/Controls/ProfileViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "905"
-            endingLineNumber = "905"
+            startingLineNumber = "476"
+            endingLineNumber = "476"
             landmarkName = "pushRegistry(_:didReceiveIncomingPushWith:for:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -23,16 +23,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "528DA5FE-4F67-4F28-A2AE-6C87C40496A2"
+            uuid = "C8CA3C6F-AA22-48D3-AD20-200C129C7226"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Haart App/Chat/chat/CallViewController.swift"
+            filePath = "Haart App/Chat/chat/UsersViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "470"
-            endingLineNumber = "470"
-            landmarkName = "userView(userID:)"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
+            landmarkName = "didPressAudioCall(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

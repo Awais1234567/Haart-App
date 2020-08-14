@@ -149,7 +149,7 @@ class UserCell: UICollectionViewCell{
         label.textAlignment = .center
         label.textColor = UIColor.white
         return label
-    }()    
+    }()
     var videoView: UIView? {
         didSet {
             guard let view = videoView else {
@@ -236,7 +236,7 @@ class UserCell: UICollectionViewCell{
             userImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             userImageView.widthAnchor.constraint(equalToConstant: 150),
             userImageView.heightAnchor.constraint(equalToConstant: 150),
-            userImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 50),
+            userImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -100),
             
             statusLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             statusLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
@@ -245,8 +245,6 @@ class UserCell: UICollectionViewCell{
             nameLabel.leadingAnchor.constraint(equalTo: layerOverBackgroundView.leadingAnchor, constant: 20),
             nameLabel.trailingAnchor.constraint(equalTo: layerOverBackgroundView.trailingAnchor, constant: -20),
             nameLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 15),
-            
-            
             
             muteButton.trailingAnchor.constraint(equalTo: layerOverBackgroundView.trailingAnchor),
             muteButton.bottomAnchor.constraint(equalTo: backgroundImageView.bottomAnchor),

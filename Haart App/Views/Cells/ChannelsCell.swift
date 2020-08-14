@@ -169,6 +169,7 @@ class ChannelssCell: UITableViewCell {
             let state = snapshot?.documents[0].data()["isActive"] as? String ?? "0"
             if state == "0"{
                 self.isActiveCircleView.backgroundColor = UIColor.incommingMsgColor
+                self.outerCircleView.layer.borderColor = UIColor.init(hexString: "#617798").withAlphaComponent(0.5).cgColor
             }else{
                 self.isActiveCircleView.backgroundColor = UIColor.green
                 self.outerCircleView.layer.borderColor = UIColor.green.cgColor

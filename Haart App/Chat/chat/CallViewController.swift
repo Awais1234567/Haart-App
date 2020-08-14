@@ -130,6 +130,7 @@ class CallViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     //MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor.lightGray
         setupViews()
         
         QBRTCAudioSession.instance().addDelegate(self)
@@ -155,6 +156,7 @@ class CallViewController: UIViewController, UICollectionViewDelegateFlowLayout {
             cameraCapture.startSession(nil)
             session?.localMediaStream.videoTrack.videoCapture = cameraCapture
             #endif
+            
         }
         
         configureGUI()
@@ -177,12 +179,12 @@ class CallViewController: UIViewController, UICollectionViewDelegateFlowLayout {
         NSLayoutConstraint.activate([
             opponentsCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             opponentsCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            opponentsCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            opponentsCollectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: -20),
             opponentsCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             toolbar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             toolbar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            toolbar.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 50),
+            toolbar.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
             toolbar.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
@@ -286,17 +288,16 @@ class CallViewController: UIViewController, UICollectionViewDelegateFlowLayout {
                     self?.localVideoView?.isHidden = !muteVideo
                 }
             })
-            toolbar.add(ButtonsFactory.screenShare(), action: { [weak self] sender in
-                guard let self = self else {
-                    return
-                }
-                let sharingVC = SharingViewController()
-                self.title = "Call"
-                sharingVC.session = self.session
-                self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "Call", style: .plain, target: nil, action: nil)
-                self.navigationController?.pushViewController(sharingVC, animated: true)
-                
-            })
+//            toolbar.add(ButtonsFactory.screenShare(), action: { [weak self] sender in
+//                guard let self = self else {
+//                    return
+//                }
+//                let sharingVC = SharingViewController(collectionViewLayout: UICollectionViewFlowLayout())
+//                self.title = "Call"
+//                sharingVC.session = self.session
+//                self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "Call", style: .plain, target: nil, action: nil)
+//                self.navigationController?.pushViewController(sharingVC, animated: true)
+//            })
         case .audio:
             if UIDevice.current.userInterfaceIdiom == .phone {
                 QBRTCAudioSession.instance().currentAudioDevice = .receiver
@@ -638,7 +639,7 @@ extension CallViewController: QBRTCClientDelegate {
             user.bitrate = report.videoReceivedBitrateTracker.bitrate
             
            if let userIndexPath = self.userIndexPath(userID: user.userID),
-            let cell = self.opponentsCollectionView.cellForItem(at: userIndexPath) as? UserCell {
+            let _ = self.opponentsCollectionView.cellForItem(at: userIndexPath) as? UserCell {
                 //cell.bitrate = user.bitrate
             }
         }
@@ -846,8 +847,13 @@ extension CallViewController: UICollectionViewDataSource {
         }
         
         if let channel = self.channel{
-            cell.backgroundImageView.sd_setImage(with: URL(string:channel.profilePicUrl), placeholderImage: nil)
-            cell.userImageView.sd_setImage(with: URL(string:channel.profilePicUrl), placeholderImage: nil)
+            if(channel.createrId == Auth.auth().currentUser?.uid) {
+                cell.backgroundImageView.sd_setImage(with: URL(string:channel.profilePicUrl), placeholderImage: nil)
+                cell.userImageView.sd_setImage(with: URL(string:channel.profilePicUrl), placeholderImage: nil)
+            }else{
+                cell.backgroundImageView.sd_setImage(with: URL(string:channel.createrProfilePicUrl), placeholderImage: nil)
+                cell.userImageView.sd_setImage(with: URL(string:channel.createrProfilePicUrl), placeholderImage: nil)
+            }
         }
         //cell.backgroundImageView.image =
         cell.connectionState = .unknown
