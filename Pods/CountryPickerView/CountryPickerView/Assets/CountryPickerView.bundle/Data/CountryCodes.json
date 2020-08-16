@@ -196,7 +196,7 @@
 },
 {
 "name": "Cayman Islands",
-"dial_code": "+345",
+"dial_code": "+1345",
 "code": "KY"
 },
 {
@@ -275,6 +275,11 @@
 "code": "CU"
 },
 {
+"name": "Curacao",
+"dial_code": "+599",
+"code": "CW"
+},
+{
 "name": "Cyprus",
 "dial_code": "+357",
 "code": "CY"
@@ -301,7 +306,7 @@
 },
 {
 "name": "Dominican Republic",
-"dial_code": "+1849",
+"dial_code": "+1",
 "code": "DO"
 },
 {
@@ -495,7 +500,7 @@
 "code": "ID"
 },
 {
-"name": "Iran, Islamic Republic of Persian Gulf",
+"name": "Iran",
 "dial_code": "+98",
 "code": "IR"
 },
@@ -526,7 +531,7 @@
 },
 {
 "name": "Jamaica",
-"dial_code": "+1876",
+"dial_code": "+876",
 "code": "JM"
 },
 {
@@ -560,14 +565,9 @@
 "code": "KI"
 },
 {
-"name": "Korea, Democratic People's Republic of Korea",
-"dial_code": "+850",
-"code": "KP"
-},
-{
-"name": "Korea, Republic of South Korea",
-"dial_code": "+82",
-"code": "KR"
+"name": "Kosovo",
+"dial_code": "+383",
+"code": "XK"
 },
 {
 "name": "Kuwait",
@@ -760,11 +760,6 @@
 "code": "NL"
 },
 {
-"name": "Netherlands Antilles",
-"dial_code": "+599",
-"code": "AN"
-},
-{
 "name": "New Caledonia",
 "dial_code": "+687",
 "code": "NC"
@@ -798,6 +793,11 @@
 "name": "Norfolk Island",
 "dial_code": "+672",
 "code": "NF"
+},
+{
+"name": "North Korea",
+"dial_code": "+850",
+"code": "KP"
 },
 {
 "name": "Northern Mariana Islands",
@@ -856,7 +856,7 @@
 },
 {
 "name": "Pitcairn",
-"dial_code": "+872",
+"dial_code": "+64",
 "code": "PN"
 },
 {
@@ -871,7 +871,7 @@
 },
 {
 "name": "Puerto Rico",
-"dial_code": "+1939",
+"dial_code": "+1",
 "code": "PR"
 },
 {
@@ -980,6 +980,11 @@
 "code": "SG"
 },
 {
+"name": "Sint Maarten",
+"dial_code": "+1721",
+"code": "SX"
+},
+{
 "name": "Slovakia",
 "dial_code": "+421",
 "code": "SK"
@@ -1005,14 +1010,19 @@
 "code": "ZA"
 },
 {
-"name": "South Sudan",
-"dial_code": "+211",
-"code": "SS"
-},
-{
 "name": "South Georgia and the South Sandwich Islands",
 "dial_code": "+500",
 "code": "GS"
+},
+{
+"name": "South Korea",
+"dial_code": "+82",
+"code": "KR"
+},
+{
+"name": "South Sudan",
+"dial_code": "+211",
+"code": "SS"
 },
 {
 "name": "Spain",

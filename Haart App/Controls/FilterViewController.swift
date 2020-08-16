@@ -25,6 +25,16 @@ class FilterViewController: InterestPopUpValues {
     @IBOutlet weak var zipCodeTxtField: HaartTextField!
     @IBOutlet weak var currentRelationshipView: UIView!
     @IBOutlet weak var alchohalView: UIView!
+    
+    @IBOutlet weak var hobbiesView: UIView!
+    
+    @IBOutlet weak var moviesHobbies: UIView!
+    
+    @IBOutlet weak var tvShowsView: UIView!
+    @IBOutlet weak var booksView: UIView!
+    
+    @IBOutlet weak var highSchoolView: UIView!
+    @IBOutlet weak var collegeView: UIView!
     @IBOutlet weak var smokingView: UIView!
     @IBOutlet weak var workoutView: UIView!
     @IBOutlet weak var dietView: UIView!
@@ -47,6 +57,11 @@ class FilterViewController: InterestPopUpValues {
     var workoutSelectedList:SelectedIntrestsCollectionViewController!
     var smokingSelectedList:SelectedIntrestsCollectionViewController!
     var alchohalSelectedList:SelectedIntrestsCollectionViewController!
+    var hobbiesSelectedList:SelectedIntrestsCollectionViewController!
+       var moviesSelectedList:SelectedIntrestsCollectionViewController!
+       var booksSelectedList:SelectedIntrestsCollectionViewController!
+       var tvShowsSelectedList:SelectedIntrestsCollectionViewController!
+       var collegeSelectedList:SelectedIntrestsCollectionViewController!
     var dietrySelectedList:SelectedIntrestsCollectionViewController!
     var kidsSelectedList:SelectedIntrestsCollectionViewController!
     var educationSelectedList:SelectedIntrestsCollectionViewController!
@@ -111,12 +126,12 @@ class FilterViewController: InterestPopUpValues {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        UIApplication.shared.statusBarView?.backgroundColor = .clear
+
     }
   
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIApplication.shared.statusBarView?.backgroundColor = .red
+
     }
 
     
@@ -150,6 +165,11 @@ class FilterViewController: InterestPopUpValues {
                 self.workoutSelectedList.userDocument = self.userDocument
                 self.smokingSelectedList.userDocument = self.userDocument
                 self.alchohalSelectedList.userDocument = self.userDocument
+                self.hobbiesSelectedList.userDocument = self.userDocument
+                       self.moviesSelectedList.userDocument = self.userDocument
+                       self.booksSelectedList.userDocument = self.userDocument
+                       self.tvShowsSelectedList.userDocument = self.userDocument
+                       self.collegeSelectedList.userDocument = self.userDocument
                 self.dietrySelectedList.userDocument = self.userDocument
                 self.kidsSelectedList.userDocument = self.userDocument
                 self.educationSelectedList.userDocument = self.userDocument
@@ -258,6 +278,20 @@ class FilterViewController: InterestPopUpValues {
         alchohalSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: alchohalSelectedList, inView: alchohalView, selectedItemsKey: "falchohal")
         
+        hobbiesSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+              self.setSelectedIntrestsView(subVc: hobbiesSelectedList, inView: hobbiesView, selectedItemsKey: "fhobbies")
+              moviesSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+                self.setSelectedIntrestsView(subVc: moviesSelectedList, inView: moviesHobbies, selectedItemsKey: "fmovies")
+              
+              booksSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+              self.setSelectedIntrestsView(subVc: booksSelectedList, inView: booksView, selectedItemsKey: "fbooks")
+              
+              tvShowsSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+                     self.setSelectedIntrestsView(subVc: tvShowsSelectedList, inView: tvShowsView, selectedItemsKey: "ftvShows")
+              
+              collegeSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+                     self.setSelectedIntrestsView(subVc: collegeSelectedList, inView: collegeView, selectedItemsKey: "fcollege")
+        
         dietrySelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: dietrySelectedList, inView: dietView, selectedItemsKey: "fdietryPreferences")
         
@@ -298,6 +332,11 @@ class FilterViewController: InterestPopUpValues {
         workoutSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(workoutBtnPressed(_:))))
         smokingSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(smokingBtnPressed(_:))))
         alchohalSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(alchoalBtnPressed(_:))))
+        hobbiesSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(hobbiesBtnPressed(_:))))
+        moviesSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(moviesBtnPressed(_:))))
+        booksSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(booksBtnPressed(_:))))
+        tvShowsSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(tvShowBtnPressed(_:))))
+        collegeSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(collegeBtnPressed(_:))))
         dietrySelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(dietBtnPressed(_:))))
         kidsSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(kidsBtnPressed(_:)) ))
       
@@ -397,11 +436,11 @@ class FilterViewController: InterestPopUpValues {
        // let api = "https://maps.googleapis.com/maps/api/geocode/json?latlng=\(locationManager.location?.coordinate.latitude ?? 0),\(locationManager.location?.coordinate.longitude ?? 0)&key=AIzaSyD1kOEBHNFsq5D7Zwu_XSM6YWj0-Jw2j0c"
         let api = "https://maps.googleapis.com/maps/api/geocode/json?address=\(zipCodeTxtField.text ?? "")&key=AIzaSyD1kOEBHNFsq5D7Zwu_XSM6YWj0-Jw2j0c"
 
-        Alamofire.request(api, method: .get, parameters: [:], encoding: URLEncoding.default, headers: nil).responseJSON { (response:DataResponse<Any>) in
+        AF.request(api, method: .get, parameters: [:], encoding: URLEncoding.default, headers: nil).responseJSON {(response:AFDataResponse<Any>) in
             SVProgressHUD.dismiss()
             switch(response.result) {
             case .success(_):
-                if let data = response.result.value as? [String:Any]{
+                if let data = response.data as? [String:Any]{
                    // print(data["results"] as! [String:Any])
                     if let results = data["results"] as? [[String:Any]] {
                         for obj in results {
@@ -426,7 +465,7 @@ class FilterViewController: InterestPopUpValues {
                 }
                 break
             case .failure(_):
-                UIApplication.showMessageWith(response.result.error?.localizedDescription ?? "Please try again later.")
+                UIApplication.showMessageWith(response.error?.localizedDescription ?? "Please try again later.")
                 break
                 
             }
@@ -460,18 +499,56 @@ class FilterViewController: InterestPopUpValues {
         currentSelectedList = religionSelectedList
         showInterestsPopUp(sender: sender, values:filterReligion, arrKey: "freligion")
     }
+    
     @IBAction func zoadicBtnPressed(_ sender: UIButton) {
         currentSelectedList = starSignSelectedList
         showInterestsPopUp(sender: sender, values:filterStarSign, arrKey: "fstarSign")
     }
     @IBAction func relationshipBtnPressed(_ sender: UIButton) {
         currentSelectedList = relationshipSelectedList
-        showInterestsPopUp(sender: sender, values:filterAlchohal, arrKey: String("frelationships"))
+        showInterestsPopUp(sender: sender, values:filterRelationship, arrKey: String("frelationships"))
     }
     @IBAction func alchoalBtnPressed(_ sender: UIButton) {
         currentSelectedList = alchohalSelectedList
         showInterestsPopUp(sender: sender, values:filterAlchohal, arrKey: "falchohal")
     }
+    
+    
+    @IBAction func hobbiesBtnPressed(_ sender: UIButton) {
+        currentSelectedList = hobbiesSelectedList
+            showInterestsPopUp(sender: sender, values:filterHobbies, arrKey: "fhobbies")
+    }
+    
+    
+    @IBAction func moviesBtnPressed(_ sender: UIButton) {
+        currentSelectedList = moviesSelectedList
+            showInterestsPopUp(sender: sender, values:filterMovies, arrKey: "fmovies")
+    }
+    
+    @IBAction func booksBtnPressed(_ sender: UIButton) {
+        currentSelectedList = booksSelectedList
+                 showInterestsPopUp(sender: sender, values:filterBooks, arrKey: "fbooks")
+    }
+    
+    
+    @IBAction func tvShowBtnPressed(_ sender: UIButton) {
+        currentSelectedList = tvShowsSelectedList
+        showInterestsPopUp(sender: sender, values:filterTvShows, arrKey: "ftvShows")
+    }
+    
+    
+    @IBAction func collegeBtnPressed(_ sender: UIButton) {
+        currentSelectedList = collegeSelectedList
+               showInterestsPopUp(sender: sender, values:filterCollege, arrKey: "fcollege")
+        
+    }
+    
+    
+    @IBAction func highSchoolBtnPressed(_ sender: Any) {
+        
+    }
+    
+    
     @IBAction func dietBtnPressed(_ sender: UIButton) {
         currentSelectedList = dietrySelectedList
         showInterestsPopUp(sender: sender, values:filterDietryPreferences, arrKey: "fdietryPreferences")
@@ -494,6 +571,7 @@ class FilterViewController: InterestPopUpValues {
         currentSelectedList = ethnicitySelectedList
         showInterestsPopUp(sender: sender, values:filterEthnicitys, arrKey: "fethnicitys")
     }
+    
     @IBAction func currentRelationshipBtnPressed(_ sender: UIButton) {
         currentSelectedList = currentRelationshipList
         showInterestsPopUp(sender: sender, values:filterCurrentRelationship, arrKey: "fcurrentRelationship")
@@ -526,7 +604,13 @@ class FilterViewController: InterestPopUpValues {
                           "fbodyFigure",
                           "fethnicitys",
                           "freligion",
-                          "feyeColors"]
+                          "feyeColors",
+                          "fhobbies",
+                          "fmovies",
+                          "fbooks",
+                           "ftvShows",
+        "fcollege",
+        "fhighschool"]
         
         for key in filterKeys {
             userData[key] = ["All"]

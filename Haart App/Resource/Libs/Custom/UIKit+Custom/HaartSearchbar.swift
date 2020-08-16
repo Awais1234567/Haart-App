@@ -13,13 +13,16 @@ import FirebaseFirestore
 protocol HaartSearchBarDelegate: class {
     func filteredArr(_ arr: Array<String>)
 }
-class HaartSearchbar: UITextField, UITextFieldDelegate {
+
+class HaartSearchbar: UITextField, UITextFieldDelegate{
     
     var searchImageView:UIImageView!
     var tblView:UITableView!
     var items:Array<String>!
     let padding = UIEdgeInsets.init(top: 10, left: 20, bottom: 10, right: 20)
     weak var searchDelegate: HaartSearchBarDelegate?
+    let interestValue = InterestPopUpValues()
+    let interestPopUp = InterestsPopUpViewController()
     // Only override draw() if you perform custom drawing.
     // An empty implementation adversely affects performance during animation.
     
@@ -46,6 +49,20 @@ class HaartSearchbar: UITextField, UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         searchImageView.isHidden = self.text?.isEmpty != true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        print("-->\(interestPopUp.arrKey)")
+        if(interestPopUp.arrKey == "movies" || interestPopUp.arrKey == "books" ){    interestValue.movies.append("hulk")
+        print(interestValue.movies)
+        print(interestValue.bioMovies)
+        interestPopUp.itemsArr = interestValue.bioMovies
+        DispatchQueue.main.async {
+            self.interestPopUp.searchTblView.reloadData()
+        }
+ }
+        
+        return true
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {

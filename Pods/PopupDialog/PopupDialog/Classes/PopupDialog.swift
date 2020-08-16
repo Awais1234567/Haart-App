@@ -178,7 +178,7 @@ final public class PopupDialog: UIViewController {
         if panGestureDismissal {
             let panRecognizer = UIPanGestureRecognizer(target: interactor, action: #selector(InteractiveTransition.handlePan))
             panRecognizer.cancelsTouchesInView = false
-           popupContainerView.stackView.addGestureRecognizer(panRecognizer)
+            popupContainerView.stackView.addGestureRecognizer(panRecognizer)
         }
     }
 

@@ -46,6 +46,7 @@ class ProfessionsVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         itemsArr = arr
         searchTblView.reloadData()
     }
+
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if (self.arrKey.count == 0) { //can not select multiple items (selecting own gender)

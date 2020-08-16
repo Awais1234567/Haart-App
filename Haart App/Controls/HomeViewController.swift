@@ -27,10 +27,12 @@ class HomeViewController: AbstractControl, UICollectionViewDelegate,UICollection
     var itemsArr = Array<QueryDocumentSnapshot>()
     @IBOutlet weak var swipeAbleView: UIImageView!
     @IBOutlet weak var homeCollectionView: UICollectionView!
+    let def = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("hit..min")
+        def.set(user.uid, forKey: "UserID")
+        
         homeCollectionView.register(UINib(nibName: "HomeCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "HomeCollectionViewCell")
         homeCollectionView.contentInset = UIEdgeInsets(top: 0, left:  0, bottom: 0, right:  0)
       
@@ -62,7 +64,7 @@ class HomeViewController: AbstractControl, UICollectionViewDelegate,UICollection
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         self.getAndSetData()
         //        appUsersListener = appUsersReference.addSnapshotListener { querySnapshot, error in
         //            guard let snapshot = querySnapshot else {
@@ -194,11 +196,21 @@ class HomeViewController: AbstractControl, UICollectionViewDelegate,UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if(itemsArr.count == 0){
+            DispatchQueue.main.async {
+            let noDataLabel: UILabel  = UILabel(frame: CGRect(x: 0, y: 0, width: self.homeCollectionView.bounds.size.width, height: self.homeCollectionView.bounds.size.height))
+                  noDataLabel.text          = "Reload"
+                  noDataLabel.textColor     = UIColor.black
+                  noDataLabel.textAlignment = .center
+                 self.homeCollectionView.backgroundView  = noDataLabel
+            }
+        }
         let cell : HomeCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: "HomeCollectionViewCell", for: indexPath as IndexPath) as! HomeCollectionViewCell
         cell.indexPath = indexPath
         cell.currentUserDocument = currentUserSnapshot
         cell.setData(userDocument: itemsArr[indexPath.row])
         return cell
+    
     }
     
     @objc override func rightBarBtnClicked(sender:UIButton) {

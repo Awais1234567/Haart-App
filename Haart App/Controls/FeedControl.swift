@@ -16,56 +16,77 @@ import Firebase
 class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UICollectionViewDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout,IGAddStoryCellDelegate {
     
     private var viewModel: IGHomeViewModel = IGHomeViewModel()
-    var feedsArr = [[String:Any]]()
+    var feedsArr :[[String:Any]] = [["void":""]]
     var image: UIImage!
     var generalFeedBit : Bool = false
     @IBOutlet weak var storyContainer: UIView!
     @IBOutlet weak var tblView: UITableView!
     var _storiesView:IGHomeView!
     
-    override func loadView() {
+    override func loadView()
+    {
         super.loadView()
-        if(generalFeedBit == true){
-            print("General Feed")
-            _storiesView = IGHomeView(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 104))
-            storyContainer.addSubview(_storiesView)
-            _storiesView.collectionView.setCollectionViewLayout(_storiesView.layout, animated: false)
-            
-            _storiesView.collectionView.delegate = self
-            _storiesView.collectionView.dataSource = self
-        }else{
-        _storiesView = IGHomeView(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 104))
-        storyContainer.addSubview(_storiesView)
-        _storiesView.collectionView.setCollectionViewLayout(_storiesView.layout, animated: false)
-        
-        _storiesView.collectionView.delegate = self
-        _storiesView.collectionView.dataSource = self
-        }
+      
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         //view.backgroundColor = UIColor.haartRed
-        self.navigationController?.view.backgroundColor = UIColor.red
-        tblView.register(UINib(nibName: "FeedCell", bundle: nil), forCellReuseIdentifier: "FeedCell")
-        self.setNavBarButtons(letfImages: [UIImage.init(named: "Back")!], rightImage: nil)
-        if(feedsArr.count > 1) {
-            feedsArr.removeFirst()
-        }
-        print(feedsArr)
+        if(generalFeedBit == true){
+            print("General Feed")
+            getData()
+            feedsArr.removeAll()
+                self._storiesView = IGHomeView(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 104))
+                self.storyContainer.addSubview(self._storiesView)
+                self._storiesView.collectionView.setCollectionViewLayout(self._storiesView.layout, animated: false)
+                                 
+                self._storiesView.collectionView.delegate = self
+                self._storiesView.collectionView.dataSource = self
+                    self.navigationController?.view.backgroundColor = UIColor.red
+                self.tblView.register(UINib(nibName: "FeedCell", bundle: nil), forCellReuseIdentifier: "FeedCell")
+                          self.setNavBarButtons(letfImages: [UIImage.init(named: "Back")!], rightImage: nil)
+                if(self.feedsArr.count > 1) {
+                    self.feedsArr.removeFirst()
+                          
+                          }
+
+            }
+              else{
+              _storiesView = IGHomeView(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 104))
+              storyContainer.addSubview(_storiesView)
+              _storiesView.collectionView.setCollectionViewLayout(_storiesView.layout, animated: false)
+              
+              _storiesView.collectionView.delegate = self
+              _storiesView.collectionView.dataSource = self
+            self.navigationController?.view.backgroundColor = UIColor.red
+                  tblView.register(UINib(nibName: "FeedCell", bundle: nil), forCellReuseIdentifier: "FeedCell")
+                  self.setNavBarButtons(letfImages: [UIImage.init(named: "Back")!], rightImage: nil)
+                  if(feedsArr.count > 1) {
+                      feedsArr.removeFirst()
+                  
+                  }
+              }
+     
+      
+            
+        
+
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        //  getData()
+  
+    enum AuthResult {
+        case success(Bool), failure(Error)
     }
-    
+    let defaults = UserDefaults.standard
     func getData() {
+        feedsArr.removeAll()
         if(self.userDocument == nil) {
             SVProgressHUD.show()
         }
         var storiesArr = [[String:Any]]()
-        let ref = db.collection("users")//.whereField("userId", isEqualTo: self.user.uid)
+        let ref = db.collection("users").whereField("userId", isEqualTo: defaults.value(forKey: "User_ID")!)
+      
         ref.getDocuments { (snapshot, error) in
             if let e = error {
                 SVProgressHUD.dismiss()
@@ -78,17 +99,45 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
             if(snapshot?.documents.count == 0) {
             }
             else {
+               
                 for i in 0..<snapshot!.documents.count {
+                    if(self.generalFeedBit == true) {
+                    let userStories :  Array<String>  = snapshot?.documents[i].data()["followed"] as! Array<String>
+                    print("Hollee\(userStories)")
+                        
+                        for j in 0..<userStories.count{
+                            let ref2 = self.db.collection("users").whereField("userId", isEqualTo: userStories[j])
+                            ref2.getDocuments { (snapshot, error) in
+                            if let e = error {
+                                SVProgressHUD.dismiss()
+                                UIApplication.showMessageWith(e.localizedDescription )
+                                return
+                            }
+                            if(self.userDocument == nil) {
+                                SVProgressHUD.dismiss()
+                            }
+                            if(snapshot?.documents.count == 0) {
+                            }
+                            else {
+                                let userPosts = snapshot?.documents[i].data()["galleryPics"] as? [[String:Any]] ?? [["void":"","time":1]]
+                                 self.feedsArr.append(contentsOf: userPosts)
+                                 print("heeelaaar\(self.feedsArr)")
+                                self.tblView.reloadData()
+                        }
+                    }
+                        }
+                    }
                     if(snapshot!.documents[i].data()["userId"] as! String == self.user.uid) {// current user
                         self.userDocument = snapshot?.documents[i]
                         AppSettings.currentUserSnapshot = self.userDocument
                         if let userStories = snapshot?.documents[i].data()["stories"] as? [String:Any] {
                             storiesArr.insert(userStories, at: 0)
                         }
+                        
                         break
                     }
                 }
-                
+               
                 for i in 0..<snapshot!.documents.count {//fetch stories of followed persons
                     if((self.userDocument?.data()["blocked"] as? Array<String> ?? [String]()).contains(snapshot!.documents[i].data()["userId"] as! String)) {
                         //do not show
@@ -97,12 +146,11 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
                         //do not show
                     }
                     else if ((self.userDocument!.data()["followed"] as? Array<String> ?? Array<String>()).contains(snapshot!.documents[i].data()["userId"] as! String)){
-                        if let userStories = snapshot?.documents[i].data()["stories"] as? [String:Any] {
+                        if let userStories = snapshot?.documents[i].data()["galleryPics"] as? [String:Any] {
                             storiesArr.append(userStories)
                         }
-                    }
-                }
-                
+                    }              }
+               
                 print(storiesArr)
                 let storiesController = StoriesController()
                 storiesController.currentUserDocument = self.userDocument
@@ -110,7 +158,9 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
                 self._storiesView.collectionView.reloadData()
                 
             }
+            
         }
+               self.tblView.reloadData()
     }
     
     func getStories(storiesArr:[[String : Any]]) -> IGStories? {
@@ -128,7 +178,10 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return feedsArr.count
+        if(feedsArr.count > 0){
+              return feedsArr.count
+        }
+        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -140,6 +193,8 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 415
     }
+    
+
     
     //MARK: - Private functions
     @objc private func clearImageCache() {
@@ -192,5 +247,11 @@ class FeedControl: AbstractControl,UITableViewDelegate,UITableViewDataSource,UIC
             }
         }
     }
-    
+ 
+}
+
+extension FeedControl: PostActionCellDelegate {
+    func didTapLikeButton(_ likeButton: UIButton, on cell: FeedCell) {
+        print("did tap like button")
+    }
 }

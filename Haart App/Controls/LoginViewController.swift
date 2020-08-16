@@ -67,15 +67,7 @@ class LoginViewController: AbstractControl {
 }
 
 
-extension LoginViewController: CountryPickerViewDelegate {
-    func countryPickerView(_ countryPickerView: CountryPickerView, didSelectCountry country: Country) {
-        // Only countryPickerInternal has it's delegate set
-       // let title = "Selected Country"
-      //  let message = "Name: \(country.name) \nCode: \(country.code) \nPhone: \(country.phoneCode)"
-        
-      //  showAlert(title: title, message: message)
-    }
-}
+
 
 extension LoginViewController: CountryPickerViewDataSource {
     func preferredCountries(in countryPickerView: CountryPickerView) -> [Country] {

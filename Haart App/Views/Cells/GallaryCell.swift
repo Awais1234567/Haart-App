@@ -10,6 +10,7 @@ import UIKit
 
 class GallaryCell: UICollectionViewCell {
 
+    @IBOutlet weak var VideoView: UIView!
     @IBOutlet weak var gallaryImgView: UIImageView!
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -12,6 +12,7 @@ import UIKit
 @IBDesignable
 open class TTSegmentedControl: UIView {
     
+    //Version: 0.4.10
     //Configure the options to for a custom design
     @IBInspectable open var defaultTextFont: UIFont = UIFont.helveticaNeueLight(12)
     @IBInspectable open var selectedTextFont: UIFont = UIFont.helveticaNeueLight(12)
@@ -26,7 +27,7 @@ open class TTSegmentedControl: UIView {
     @IBInspectable open var useShadow:Bool = true
     
     //left and right space between items
-    @IBInspectable open var padding: CGSize = CGSize(width: 15, height: 10)
+    @IBInspectable open var padding: CGSize = CGSize(width: 30, height: 10)
     @IBInspectable open var cornerRadius: CGFloat = -1 // for rounded corner radius use negative value, 0 to disable
     
     public enum DraggingState: Int {
@@ -43,7 +44,7 @@ open class TTSegmentedControl: UIView {
         var options:UIView.AnimationOptions = .curveEaseInOut
     }
     
-    open var itemTitles: [String] = ["Item1", "Item2", "Item3", "item4", "item5"]
+    open var itemTitles: [String] = ["Item1", "Item2", "Item3"]
     
     open var attributedDefaultTitles: [NSAttributedString]!
     open var attributedSelectedTitles: [NSAttributedString]!
@@ -90,7 +91,6 @@ open class TTSegmentedControl: UIView {
     
     open override func awakeFromNib() {
         super.awakeFromNib()
-  
     }
     
     public override init(frame: CGRect) {
@@ -101,20 +101,33 @@ open class TTSegmentedControl: UIView {
         super.init(coder: aDecoder)
     }
     
+    open func reconfigure() {
+        self.isConfigurated = false
+        allItemLabels = []
+        allSelectedItemLabels = []
+        self.containerView.removeFromSuperview()
+        self.thumbContainerView.removeFromSuperview()
+        self.thumbView.removeFromSuperview()
+        self.selectedLabelsView.removeFromSuperview()
+        
+        self.thumbContainerView = UIView()
+        self.thumbView = UIView()
+        self.selectedLabelsView = UIView()
+        self.containerView = UIView()
+        self.layoutSubviews()
+    }
     
     open override func layoutSubviews() {
         super.layoutSubviews()
-    
+        
         if !isConfigurated {
             configureItemsConent()
             configureViewBounds()
-            
             configureContainerView()
             configureItems()
             configureSelectedView()
             configureSelectedLabelsView()
             configureSelectedLabelItems()
-            
             isConfigurated = true
         }
         
@@ -136,8 +149,7 @@ open class TTSegmentedControl: UIView {
     fileprivate var allSelectedItemLabels: [UILabel] = []
     
     fileprivate var sectionWidth: CGFloat {
-       // return (self.frame.size.width - 20) / CGFloat(allItemLabels.count)
-        return (self.frame.size.width / CGFloat(allItemLabels.count))
+        return self.frame.size.width / CGFloat(allItemLabels.count)
     }
     
     fileprivate var minPoint: CGPoint {
@@ -152,9 +164,7 @@ open class TTSegmentedControl: UIView {
         return 100
     }
     
-    fileprivate var isSwitch: Bool {
-        return attributedDefaultTitles.count == 2
-    }
+    open var isSwitch: Bool = false
     
     //MARK: - Helpers
     static public func UIColorFromRGB(_ rgbValue: UInt) -> UIColor {
@@ -654,7 +664,7 @@ extension TTSegmentedControl {
             currentSelectedIndex = index
             return
         }
-        let label = allItemLabels[min(index, attributedDefaultTitles.count)]
+        let label = allItemLabels[min(index, attributedDefaultTitles.count - 1)]
         selectedLabelsView.isHidden = noItemSelected
         changeThumbFrameForPoint(label.center, animated: animated)
     }

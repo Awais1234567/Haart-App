@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -26,13 +24,21 @@
                                 <rect key="frame" x="0.0" y="0.0" width="101" height="80"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A8D-9O-xhG">
+                                <rect key="frame" x="0.0" y="0.0" width="101" height="80"/>
+                                <color key="backgroundColor" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.96462148430000005" green="0.96475988629999998" blue="0.96459132430000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="ue4-uR-dSD" firstAttribute="leading" secondItem="RjT-No-eOd" secondAttribute="leading" id="4fp-l1-JqZ"/>
                             <constraint firstAttribute="trailing" secondItem="ue4-uR-dSD" secondAttribute="trailing" id="KH7-ng-5cH"/>
+                            <constraint firstItem="A8D-9O-xhG" firstAttribute="leading" secondItem="RjT-No-eOd" secondAttribute="leading" id="OgZ-oz-U3p"/>
+                            <constraint firstAttribute="bottom" secondItem="A8D-9O-xhG" secondAttribute="bottom" id="RPn-DO-Oza"/>
                             <constraint firstItem="ue4-uR-dSD" firstAttribute="top" secondItem="RjT-No-eOd" secondAttribute="top" id="cNZ-hc-Geu"/>
+                            <constraint firstAttribute="trailing" secondItem="A8D-9O-xhG" secondAttribute="trailing" id="oSg-iy-9lS"/>
                             <constraint firstAttribute="bottom" secondItem="ue4-uR-dSD" secondAttribute="bottom" id="p1c-e3-evh"/>
+                            <constraint firstItem="A8D-9O-xhG" firstAttribute="top" secondItem="RjT-No-eOd" secondAttribute="top" id="zfP-FN-oYO"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -46,6 +52,7 @@
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <size key="customSize" width="101" height="80"/>
             <connections>
+                <outlet property="VideoView" destination="A8D-9O-xhG" id="aqP-9M-Mxb"/>
                 <outlet property="gallaryImgView" destination="ue4-uR-dSD" id="2Tg-67-YWj"/>
             </connections>
             <point key="canvasLocation" x="174.63768115942031" y="115.84821428571428"/>

@@ -14,10 +14,12 @@ import YPImagePicker
 import Firebase
 import Lightbox
 import FirebaseStorage
+import AVFoundation
 class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, IGAddStoryCellDelegate {
    
     var lightBoxImagesArr = [LightboxImage]()
     var shouldFetchImagesArr = true
+    let defaults = UserDefaults.standard
     private let storage = Storage.storage().reference()
     @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var userNameLbl: UILabel!
@@ -32,6 +34,9 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
     @IBOutlet weak var grayView: UIView!
     @IBOutlet weak var gallaryCollectionView: UICollectionView!
     var galleryItemsArr:[[String:Any]] = [["void":""]]
+    var galleryVideoArr:[[String:Any]] = [["void":""]]
+    var playerLayer = AVPlayerLayer(player: nil)
+    var player = AVPlayer()
     
     var _storiesView:IGHomeView!
     //MARK: - Overridden functions
@@ -56,9 +61,10 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
     @objc private func clearImageCache() {
         IGCache.shared.removeAllObjects()
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        defaults.setValue(self.user.uid, forKey: "User_ID")
         self.view.backgroundColor = UIColor.init(red: 246/255.0, green: 246/255.0, blue: 246/255.0, alpha: 1)
         gallaryCollectionView.register(UINib(nibName: "GallaryCell", bundle: nil), forCellWithReuseIdentifier: "GallaryCell")
         
@@ -69,7 +75,7 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
         grayView.grayViewRadiousBottm(value:36)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.view.endEditing(true)
         getData()
@@ -119,6 +125,7 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
                         self.followingCountLbl.text = (self.userDocument?.data()["followed"] as? [String] ?? [String]()).count.string
                         
                      //   if(self.shouldFetchImagesArr == true) { //do not update agaib and gain because already updated
+                 
                         self.galleryItemsArr = self.userDocument?.data()["galleryPics"] as? [[String:Any]] ?? [["void":"","time":1]]
                             var tempArr = self.userDocument?.data()["galleryPics"] as? [[String:String]] ?? [["":""]]
                             tempArr.removeFirst()
@@ -207,14 +214,32 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
                 cell.gallaryImgView.contentMode = .center
                 cell.gallaryImgView.image = UIImage.init(named: "Camera_Big_Red")
             }
-            else {
+            else if(indexPath.row != 0){
                 cell.gallaryImgView.contentMode = .scaleAspectFill
                 if(indexPath.row < galleryItemsArr.count) {
+                    if(galleryItemsArr[indexPath.row]["type"] as! String == "video"){
+                        cell.VideoView.isHidden = false
+                        cell.VideoView.sd_imageIndicator = SDWebImageActivityIndicator.gray
+                        let videoURL = NSURL(string: galleryItemsArr[indexPath.row]["url"] as! String)
+                         player = AVPlayer(url: videoURL! as URL)
+                        NotificationCenter.default.addObserver(self,
+                        selector: #selector(playerItemDidReachEnd),
+                          name: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
+                          object: player.currentItem)
+                        playerLayer = AVPlayerLayer(player: player)
+                        playerLayer.videoGravity = .resizeAspectFill
+                        playerLayer.frame = cell.VideoView.bounds
+                        cell.VideoView.layer.addSublayer(playerLayer)
+                        player.play()
+                        
+                    }else if(galleryItemsArr[indexPath.row]["type"] as! String == "image"){
                     cell.gallaryImgView.sd_imageIndicator = SDWebImageActivityIndicator.gray
                     cell.gallaryImgView.sd_setImage(with: URL(string:galleryItemsArr[indexPath.row]["url"] as? String ?? "" ), placeholderImage: nil)
+                    }
                 }
                 else {
                     cell.gallaryImgView.image = nil
+                    cell.VideoView.isHidden = true
                 }
             }
             //cell.gallaryImgView.superview!.layer.cornerRadius = 10.0
@@ -310,7 +335,11 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
         }
         
     }
-
+    @objc func playerItemDidReachEnd(notification: NSNotification) {
+                     player.seek(to: CMTime.zero)
+                    player.play()
+                 }
+    
     @IBAction func messageBtnPressed(_ sender: Any) {
         if let user = Auth.auth().currentUser {
             let vc = ChannelsViewController(currentUser: user)
@@ -320,12 +349,42 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
         }
     }
     
+    func didSelectMedia2(image: UIImage?, video: YPMediaVideo?, caption: String?) {
+           if(image != nil) {
+               print("add function called")
+               SVProgressHUD.show()
+               self.uploadImage(image!, "galleryImages", completion: { (url) in
+                   SVProgressHUD.dismiss()
+                   self.galleryItemsArr.append(["id":"post" + self.user.uid + ("".randomStringWithLength(len: 8) as String),"type":"image","url":url?.absoluteString ?? "", "caption":caption ?? "", "fullName": self.userDocument!["fullName"] as! String, "timeStamp":Date(), "comments":[]])
+                   self.gallaryCollectionView.reloadData()
+                   self.updateGalleryPics()
+               })
+           }
+           if(video != nil){
+                         SVProgressHUD.show()
+           print("upload Video Called")
+               self.uploadVideo(video!, "galleryImages", completion: {(url) in
+                      SVProgressHUD.dismiss()
+               self.galleryItemsArr.append(["id":"post" + self.user.uid + ("".randomStringWithLength(len: 8) as String),"type":"video","url":url?.absoluteString ?? "", "caption":caption ?? "", "fullName": self.userDocument!["fullName"] as! String, "timeStamp":Date(), "comments":[]])
+                                 self.gallaryCollectionView.reloadData()
+                              self.updateGalleryPics()
+                   
+                   
+               })
+               
+           }
+           
+           
+       }
+    
 }
 
 
 extension ProfileViewController:AddPostViewControllerDelegate {
-    func didSelectMedia(image: UIImage?, video: Any?, caption: String?) {
-        if(image != nil) {
+    
+    func didSelectMedia(image: UIImage?, video: YPMediaVideo?, caption: String?) {
+   
+            print("add function called")
             SVProgressHUD.show()
             self.uploadImage(image!, "galleryImages", completion: { (url) in
                 SVProgressHUD.dismiss()
@@ -333,27 +392,77 @@ extension ProfileViewController:AddPostViewControllerDelegate {
                 self.gallaryCollectionView.reloadData()
                 self.updateGalleryPics()
             })
+        
+        if(video != nil){
+                      SVProgressHUD.show()
+        print("upload Video Called")
+            self.uploadVideo(video!, "galleryImages", completion: {(url) in
+                   SVProgressHUD.dismiss()
+            self.galleryItemsArr.append(["id":"post" + self.user.uid + ("".randomStringWithLength(len: 8) as String),"type":"video","url":url?.absoluteString ?? "", "caption":caption ?? "", "fullName": self.userDocument!["fullName"] as! String, "timeStamp":Date(), "comments":[]])
+                              self.gallaryCollectionView.reloadData()
+                           self.updateGalleryPics()
+
+
+            })
+
         }
+        
+        
     }
     
-    func addMedia() {
-        let picker = YPImagePicker()
-        picker.didFinishPicking { [unowned picker] items, _ in
-            if let photo = items.singlePhoto {
-                picker.dismiss(animated: false, completion: {
-                    let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddPostViewController") as! AddPostViewController
-                    vc.selectedImage = photo.image
-                    vc.delegate = self
-                    UIApplication.visibleViewController.present(HaartNavBarController.init(rootViewController: vc), animated: true, completion: nil)
-                })
-            }
-            else {
-               picker.dismiss(animated: true, completion: nil)
-            }
+    func addMedia(){
+        print("camera tapped")
+        let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "ViewController") as! ViewController
+        vc.modalPresentationStyle = .fullScreen
+                UIApplication.visibleViewController.present(vc, animated: true)
         }
-        present(picker, animated: true, completion: nil)
-    }
+
+        
     
+//    func addMedia() {
+//        var config = YPImagePickerConfiguration()
+//        config.video.compression = AVAssetExportPresetMediumQuality
+//        config.showsPhotoFilters = false
+//        config.showsCrop = YPCropType.rectangle(ratio: Double(UIScreen.main.bounds.size.width / UIScreen.main.bounds.size.height))
+//
+//        config.library.mediaType = .photoAndVideo
+//        config.showsPhotoFilters = true
+//        //config.filters
+//        config.video.recordingTimeLimit = 30.0
+//        config.showsVideoTrimmer = true
+//        config.screens = [.library,.photo]
+//        //config.video.libraryTimeLimit = 30.0
+//        config.library.defaultMultipleSelection = true
+//        config.video.minimumTimeLimit = 3.0
+//        config.video.trimmerMaxDuration = 30.0
+//        config.video.trimmerMinDuration = 3.0
+//        config.library.maxNumberOfItems = 4
+//        let picker = YPImagePicker(configuration: config)
+//        picker.didFinishPicking { [unowned picker] items, _ in
+//            if let photo = items.singlePhoto {
+//                picker.dismiss(animated: false, completion: {
+//                    let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddPostViewController") as! AddPostViewController
+//                    vc.selectedImage = photo.image
+//                    vc.delegate = self
+//                    UIApplication.visibleViewController.present(HaartNavBarController.init(rootViewController: vc), animated: true, completion: nil)
+//                })
+//            } else  if let video = items.singleVideo{
+//                        picker.dismiss(animated: false, completion: {
+//                            let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddPostViewController") as! AddPostViewController
+////
+//                            vc.selectedVideoThumb = video.thumbnail
+//                            vc.selectedVideoUrl = video.url
+//                            vc.delegate = self
+//                            UIApplication.visibleViewController.present(HaartNavBarController.init(rootViewController: vc), animated: true, completion: nil)
+//                        })
+//                    }
+//            else {
+//               picker.dismiss(animated: true, completion: nil)
+//            }
+//        }
+//        present(picker, animated: true, completion: nil)
+//    }
+//
     func updateGalleryPics() {
         SVProgressHUD.show()
         self.userDocument!.reference.updateData(["galleryPics":galleryItemsArr, "fcmToken":AppSettings.deviceToken], completion: { (error) in
@@ -363,8 +472,17 @@ extension ProfileViewController:AddPostViewControllerDelegate {
             }
         })
     }
+//    func updateGalleryVids() {
+//         SVProgressHUD.show()
+//         self.userDocument!.reference.updateData(["galleryVideos":galleryVideoArr, "fcmToken":AppSettings.deviceToken], completion: { (error) in
+//             SVProgressHUD.dismiss()
+//             if let e = error {
+//                 UIApplication.showMessageWith(e.localizedDescription)
+//             }
+//         })
+//     }
     
-    private func uploadImage(_ image: UIImage,_ folderName:String, completion: @escaping (URL?) -> Void) {
+ func uploadImage(_ image: UIImage,_ folderName:String, completion: @escaping (URL?) -> Void) {
         
         guard let scaledImage = image.scaledToSafeUploadSize, let data = scaledImage.jpegData(compressionQuality: 0.4) else {
             completion(nil)
@@ -394,6 +512,25 @@ extension ProfileViewController:AddPostViewControllerDelegate {
         }
     }
     
+    func uploadVideo(_ video: YPMediaVideo,_ folderName:String, completion: @escaping (URL?) -> Void) {
+        video.fetchData { (data) in
+            let metadata = StorageMetadata()
+            metadata.contentType = "video/mov"
+            
+            let videoName = [UUID().uuidString, String(Date().timeIntervalSince1970)].joined()
+            storage.child(self.user.uid).child(folderName).child(videoName).putFile(from: video.url, metadata: nil, completion: { (meta, error) in
+                self.getDownloadURL(from: meta?.path ?? "", completion: { (url, error) in
+                    if let error1 = error {
+                                                UIApplication.showMessageWith(error1.localizedDescription)
+                                                print(error1.localizedDescription)
+                                                return
+                                            }
+                                            completion(url)
+                })
+            })
+
+        }
+    }
     // MARK: - GET DOWNLOAD URL
     private func getDownloadURL(from path: String, completion: @escaping (URL?, Error?) -> Void) {
         storage.child(path).downloadURL(completion: completion)

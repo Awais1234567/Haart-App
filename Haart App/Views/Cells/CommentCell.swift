@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SDWebImage
 import FirebaseFirestore
 
 class CommentCell: UITableViewCell {
@@ -15,6 +16,9 @@ class CommentCell: UITableViewCell {
     @IBOutlet weak var fullNameLbl: UILabel!
     @IBOutlet weak var timeLbl: UILabel!
     @IBOutlet weak var commentLbl: UILabel!
+    let db = Firestore.firestore()
+    var commentsReference: CollectionReference!
+       var userDocument:QueryDocumentSnapshot?
     override func awakeFromNib() {
         super.awakeFromNib()
         profileImgView.layer.cornerRadius = profileImgView.frame.size.height / 2.0
@@ -30,10 +34,29 @@ class CommentCell: UITableViewCell {
         // Configure the view for the selected state
     }
     func setData(userDocument:QueryDocumentSnapshot) {
-        fullNameLbl.text = "Osama"//userDocument.data()["unreadLikesCount"] as? String
+        let ref2 = self.db.collection("users").whereField("userId", isEqualTo: userDocument.data()["userId"]!)
+                                           ref2.getDocuments { (snapshot, error) in
+                                           if let e = error {
+                                               UIApplication.showMessageWith(e.localizedDescription )
+                                               return
+                                           }
+                                           if(self.userDocument == nil) {
+                                              
+                                           }
+                                           if(snapshot?.documents.count == 0) {
+                                           }
+                                           else {
+                                               print("hitt it")
+                                           let bioPicsArr = snapshot?.documents[0].data()["bioPics"] as? [String] ?? ["","","","",""]
+                                            self.fullNameLbl.text = snapshot?.documents[0].data()["fullName"] as? String
+                                            self.profileImgView.sd_imageIndicator = SDWebImageActivityIndicator.gray
+                                            self.profileImgView.sd_setImage(with: URL(string: bioPicsArr[0]), placeholderImage: nil)
+                                        
+                                       }
+                                   }
+      
         commentLbl.text = userDocument.data()["comment"] as? String
         timeLbl.text = (userDocument.data()["timeStamp"] as! Timestamp).dateValue().feedTime()
-        profileImgView.image = UIImage(named: "user3")
     }
     
 }

@@ -18,7 +18,11 @@
 
 #import "FBSDKShareLinkContent.h"
 
+#ifdef FBSDKCOCOAPODS
+#import <FBSDKCoreKit/FBSDKCoreKit+Internal.h>
+#else
 #import "FBSDKCoreKit+Internal.h"
+#endif
 #import "FBSDKHashtag.h"
 #import "FBSDKShareUtility.h"
 
@@ -72,14 +76,14 @@
 {
   NSMutableDictionary<NSString *, id> *updatedParameters = [NSMutableDictionary dictionaryWithDictionary:existingParameters];
 
-  [FBSDKBasicUtility dictionary:updatedParameters setObject:_contentURL forKey:@"link"];
-  [FBSDKBasicUtility dictionary:updatedParameters setObject:_quote forKey:@"quote"];
+  [FBSDKTypeUtility dictionary:updatedParameters setObject:_contentURL forKey:@"link"];
+  [FBSDKTypeUtility dictionary:updatedParameters setObject:_quote forKey:@"quote"];
 
   /**
    Pass link parameter as "messenger_link" due to versioning requirements for message dialog flow.
    We will only use the new share flow we developed if messenger_link is present, not link.
    */
-  [FBSDKBasicUtility dictionary:updatedParameters setObject:_contentURL forKey:@"messenger_link"];
+  [FBSDKTypeUtility dictionary:updatedParameters setObject:_contentURL forKey:@"messenger_link"];
 
   return updatedParameters;
 }

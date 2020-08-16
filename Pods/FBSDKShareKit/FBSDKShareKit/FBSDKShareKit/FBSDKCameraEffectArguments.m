@@ -16,9 +16,17 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKCameraEffectArguments.h"
 
+#ifdef FBSDKCOCOAPODS
+#import <FBSDKCoreKit/FBSDKCoreKit+Internal.h>
+#else
 #import "FBSDKCoreKit+Internal.h"
+#endif
 #import "FBSDKShareUtility.h"
 
 static NSString *const FBSDKCameraEffectArgumentsArgumentsKey = @"arguments";
@@ -124,7 +132,7 @@ static NSString *const FBSDKCameraEffectArgumentsArgumentsKey = @"arguments";
   [FBSDKCameraEffectArguments assertKey:key];
   if (value) {
     [FBSDKCameraEffectArguments assertValue:value];
-    _arguments[key] = value;
+    [FBSDKTypeUtility dictionary:_arguments setObject:value forKey:key];
   } else {
     [_arguments removeObjectForKey:key];
   }
@@ -175,3 +183,5 @@ static NSString *const FBSDKCameraEffectArgumentsArgumentsKey = @"arguments";
 }
 
 @end
+
+#endif

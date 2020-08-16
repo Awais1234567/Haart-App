@@ -22,7 +22,6 @@ public class CountryPickerViewController: UITableViewController {
     fileprivate var showOnlyPreferredSection: Bool {
         return dataSource.showOnlyPreferredSection
     }
-    
     internal weak var countryPickerView: CountryPickerView! {
         didSet {
             dataSource = CountryPickerViewDataSourceInternal(view: countryPickerView)
@@ -33,8 +32,7 @@ public class CountryPickerViewController: UITableViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-        //UINavigationBar.appearance().barTintColor = .red
-        //self.navigationController?.navigationBar.isTranslucent = false
+        
         prepareTableItems()
         prepareNavItem()
         prepareSearchBar()
@@ -47,15 +45,16 @@ extension CountryPickerViewController {
     
     func prepareTableItems()  {
         if !showOnlyPreferredSection {
-            let countriesArray = countryPickerView.countries
+            let countriesArray = countryPickerView.usableCountries
+            let locale = dataSource.localeForCountryNameInList
             
             var groupedData = Dictionary<String, [Country]>(grouping: countriesArray) {
-                let name = $0.localizedName ?? $0.name
+                let name = $0.localizedName(locale) ?? $0.name
                 return String(name.capitalized[name.startIndex])
             }
             groupedData.forEach{ key, value in
                 groupedData[key] = value.sorted(by: { (lhs, rhs) -> Bool in
-                    return lhs.name < rhs.name
+                    return lhs.localizedName(locale) ?? lhs.name < rhs.localizedName(locale) ?? rhs.name
                 })
             }
             
@@ -130,8 +129,13 @@ extension CountryPickerViewController {
         let country = isSearchMode ? searchResults[indexPath.row]
             : countries[sectionsTitles[indexPath.section]]![indexPath.row]
 
-        let countryName = country.localizedName ?? country.name
-        let name = dataSource.showPhoneCodeInList ? "\(countryName) (\(country.phoneCode))" : countryName
+        var name = country.localizedName(dataSource.localeForCountryNameInList) ?? country.name
+        if dataSource.showCountryCodeInList {
+            name = "\(name) (\(country.code))"
+        }
+        if dataSource.showPhoneCodeInList {
+            name = "\(name) (\(country.phoneCode))"
+        }
         cell.imageView?.image = country.flag
         
         cell.flgSize = dataSource.cellImageViewSize
@@ -145,7 +149,8 @@ extension CountryPickerViewController {
         if let color = dataSource.cellLabelColor {
             cell.textLabel?.textColor = color
         }
-        cell.accessoryType = country == countryPickerView.selectedCountry ? .checkmark : .none
+        cell.accessoryType = country == countryPickerView.selectedCountry &&
+            dataSource.showCheckmarkInList ? .checkmark : .none
         cell.separatorInset = .zero
         return cell
     }
@@ -187,11 +192,11 @@ extension CountryPickerViewController {
         let country = isSearchMode ? searchResults[indexPath.row]
             : countries[sectionsTitles[indexPath.section]]![indexPath.row]
 
+        searchController?.isActive = false
         searchController?.dismiss(animated: false, completion: nil)
         
         let completion = {
             self.countryPickerView.selectedCountry = country
-            self.countryPickerView.delegate?.countryPickerView(self.countryPickerView, didSelectCountry: country)
         }
         // If this is root, dismiss, else pop
         if navigationController?.viewControllers.count == 1 {
@@ -220,8 +225,10 @@ extension CountryPickerViewController: UISearchResultsUpdating {
             }
 
             searchResults.append(contentsOf: indexArray.filter({
-                let countryName = $0.localizedName ?? $0.name
-                return countryName.lowercased().hasPrefix(text.lowercased())
+                let name = ($0.localizedName(dataSource.localeForCountryNameInList) ?? $0.name).lowercased()
+                let code = $0.code.lowercased()
+                let query = text.lowercased()
+                return name.hasPrefix(query) || (dataSource.showCountryCodeInList && code.hasPrefix(query))
             }))
         }
         tableView.reloadData()
@@ -333,4 +340,19 @@ class CountryPickerViewDataSourceInternal: CountryPickerViewDataSource {
         return view.dataSource?.showPhoneCodeInList(in: view) ?? showPhoneCodeInList(in: view)
     }
     
+    var showCountryCodeInList: Bool {
+        return view.dataSource?.showCountryCodeInList(in: view) ?? showCountryCodeInList(in: view)
+    }
+    
+    var showCheckmarkInList: Bool {
+        return view.dataSource?.showCheckmarkInList(in: view) ?? showCheckmarkInList(in: view)
+    }
+    
+    var localeForCountryNameInList: Locale {
+        return view.dataSource?.localeForCountryNameInList(in: view) ?? localeForCountryNameInList(in: view)
+    }
+    
+    var excludedCountries: [Country] {
+        return view.dataSource?.excludedCountries(in: view) ?? excludedCountries(in: view)
+    }
 }

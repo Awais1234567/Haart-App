@@ -31,7 +31,7 @@ import FirebaseAuth
 import FirebaseMessaging
 import GoogleSignIn
 import SVProgressHUD
-class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate {
+class LoginController: UIViewController, GIDSignInDelegate{
   
 /*******************  Email Log In **********************/
     func configureEmailLogIn(with email:String)  {
@@ -64,7 +64,6 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
  /*******************  Gmail Log In **********************/
     func configureGmailLogIn()  {
         GIDSignIn.sharedInstance().delegate = self
-        GIDSignIn.sharedInstance().uiDelegate = self
         GIDSignIn.sharedInstance().signIn()
     }
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {

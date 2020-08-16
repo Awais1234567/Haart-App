@@ -68,11 +68,20 @@ Version 0.2.0 introduces Swift 4.2 support
 
 Version 0.1.1 introduces Swift 4.0 support
 
+### Cocoapods
+
 NotificationView is available through [CocoaPods](https://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
 pod 'NotificationView'
+```
+
+### Swift Package Manager
+
+To integrate `NotificationView` via [SPM](https://swift.org/package-manager/) into your Xcode 11 project specify it in Project > Swift Packages:
+```
+https://github.com/pikachu987/NotificationView
 ```
 
 ## Usage
@@ -116,9 +125,6 @@ NotificationView
 
 //Theme for NotificationView. There are dark mode and default mode and custom mode.
 notificationView.theme
-
-//The time at the top right of NotificationView.
-notificationView.date
 
 //The title of the NotificationView.
 notificationView.title

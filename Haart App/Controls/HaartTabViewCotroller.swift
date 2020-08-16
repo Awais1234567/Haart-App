@@ -15,7 +15,7 @@ class HaartTabViewCotroller: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        UIApplication.shared.statusBarView?.backgroundColor = .red
+
         self.tabBar.tintColor = UIColor.red
         UITabBar.appearance().layer.borderWidth = 0.0
         UITabBar.appearance().clipsToBounds = true

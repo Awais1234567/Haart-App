@@ -16,11 +16,19 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
+#if !TARGET_OS_TV
+
 #import "FBSDKShareCameraEffectContent.h"
 
 #import "FBSDKCameraEffectArguments+Internal.h"
 #import "FBSDKCameraEffectTextures+Internal.h"
+#ifdef FBSDKCOCOAPODS
+#import <FBSDKCoreKit/FBSDKCoreKit+Internal.h>
+#else
 #import "FBSDKCoreKit+Internal.h"
+#endif
 #import "FBSDKHashtag.h"
 #import "FBSDKShareUtility.h"
 
@@ -67,7 +75,7 @@ static NSString *const kFBSDKShareCameraEffectContentUUIDKey = @"uuid";
                                   bridgeOptions:(FBSDKShareBridgeOptions)bridgeOptions
 {
   NSMutableDictionary<NSString *, id> *updatedParameters = [NSMutableDictionary dictionaryWithDictionary:existingParameters];
-  [FBSDKBasicUtility dictionary:updatedParameters
+  [FBSDKTypeUtility dictionary:updatedParameters
                       setObject:_effectID
                          forKey:@"effect_id"];
 
@@ -77,7 +85,7 @@ static NSString *const kFBSDKShareCameraEffectContentUUIDKey = @"uuid";
                                                            error:NULL
                                             invalidObjectHandler:NULL];
   }
-  [FBSDKBasicUtility dictionary:updatedParameters
+  [FBSDKTypeUtility dictionary:updatedParameters
                       setObject:effectArgumentsJSON
                          forKey:@"effect_arguments"];
 
@@ -87,16 +95,20 @@ static NSString *const kFBSDKShareCameraEffectContentUUIDKey = @"uuid";
     // the existing API protocol only allows one value to be put into the pasteboard.
     NSDictionary<NSString *, UIImage *> *texturesDict = [_effectTextures allTextures];
     NSMutableDictionary<NSString *, NSData *> *texturesDataDict = [NSMutableDictionary dictionaryWithCapacity:texturesDict.count];
-    [texturesDict enumerateKeysAndObjectsUsingBlock:^(NSString *key, UIImage *img, BOOL *stop) {
+    [FBSDKTypeUtility dictionary:texturesDict enumerateKeysAndObjectsUsingBlock:^(NSString *key, UIImage *img, BOOL *stop) {
       // Convert UIImages to NSData, because UIImage is not archivable.
       NSData *imageData = UIImagePNGRepresentation(img);
       if (imageData) {
         texturesDataDict[key] = imageData;
       }
     }];
-    effectTexturesData = [NSKeyedArchiver archivedDataWithRootObject:texturesDataDict];
+    #if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_11_0
+      effectTexturesData = [NSKeyedArchiver archivedDataWithRootObject:texturesDataDict requiringSecureCoding:YES error:NULL];
+    #else
+      effectTexturesData = [NSKeyedArchiver archivedDataWithRootObject:texturesDataDict];
+    #endif
   }
-  [FBSDKBasicUtility dictionary:updatedParameters
+  [FBSDKTypeUtility dictionary:updatedParameters
                       setObject:effectTexturesData
                          forKey:@"effect_textures"];
 
@@ -237,3 +249,5 @@ static NSString *const kFBSDKShareCameraEffectContentUUIDKey = @"uuid";
 }
 
 @end
+
+#endif

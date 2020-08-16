@@ -58,14 +58,14 @@ static NSMapTable *g_mdnsAdvertisementServices;
                                FBSDK_DEVICE_INFO_MODEL: [UIDevice currentDevice].model,
                                };
   NSError *err;
-  NSData *jsonDeviceInfo = [NSJSONSerialization dataWithJSONObject:deviceInfo
+  NSData *jsonDeviceInfo = [FBSDKTypeUtility dataWithJSONObject:deviceInfo
                                                            options:0
                                                              error:&err];
 
   return [[NSString alloc] initWithData:jsonDeviceInfo encoding:NSUTF8StringEncoding];
 }
 
-+ (BOOL)startAdvertisementService:(NSString *)loginCode withDelegate:(id<NSNetServiceDelegate>)delegate;
++ (BOOL)startAdvertisementService:(NSString *)loginCode withDelegate:(id<NSNetServiceDelegate>)delegate
 {
    static NSString *sdkVersion = nil;
   static dispatch_once_t onceToken;

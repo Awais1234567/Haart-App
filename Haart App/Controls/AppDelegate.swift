@@ -114,7 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
         if let _ = DynamicLinks.dynamicLinks().dynamicLink(fromCustomSchemeURL: url) {
             return true
         }
-        return GIDSignIn.sharedInstance().handle(url, sourceApplication: sourceApplication, annotation: annotation)
+        return GIDSignIn.sharedInstance().handle(url)
     }
    
     func application(_ application: UIApplication, continue userActivity: NSUserActivity,

@@ -2,7 +2,7 @@
 //  GMSPlace.h
 //  Google Places SDK for iOS
 //
-//  Copyright 2016 Google Inc.
+//  Copyright 2016 Google LLC
 //
 //  Usage of this SDK is subject to the Google Maps/Google Earth APIs Terms of
 //  Service: https://developers.google.com/maps/terms
@@ -10,11 +10,7 @@
 
 #import <CoreLocation/CoreLocation.h>
 
-#if __has_feature(modules)
-@import GoogleMapsBase;
-#else
-#import <GoogleMapsBase/GoogleMapsBase.h>
-#endif
+#import "GMSPlacesDeprecationUtils.h"
 
 @class GMSAddressComponent;
 @class GMSCoordinateBounds;
@@ -32,6 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Describes the current open status of a place.
+ *
+ * (Deprecated: This enum is currently not supported and should not be used. Use GMSPlaceOpenStatus
+ * instead.)
  */
 typedef NS_ENUM(NSInteger, GMSPlacesOpenNowStatus) {
   /** The place is open now. */
@@ -64,6 +63,46 @@ typedef NS_ENUM(NSInteger, GMSPlacesPriceLevel) {
 /**@}*/
 
 /**
+ * \defgroup PlaceOpenStatus GMSPlaceOpenStatus
+ * @{
+ */
+
+/**
+ * Describes the open status of a place.
+ */
+typedef NS_ENUM(NSInteger, GMSPlaceOpenStatus) {
+  /** The place's open status is unknown. */
+  GMSPlaceOpenStatusUnknown,
+  /** The place is open. */
+  GMSPlaceOpenStatusOpen,
+  /** The place is not open. */
+  GMSPlaceOpenStatusClosed,
+};
+
+/**@}*/
+
+/**
+ * \defgroup PlacesBusinessStatus GMSPlacesBusinessStatus
+ * @{
+ */
+
+/**
+ * Describes the business status of a place.
+ */
+typedef NS_ENUM(NSInteger, GMSPlacesBusinessStatus) {
+  /** The business status is not known. */
+  GMSPlacesBusinessStatusUnknown,
+  /** The business is operational. */
+  GMSPlacesBusinessStatusOperational,
+  /** The business is closed temporarily. */
+  GMSPlacesBusinessStatusClosedTemporarily,
+  /** The business is closed permanently. */
+  GMSPlacesBusinessStatusClosedPermanently,
+};
+
+/**@}*/
+
+/**
  * Represents a particular physical place. A GMSPlace encapsulates information about a physical
  * location, including its name, location, and any other information we might have about it. This
  * class is immutable.
@@ -86,11 +125,10 @@ typedef NS_ENUM(NSInteger, GMSPlacesPriceLevel) {
 /**
  * Represents the open now status of the place at the time that the place was created.
  *
- * (Deprecated: This property is currently not supported and should not be used)
  */
 @property(nonatomic, readonly, assign)
-    GMSPlacesOpenNowStatus openNowStatus __GMS_AVAILABLE_BUT_DEPRECATED_MSG(
-        "openNowStatus property is currently not supported and should not be used)");
+    GMSPlacesOpenNowStatus openNowStatus __GMS_PLACES_AVAILABLE_BUT_DEPRECATED_MSG(
+        "openNowStatus property is currently not supported and should not be used");
 
 /**
  * Phone number of this place, in international format, i.e. including the country code prefixed
@@ -178,6 +216,39 @@ typedef NS_ENUM(NSInteger, GMSPlacesPriceLevel) {
  * An array of |GMSPlacePhotoMetadata| objects representing the photos of the place.
  */
 @property(nonatomic, copy, readonly, nullable) NSArray<GMSPlacePhotoMetadata *> *photos;
+
+/**
+ * The timezone UTC offset of the place in minutes.
+ */
+@property(nonatomic, readonly, nullable) NSNumber *UTCOffsetMinutes;
+
+/**
+ * The |GMSPlaceBusinessStatus| of the place.
+ */
+@property(nonatomic, readonly) GMSPlacesBusinessStatus businessStatus;
+
+/**
+ * Default init is not available.
+ */
+- (instancetype)init NS_UNAVAILABLE;
+
+/**
+ * Calculates if a place is open based on |openingHours|, |UTCOffsetMinutes|, and |date|.
+ *
+ * @param date A reference point in time used to determine if the place is open.
+ * @return GMSPlaceOpenStatusOpen if the place is open, GMSPlaceOpenStatusClosed if the place is
+ *     closed, and GMSPlaceOpenStatusUnknown if the open status is unknown.
+ */
+- (GMSPlaceOpenStatus)isOpenAtDate:(NSDate *)date;
+
+/**
+ * Calculates if a place is open based on |openingHours|, |UTCOffsetMinutes|, and current date
+ * and time obtained from |[NSDate date]|.
+ *
+ * @return GMSPlaceOpenStatusOpen if the place is open, GMSPlaceOpenStatusClosed if the place is
+ *     closed, and GMSPlaceOpenStatusUnknown if the open status is unknown.
+ */
+- (GMSPlaceOpenStatus)isOpen;
 
 @end
 

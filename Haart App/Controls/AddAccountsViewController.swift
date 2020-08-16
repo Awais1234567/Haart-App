@@ -22,7 +22,7 @@ class AddAccountsViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIApplication.shared.statusBarView?.backgroundColor = .clear
+   
     }
     
     override func viewDidLayoutSubviews() {

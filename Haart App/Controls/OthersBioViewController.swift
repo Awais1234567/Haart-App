@@ -13,7 +13,7 @@ import SDWebImage
 import CoreLocation
 import FirebaseFirestore
 class OthersBioViewController: InterestPopUpValues {
-
+    
     var currentUserDocument:QueryDocumentSnapshot?
     @IBOutlet weak var currentRelationshipView: UIView!
     @IBOutlet weak var distance1Lbl: UILabel!
@@ -35,7 +35,15 @@ class OthersBioViewController: InterestPopUpValues {
     @IBOutlet weak var bodyTypeView: UIView!
     @IBOutlet weak var eyesColorView: UIView!
     @IBOutlet weak var interestedInView: UIView!
-
+    
+    @IBOutlet weak var hobbiesView: UIView!
+    
+    @IBOutlet weak var moviesView: UIView!
+    
+    @IBOutlet weak var booksView: UIView!
+    @IBOutlet weak var tvShowsView: UIView!
+    
+    @IBOutlet weak var collegeView: UIView!
     @IBOutlet weak var blockBtn: UIButton!
     @IBOutlet weak var professionView: UIView!
     @IBOutlet weak var incomeSelector: RangeSeekSlider!
@@ -49,6 +57,12 @@ class OthersBioViewController: InterestPopUpValues {
     var workoutSelectedList:SelectedIntrestsCollectionViewController!
     var smokingSelectedList:SelectedIntrestsCollectionViewController!
     var alchohalSelectedList:SelectedIntrestsCollectionViewController!
+    var hobbiesSelectedList:SelectedIntrestsCollectionViewController!
+    var moviesSelectedList:SelectedIntrestsCollectionViewController!
+    var tvShowsSelectedList:SelectedIntrestsCollectionViewController!
+    var booksSelectedList:SelectedIntrestsCollectionViewController!
+    var collegeSelectedList:SelectedIntrestsCollectionViewController!
+    var highSchoolSelectedList:SelectedIntrestsCollectionViewController!
     var dietrySelectedList:SelectedIntrestsCollectionViewController!
     var kidsSelectedList:SelectedIntrestsCollectionViewController!
     var educationSelectedList:SelectedIntrestsCollectionViewController!
@@ -62,6 +76,8 @@ class OthersBioViewController: InterestPopUpValues {
     var eyeColorSelectedList:SelectedIntrestsCollectionViewController!
     var relationshipSelectedList:SelectedIntrestsCollectionViewController!
     var currrentRelationshipSelectedList:SelectedIntrestsCollectionViewController!
+    
+    
     
     var userId = ""
     
@@ -78,7 +94,7 @@ class OthersBioViewController: InterestPopUpValues {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-         self.setNavBarButtons(letfImages: [UIImage.init(named: "Filter")!, UIImage.init(named: "Matches")!], rightImage: [UIImage.init(), UIImage.init(named: "Matches")!])
+        self.setNavBarButtons(letfImages: [UIImage.init(named: "Filter")!, UIImage.init(named: "Matches")!], rightImage: [UIImage.init(), UIImage.init(named: "Matches")!])
         setSelectedIntrestsViews()
         ageLbl.layer.borderColor = UIColor.red.cgColor
         heightLbl.layer.borderColor = UIColor.red.cgColor
@@ -125,29 +141,37 @@ class OthersBioViewController: InterestPopUpValues {
                 self.distanceLbl.text = text
                 self.distance1Lbl.text = text
                 
-               
+                
                 self.nameLbl.text = self.userDocument?.data()["fullName"] as? String ?? ""
                 self.bioLbl.text = self.userDocument?.data()["bio"] as? String ?? ""
                 let height = self.userDocument?.data()["height"] as? CGFloat ?? 0
-               self.addressLbl.text = self.userDocument?.data()["address"] as? String ?? ""
+                self.addressLbl.text = self.userDocument?.data()["address"] as? String ?? ""
                 self.heightLbl.text = height > 0 ? self.numberFormatter.string(from: height as NSNumber)  : ""
-
+                
                 self.workoutSelectedList.userDocument = self.userDocument //calling didset
                 self.smokingSelectedList.userDocument = self.userDocument
                 self.alchohalSelectedList.userDocument = self.userDocument
+                self.hobbiesSelectedList.userDocument = self.userDocument
+                self.moviesSelectedList.userDocument = self.userDocument
+                self.booksSelectedList.userDocument = self.userDocument
+                self.tvShowsSelectedList.userDocument = self.userDocument
+                self.collegeSelectedList.userDocument = self.userDocument
                 self.currrentRelationshipSelectedList.userDocument = self.userDocument
                 self.dietrySelectedList.userDocument = self.userDocument
                 self.kidsSelectedList.userDocument = self.userDocument
                 self.educationSelectedList.userDocument = self.userDocument
                 self.starSignSelectedList.userDocument = self.userDocument
                 self.genderSelectedList.userDocument = self.userDocument
-             //   self.hairColorSelectedList.userDocument = self.userDocument
+                //   self.hairColorSelectedList.userDocument = self.userDocument
                 self.bodyTypeSelectedList.userDocument = self.userDocument
                 self.ethnicitySelectedList.userDocument = self.userDocument
                 self.religionSelectedList.userDocument = self.userDocument
                 self.professionSelectedList.userDocument = self.userDocument
                 self.eyeColorSelectedList.userDocument = self.userDocument
                 self.relationshipSelectedList.userDocument = self.userDocument
+                
+                
+                
                 if let dob = self.userDocument?.data()["dob"] as? String {
                     if(dob.count > 0) {
                         self.ageLbl.text = (dob.getAgeFromDOB().0.string)
@@ -163,7 +187,7 @@ class OthersBioViewController: InterestPopUpValues {
                 let minIncomeStr = minIncome == 1000 ? "$1M" : "$\(minIncome)K"
                 let maxIncomeStr = maxIncome == 1000 ? "$1M" : "$\(maxIncome)K"
                 self.incomeLbl.text = "\(minIncomeStr) - \(maxIncomeStr)"
-               
+                
                 self.ageLbl.isHidden = self.ageLbl.text?.count == 0
                 self.heightLbl.isHidden = self.heightLbl.text?.count == 0
                 self.distanceLbl.isHidden = self.distanceLbl.text?.count == 0
@@ -193,6 +217,20 @@ class OthersBioViewController: InterestPopUpValues {
         alchohalSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: alchohalSelectedList, inView: alcohalView, selectedItemsKey: kAlchohal)
         
+        hobbiesSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+        self.setSelectedIntrestsView(subVc: hobbiesSelectedList, inView: hobbiesView, selectedItemsKey: kHobbies)
+        moviesSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+        self.setSelectedIntrestsView(subVc: moviesSelectedList, inView: moviesView, selectedItemsKey: kMovies)
+        
+        booksSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+        self.setSelectedIntrestsView(subVc: booksSelectedList, inView: booksView, selectedItemsKey: kBooks)
+        
+        tvShowsSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+        self.setSelectedIntrestsView(subVc: tvShowsSelectedList, inView: tvShowsView, selectedItemsKey: kTvShows)
+        
+        collegeSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+        self.setSelectedIntrestsView(subVc: collegeSelectedList, inView: collegeView, selectedItemsKey: kCollege)
+        
         dietrySelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: dietrySelectedList, inView: foodView, selectedItemsKey: kDietryPreferences)
         
@@ -202,24 +240,25 @@ class OthersBioViewController: InterestPopUpValues {
         educationSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: educationSelectedList, inView: educationLevelView, selectedItemsKey: kEducationLevelKey)
         
+        
         starSignSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: starSignSelectedList, inView: starSignView, selectedItemsKey: kStarSignKey)
         
         genderSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: genderSelectedList, inView: interestedInView, selectedItemsKey: kGenderKey)
         
-      //  hairColorSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
-      //  self.setSelectedIntrestsView(subVc: hairColorSelectedList, inView: , selectedItemsKey: kHairColorsKey)
+        //  hairColorSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+        //  self.setSelectedIntrestsView(subVc: hairColorSelectedList, inView: , selectedItemsKey: kHairColorsKey)
         //
         bodyTypeSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: bodyTypeSelectedList, inView: bodyTypeView, selectedItemsKey: kBodyTypeKey)
-
+        
         ethnicitySelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: ethnicitySelectedList, inView: raceView, selectedItemsKey: kEthnicityKey)
         
         religionSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: religionSelectedList, inView: religionView, selectedItemsKey: kReligionKey)
-      
+        
         
         eyeColorSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: eyeColorSelectedList, inView: eyesColorView, selectedItemsKey: kEyeColorsKey)
@@ -228,11 +267,11 @@ class OthersBioViewController: InterestPopUpValues {
     
     func setSelectedIntrestsView(subVc:SelectedIntrestsCollectionViewController,inView:UIView, selectedItemsKey:String) {
         subVc.collectionView.semanticContentAttribute = UISemanticContentAttribute.forceRightToLeft
-
+        
         subVc.selectedItemsKey = selectedItemsKey
-//        if let arr = (UserDefaults.standard.object(forKey: selectedItemsKey) as? [String]) {
-//            subVc.itemsArr = arr
-//        }
+        //        if let arr = (UserDefaults.standard.object(forKey: selectedItemsKey) as? [String]) {
+        //            subVc.itemsArr = arr
+        //        }
         self.addChild(subVc)
         inView.addSubview(subVc.view)
         inView.addVisualConstraints(["H:|[subVc]|", "V:|-2-[subVc]-2-|",], subviews: ["subVc":subVc.view])
@@ -245,14 +284,14 @@ class OthersBioViewController: InterestPopUpValues {
         switch sender.tag {
         case 1:
             let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "FilterViewController")
-             self.present(vc, animated: true, completion: nil)
+            self.present(vc, animated: true, completion: nil)
             break
         case 2:
             let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "LikedViewController")
             self.navigationController?.pushViewController(vc, animated: true)
             break
         default: break
-       
+            
         }
         
     }
@@ -270,14 +309,14 @@ class OthersBioViewController: InterestPopUpValues {
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
-        
+    
     
     @IBAction func feedBtnPressed(_ sender: Any) {
         let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "FeedControl")
         UIApplication.visibleViewController.navigationController?.pushViewController(vc, animated: true)
     }
     @IBAction func closeBtnPressed(_ sender: Any) {
-         close()
+        close()
     }
     
     func close() {
@@ -295,13 +334,13 @@ class OthersBioViewController: InterestPopUpValues {
         //  ref.getDocuments { (snapshot, error) in
         //    let document = snapshot?.documents[0]
         var blockedArr = currentUserDocument?.data()["blocked"] as? [String] ?? Array<String>()
-//        var followedArr = currentUserDocument?.data()["followed"] as? [String] ?? Array<String>()
-//        for i in 0..<(followedArr.count) {
-//            if(followedArr[i] == userId) {
-//                followedArr.remove(at: i)
-//                break
-//            }
-//        }
+        //        var followedArr = currentUserDocument?.data()["followed"] as? [String] ?? Array<String>()
+        //        for i in 0..<(followedArr.count) {
+        //            if(followedArr[i] == userId) {
+        //                followedArr.remove(at: i)
+        //                break
+        //            }
+        //        }
         if(!blockedArr.contains(userId)) {
             blockedArr.append(userId)
         }

@@ -151,7 +151,7 @@ class HomeCollectionViewCell: UICollectionViewCell , UICollectionViewDelegate, U
     }
     @IBAction func feedBrnPressed(_ sender: Any) {
        
-        let vc = FeedControl()
+             let vc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "FeedControl") as! FeedControl
         vc.generalFeedBit = true
         UIApplication.visibleViewController.navigationController?.pushViewController(vc, animated: true)
     }

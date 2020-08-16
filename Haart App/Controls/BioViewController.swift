@@ -19,12 +19,14 @@ import YPImagePicker
 import SDWebImage
 import GoogleMaps
 import FirebaseStorage
+import PopupDialog
 
-class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
+class BioViewController: InterestPopUpValues, UIScrollViewDelegate{
     var randomStr:String?
     var shouldFetchImagesArr = true
     var postalCode:String?
     var gmsAddress1: GMSAddress?
+    var popup : PopupDialog!
     @IBOutlet weak var bioPic2Btn: UIButton!
     @IBOutlet weak var bioPic1Btn: UIButton!
     @IBOutlet weak var bioPic5Btn: UIButton!
@@ -42,7 +44,7 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
     @IBOutlet weak var bioScrollView: UIScrollView!
     @IBOutlet weak var heightSelector: RangeSeekSlider!
    
-    @IBOutlet weak var bioTxtView: HaartTextView!
+   
     @IBOutlet weak var userNameTxtField: HaartTextField!
     @IBOutlet weak var fullNameTxtField: HaartTextField!
     // @IBOutlet weak var distanceSelector: RangeSeekSlider!
@@ -70,11 +72,24 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
     @IBOutlet weak var dobBtn: UIButton!
     @IBOutlet weak var zipCodeTxtField: HaartTextField!
     @IBOutlet weak var aboutYouTxtView: HaartTextView!
+    @IBOutlet weak var hobbiesView: UIView!
     
+    @IBOutlet weak var CollegeView: UIView!
+    
+    @IBOutlet weak var moviesView: UIView!
+    
+    @IBOutlet weak var tvshowsView: UIView!
+    @IBOutlet weak var booksView: UIView!
+
     var currentRelationshipStatusList:SelectedIntrestsCollectionViewController!
     var workoutSelectedList:SelectedIntrestsCollectionViewController!
     var smokingSelectedList:SelectedIntrestsCollectionViewController!
     var alchohalSelectedList:SelectedIntrestsCollectionViewController!
+    var hobbiesSelectedList:SelectedIntrestsCollectionViewController!
+    var moviesSelectedList:SelectedIntrestsCollectionViewController!
+    var booksSelectedList:SelectedIntrestsCollectionViewController!
+    var tvShowsSelectedList:SelectedIntrestsCollectionViewController!
+    var collegeSelectedList:SelectedIntrestsCollectionViewController!
     var dietrySelectedList:SelectedIntrestsCollectionViewController!
     var kidsSelectedList:SelectedIntrestsCollectionViewController!
     var educationSelectedList:SelectedIntrestsCollectionViewController!
@@ -134,7 +149,7 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
         setSelectedIntrestsViews()
         
         aboutYouTxtView.maxCharacterLimit = 120
-        bioTxtView.maxCharacterLimit = 500
+ 
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -153,7 +168,6 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
             currentSelectedList.view.setNeedsDisplay()
         }
         bioScrollView.contentSize = CGSize.init(width: UIScreen.main.bounds.size.width, height: 860)
-        UIApplication.shared.statusBarView?.backgroundColor = .clear
         
     }
     override func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -163,7 +177,7 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIApplication.shared.statusBarView?.backgroundColor = .red
+
         self.view.endEditing(true)
     }
 
@@ -198,6 +212,11 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
         self.workoutSelectedList.userDocument = self.userDocument
         self.smokingSelectedList.userDocument = self.userDocument
         self.alchohalSelectedList.userDocument = self.userDocument
+        self.hobbiesSelectedList.userDocument = self.userDocument
+        self.moviesSelectedList.userDocument = self.userDocument
+        self.booksSelectedList.userDocument = self.userDocument
+        self.tvShowsSelectedList.userDocument = self.userDocument
+        self.collegeSelectedList.userDocument = self.userDocument
         self.dietrySelectedList.userDocument = self.userDocument
         self.kidsSelectedList.userDocument = self.userDocument
         self.educationSelectedList.userDocument = self.userDocument
@@ -221,8 +240,8 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
             aboutYouTxtView.text = self.userDocument?.data()["aboutYou"] as? String
             aboutYouTxtView.placeholderText = aboutYouTxtView.text.count > 0 ? "" : "Describe Something..."
             aboutYouTxtView.textViewDidChange(aboutYouTxtView)
-            bioTxtView.text = self.userDocument?.data()["bio"] as? String
-            bioTxtView.textViewDidChange(bioTxtView)
+
+
             heightSelector.selectedMaxValue = self.userDocument?.data()["height"] as? CGFloat ?? CGFloat.init(5.0)
             heightSelector.layoutSubviews()
             incomeSelector.selectedMinValue = self.userDocument?.data()["incomeMin"] as? CGFloat ?? CGFloat.init(3.0)
@@ -245,7 +264,7 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
     
     func saveUser() {
         
-        var userData = ["dob":dobTxtField.text ?? "", "zipCode":zipCodeTxtField.text ?? "", "aboutYou":aboutYouTxtView.text ?? "", "bio":bioTxtView.text ?? "", "height":heightSelector.selectedMaxValue, "incomeMin":incomeSelector.selectedMinValue, "incomeMax":incomeSelector.selectedMaxValue] as [String : Any]
+        var userData = ["dob":dobTxtField.text ?? "", "zipCode":zipCodeTxtField.text ?? "", "aboutYou":aboutYouTxtView.text ?? "", "height":heightSelector.selectedMaxValue, "incomeMin":incomeSelector.selectedMinValue, "incomeMax":incomeSelector.selectedMaxValue] as [String : Any]
       
         if(gmsAddress1 != nil) {
             userData["address"] = "\(gmsAddress1?.locality ?? "")"
@@ -388,6 +407,11 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
         workoutSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(workoutBtnPressed(_:))))
         smokingSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(smokingBtnPressed(_:))))
         alchohalSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(alchohalBtnPressed(_:))))
+        hobbiesSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(hobbiesBtnPressed(_:))))
+        moviesSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(moviesBtnPressed(_:))))
+        booksSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(booksBtnPressed(_:))))
+        tvShowsSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(tvshowsBtnPressed(_:))))
+        collegeSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(collegeBtnPressed(_:))))
         dietrySelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action:  #selector(dietBtnPressed(_:))))
         kidsSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(kidsBtnPressed(_:)) ))
         professionSelectedList.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(proffesionBtnPressed(_:)) ))
@@ -424,7 +448,22 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
 
         alchohalSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: alchohalSelectedList, inView: alcohalView, selectedItemsKey: kAlchohal)
-
+        
+        hobbiesSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+        self.setSelectedIntrestsView(subVc: hobbiesSelectedList, inView: hobbiesView, selectedItemsKey: kHobbies)
+        moviesSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+          self.setSelectedIntrestsView(subVc: moviesSelectedList, inView: moviesView, selectedItemsKey: kMovies)
+        
+        booksSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+        self.setSelectedIntrestsView(subVc: booksSelectedList, inView: booksView, selectedItemsKey: kBooks)
+        
+        tvShowsSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+               self.setSelectedIntrestsView(subVc: tvShowsSelectedList, inView: tvshowsView, selectedItemsKey: kTvShows)
+        
+        collegeSelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
+               self.setSelectedIntrestsView(subVc: collegeSelectedList, inView: CollegeView, selectedItemsKey: kCollege)
+        
+        
         dietrySelectedList = SelectedIntrestsCollectionViewController.init(collectionViewLayout: layout())
         self.setSelectedIntrestsView(subVc: dietrySelectedList, inView: dietView, selectedItemsKey: kDietryPreferences)
 
@@ -514,7 +553,7 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
     
     @IBAction func bioBtnPressed(_ sender: Any) {
         if(fullNameTxtField.text?.count ?? 0 > 0) {
-            bioScrollView.contentSize = CGSize.init(width: UIScreen.main.bounds.size.width, height: 2860 + 43)
+            bioScrollView.contentSize = CGSize.init(width: UIScreen.main.bounds.size.width, height: 3307 + 43)
             UIView.animate(withDuration: 0.3) {
                 self.bioScrollView.contentOffset = CGPoint.init(x: self.bioScrollView.contentOffset.x, y: self.bioScrollView.contentOffset.y + 300)
             }
@@ -587,6 +626,39 @@ class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
     @IBAction func alchohalBtnPressed(_ sender: UIButton) {
         currentSelectedList = alchohalSelectedList
         showPopUpItems(sender: sender, arr1:bioAlchohal, arrKey: kAlchohal)
+    }
+    
+
+    @IBAction func hobbiesBtnPressed(_ sender: UIButton) {
+        currentSelectedList = hobbiesSelectedList
+        showPopUpItems(sender: sender, arr1:bioHobbies, arrKey: kHobbies)
+        
+    }
+    
+    
+
+    let interestVal = InterestPopUpValues()
+    @IBAction func moviesBtnPressed(_ sender: UIButton) {
+        currentSelectedList = moviesSelectedList
+        showPopUpItems(sender: sender, arr1:bioMovies, arrKey: kMovies)
+    }
+    
+    
+    @IBAction func booksBtnPressed(_ sender: UIButton) {
+        currentSelectedList = booksSelectedList
+        showPopUpItems(sender: sender, arr1:bioBooks, arrKey: kBooks)
+        
+    }
+    
+    @IBAction func tvshowsBtnPressed(_ sender: UIButton) {
+        currentSelectedList = tvShowsSelectedList
+              showPopUpItems(sender: sender, arr1:bioTvShows, arrKey: kTvShows)
+    }
+    
+    
+    @IBAction func collegeBtnPressed(_ sender: UIButton) {
+        currentSelectedList = collegeSelectedList
+            showPopUpItems(sender: sender, arr1:bioCollege, arrKey: kCollege)
     }
     
     @IBAction func smokingBtnPressed(_ sender: UIButton) {

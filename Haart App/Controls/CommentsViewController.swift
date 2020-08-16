@@ -31,17 +31,27 @@ import MessageKit
 //    }
 //}
 
-class CommentssViewController: AbstractControl {
+class CommentssViewController: AbstractControl, UITextViewDelegate {
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
         tableView.estimatedRowHeight = 65
         tableView.dataSource = self
-        tableView.separatorStyle = .none
+        tableView.separatorStyle = .singleLine
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
+    
+    lazy var captionView : UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.addBorder(toSide: .Bottom, withColor: UIColor.systemGray.cgColor, andThickness: 0.5)
+        return view
+    }()
+    
+
     var commentsReference: CollectionReference!
     var post = [String:Any]()
       var postCommentsDoc:[QueryDocumentSnapshot]?
@@ -93,14 +103,22 @@ class CommentssViewController: AbstractControl {
 //        }
     }
     func setupViews(){
+        view.addSubview(captionView)
         view.addSubview(tableView)
-        tableView.superview?.bringSubviewToFront(tableView)
+        
         
         NSLayoutConstraint.activate([
+            captionView.topAnchor.constraint(equalTo: view.topAnchor),
+            captionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            captionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            captionView.heightAnchor.constraint(equalToConstant: 60 * appConstant.heightRatio),
+            
+            tableView.topAnchor.constraint(equalTo: captionView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+          
+            
         ])
     }
     
@@ -123,12 +141,14 @@ extension CommentssViewController: MessageInputBarDelegate {
     
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
         // Use to send the message
+        messageInputBar.inputTextView.delegate = self
         messageInputBar.inputTextView.text = String()
         //messageInputBar.invalidatePlugins()
         
-            commentsReference.addDocument(data: ["userId":user.uid, "comment":text, "userPic":"", "timeStamp":Date()]) { (error) in
+        commentsReference.addDocument(data: ["userId":user.uid, "comment":text, "userPic":"", "timeStamp":Date()]) { (error) in
                 print(error?.localizedDescription ?? "no error")
             }
+           self.tableView.reloadData()
      }
     
 //    func messageInputBar(_ inputBar: MessageInputBar, textViewTextDidChangeTo text: String) {
@@ -139,6 +159,9 @@ extension CommentssViewController: MessageInputBarDelegate {
 //        // Use to change any other subview insets
 //    }
     
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        print("stard")
+    }
 }
 extension CommentssViewController: UITableViewDelegate, UITableViewDataSource{
     func numberOfSections(in tableView: UITableView) -> Int {
