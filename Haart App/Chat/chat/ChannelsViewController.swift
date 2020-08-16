@@ -39,10 +39,6 @@ class ChannelsViewController: UIViewController, UITableViewDelegate, UITableView
         tableView.dataSource = self
         tableView.separatorStyle = .none
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        //tableView.backgroundColor = UIColor.paleGrey()
-        //tableView.sectionIndexColor = UIColor.cerulean()
-        //tableView.sectionIndexBackgroundColor = UIColor.ublWhite1()
-        //tableView.refreshControl = self.refereshControl
         return tableView
     }()
     private let toolbarLabel: UILabel = {
@@ -51,6 +47,7 @@ class ChannelsViewController: UIViewController, UITableViewDelegate, UITableView
         label.font = UIFont.systemFont(ofSize: 15)
         return label
     }()
+    var currentUserProfileImage: UIImage!
     private let channelCellIdentifier = "channelCell"
     private var currentChannelAlertController: UIAlertController?
     var recieverId = String()
@@ -251,8 +248,11 @@ extension ChannelsViewController {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as! ChannelssCell
         let channel = channels[indexPath.row]
         let vc = ChatViewController(user: currentUser, channel: channel)
+        vc.opponentImage = cell.imgView.image
+        vc.currentUserImageView = self.currentUserProfileImage
         self.navigationController?.pushViewController(vc, animated: true)
     }
     

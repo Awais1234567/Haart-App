@@ -74,6 +74,8 @@ final class ChatViewController: MessagesViewController {
     private var isUpdatedPayload = true
     var messageReceiverId = ""
     private var answerTimer: Timer?
+    var opponentImage: UIImage!
+    var currentUserImageView: UIImage!
     lazy private var navViewController: UINavigationController = {
         let navViewController = UINavigationController()
         return navViewController
@@ -627,6 +629,25 @@ extension ChatViewController: MessagesDisplayDelegate {
         return header
     }
     
+    func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+        //avatarView.isHidden = isNextMessageSameSender(at: indexPath)
+        //avatarView.layer.borderWidth = 2
+        //avatarView.layer.borderColor = UIColor.primaryColor.cgColor
+        if(self.isFromCurrentSender(message: message)) {
+            if let image = currentUserImageView{
+                let avatar = Avatar(image: image, initials: "?")
+                avatarView.set(avatar: avatar)
+            }
+        }
+        else {
+            if let image = opponentImage{
+                let avatar = Avatar(image: image, initials: "?")
+                avatarView.set(avatar: avatar)
+            }
+        }
+        
+    }
+    
     
 }
 
@@ -635,7 +656,7 @@ extension ChatViewController: MessagesDisplayDelegate {
 extension ChatViewController: MessagesLayoutDelegate {
     
     func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        return .zero
+        return CGSize(width: 30, height: 30)
     }
     
     func footerViewSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
@@ -645,6 +666,7 @@ extension ChatViewController: MessagesLayoutDelegate {
     func heightForLocation(message: MessageType, at indexPath: IndexPath, with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 0
     }
+    
     
 }
 
@@ -676,7 +698,7 @@ extension ChatViewController: MessagesDataSource {
         let time = dateFormatter.string(from: message.sentDate)
         
         if(currentSender().id == message.sender.id) {
-            string = message.read ? "\(time) Seen" : "\(time) Delivered"
+            string = message.read ? "\(time) ✓✓" : "\(time) ✓"
         }
         else {
             string = "\(time)"
@@ -685,7 +707,7 @@ extension ChatViewController: MessagesDataSource {
             string: string,
             attributes: [
                 .font: UIFont.preferredFont(forTextStyle: .caption1),
-                .foregroundColor: UIColor(white: 0.3, alpha: 1)
+                .foregroundColor: UIColor(white: 0.3, alpha: 1),
             ]
         )
     }
@@ -850,9 +872,9 @@ extension ChatViewController{
                                                 // Reachability
                                                 if QuickbloxReachability.instance.networkConnectionStatus() != NetworkConnectionStatus.notConnection {
                                                     self!.loadUsers()
-                                                    SVProgressHUD.dismiss()
-                                                    let controller = UsersViewController()
-                                                    UIApplication.shared.keyWindow?.rootViewController = controller
+//                                                    SVProgressHUD.dismiss()
+//                                                    let controller = UsersViewController()
+//                                                    UIApplication.shared.keyWindow?.rootViewController = controller
                                                     
                                                     
 //                                                    let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -918,7 +940,7 @@ extension ChatViewController{
 
                         CallKitManager.instance.startCall(withUserIDs: opponentsIDs, session: session, uuid: uuid)
                         SVProgressHUD.dismiss()
-                        let callViewController = CallViewController()
+                        let callViewController = CallingViewController()
                         callViewController.session = self.session
                         callViewController.usersDataSource = self.dataSource
                         callViewController.callUUID = uuid

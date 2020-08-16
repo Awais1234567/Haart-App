@@ -5,8 +5,8 @@ target 'Haart App' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-#pod 'QuickBlox', '~> 2.17.4'
-#pod 'Quickblox-WebRTC', '~> 2.7.4'
+pod 'QuickBlox', '~> 2.17.4'
+pod 'Quickblox-WebRTC', '~> 2.7.4'
 
 pod "ScaledVisibleCellsCollectionView"
 

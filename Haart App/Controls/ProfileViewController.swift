@@ -326,6 +326,7 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
                 let vc = ChannelsViewController(currentUser: user)
                 let controller = UINavigationController.init(rootViewController: vc)
                 controller.modalPresentationStyle = .overFullScreen
+                vc.currentUserProfileImage = self.profileImgView.image
                 UIApplication.visibleViewController.present(controller, animated: true, completion: nil)
             }           
         default:
@@ -343,6 +344,7 @@ class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollecti
             let vc = ChannelsViewController(currentUser: user)
             let controller = UINavigationController.init(rootViewController: vc)
             controller.modalPresentationStyle = .overFullScreen
+            vc.currentUserProfileImage = self.profileImgView.image
             UIApplication.rootViewController.present(controller, animated: true, completion: nil)
         }
     }

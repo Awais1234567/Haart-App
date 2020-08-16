@@ -133,9 +133,6 @@ class ChannelssCell: UITableViewCell {
         ])
     }
     func setData(channel:Channel) {
-        print("Creater Id",channel.createrId)
-        print("id", channel.id)
-        print(channel.userIds)
         
         self.selectionStyle = .none
         timeLbl.text = channel.timeStamp.formattedRelativeString()
