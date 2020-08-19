@@ -792,7 +792,7 @@ extension ProfileViewController: QBRTCClientDelegate {
 
     private func openCall(withSession session: QBRTCSession?, uuid: UUID, sessionConferenceType: QBRTCConferenceType) {
         if hasConnectivity() {
-            let callViewController = CallViewController()
+            let callViewController = CallingViewController()
             if let qbSession = session{
                 callViewController.session = qbSession
             }

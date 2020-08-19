@@ -108,10 +108,20 @@ final class ChatViewController: MessagesViewController {
         super.init(nibName: nil, bundle: nil)
         if(channel.createrId == Auth.auth().currentUser?.uid) {
             title = channel.name
+//            for i in channel.userIds{
+//                if i != channel.createrId{
+//                    getUserActiveState(id: i)
+//                }
+//            }
             
         }
         else {
             title = channel.createrName
+//            for i in channel.userIds{
+//                if i == channel.createrId{
+//                    getUserActiveState(id: i)
+//                }
+//            }
         }
         
     }
@@ -249,6 +259,19 @@ final class ChatViewController: MessagesViewController {
         
         getUserTypingState()
         
+    }
+    
+    func getUserActiveState(id: String){
+        let controller = AbstractControl()
+        let ref = controller.db.collection("users").whereField("userId", isEqualTo: id)
+        ref.addSnapshotListener({(snapshot, error)in
+            let state = snapshot?.documents[0].data()["isActive"] as? String ?? "0"
+            if state == "0"{
+                self.subtitleLabel.text = "offline"
+            }else{
+                self.subtitleLabel.text = "online"
+            }
+        })
     }
     
     func setupViews(){
@@ -557,11 +580,22 @@ final class ChatViewController: MessagesViewController {
                 let controller = AbstractControl()
                 let ref = controller.db.collection("users").whereField("userId", isEqualTo: i)
                 ref.addSnapshotListener({(snapshot, error)in
-                    let state = snapshot?.documents[0].data()["isTyping"] as? String ?? "0"
-                    if state == "0"{
-                        self.subtitleLabel.text = ""
+                    let isTyping = snapshot?.documents[0].data()["isTyping"] as? String ?? "0"
+                    let isActive = snapshot?.documents[0].data()["isActive"] as? String ?? "0"
+                    if isTyping == "0"{
+                        if isActive == "0"{
+                            self.subtitleLabel.text = "offline"
+                        }else{
+                            self.subtitleLabel.text = "online"
+                        }
+                        
                     }else{
-                        self.subtitleLabel.text = "typing..."
+                        if isActive == "0"{
+                            self.subtitleLabel.text = "online"
+                        }else{
+                            self.subtitleLabel.text = "typing..."
+                        }
+                        
                     }
                 })
             }
