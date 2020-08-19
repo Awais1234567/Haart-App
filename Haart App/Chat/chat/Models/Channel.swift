@@ -39,8 +39,9 @@ struct Channel {
     let profilePicUrl:String
     let userName:String
     let timeStamp:Date
+    let notificationBit:Bool
     var userIds = Array<String>()
-    init(name: String,createrName:String,createrId:String,userIds: Array<String>, userName:String, profilePicUrl:String, createrProfilePicUrl:String, createUserName:String) {
+    init(name: String,createrName:String,createrId:String,userIds: Array<String>, userName:String, profilePicUrl:String, createrProfilePicUrl:String, createUserName:String,notificationBit:Bool) {
         id = nil
         
         self.userIds = userIds
@@ -52,6 +53,7 @@ struct Channel {
         self.createUserName = createUserName
         self.createrName = createrName
         self.createrId = createrId
+        self.notificationBit = notificationBit
     }
     
     init?(document: QueryDocumentSnapshot) {
@@ -69,6 +71,7 @@ struct Channel {
         self.timeStamp = (data["timeStamp"] as! Timestamp).dateValue()
         self.createrProfilePicUrl = data["createrProfilePicUrl"] as! String
         self.createUserName = data["createrUserName"] as! String
+        self.notificationBit = data["notificationBit"] as? Bool ?? true
         id = document.documentID
         self.name = name
     }
@@ -81,12 +84,12 @@ extension Channel: DatabaseRepresentation {
         rep["name"] = name
         rep["createrName"] = createrName
         rep["createrId"] = createrId
-        
         rep["userName"] = userName
         rep["profilePicUrl"] = profilePicUrl
         rep["timeStamp"] = timeStamp
         rep["createrProfilePicUrl"] = createrProfilePicUrl
         rep["createrUserName"] = createUserName
+        rep["notificationBit"] = notificationBit
         
         if let id = id {
             rep["id"] = id

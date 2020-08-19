@@ -10,11 +10,16 @@ import Foundation
 import YPImagePicker
 import SVProgressHUD
 import Firebase
-import FirebaseAuth
+import FirebaseCore
+import FirebaseStorage
+import FirebaseDatabase
 import FirebaseFirestore
+import FirebaseDynamicLinks
+import FirebaseAuth
+import FirebaseMessaging
 import AVFoundation
 class StoriesController:UIViewController {
-    private let storage = Storage.storage().reference()
+    let storage = Storage.storage().reference()
     var currentUser = Auth.auth().currentUser
     var currentUserDocument:QueryDocumentSnapshot?
     private var viewModel: IGHomeViewModel = IGHomeViewModel()

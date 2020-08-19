@@ -397,11 +397,11 @@ class FilterViewController: InterestPopUpValues {
        // let api = "https://maps.googleapis.com/maps/api/geocode/json?latlng=\(locationManager.location?.coordinate.latitude ?? 0),\(locationManager.location?.coordinate.longitude ?? 0)&key=AIzaSyD1kOEBHNFsq5D7Zwu_XSM6YWj0-Jw2j0c"
         let api = "https://maps.googleapis.com/maps/api/geocode/json?address=\(zipCodeTxtField.text ?? "")&key=AIzaSyD1kOEBHNFsq5D7Zwu_XSM6YWj0-Jw2j0c"
 
-        Alamofire.request(api, method: .get, parameters: [:], encoding: URLEncoding.default, headers: nil).responseJSON { (response:DataResponse<Any>) in
+        AF.request(api, method: .get, parameters: [:], encoding: URLEncoding.default, headers: nil).responseJSON {(response: AFDataResponse<Any>) in
             SVProgressHUD.dismiss()
             switch(response.result) {
             case .success(_):
-                if let data = response.result.value as? [String:Any]{
+                if let data = response.data as? [String:Any]{
                    // print(data["results"] as! [String:Any])
                     if let results = data["results"] as? [[String:Any]] {
                         for obj in results {
@@ -426,7 +426,7 @@ class FilterViewController: InterestPopUpValues {
                 }
                 break
             case .failure(_):
-                UIApplication.showMessageWith(response.result.error?.localizedDescription ?? "Please try again later.")
+                UIApplication.showMessageWith(response.error?.localizedDescription ?? "Please try again later.")
                 break
                 
             }

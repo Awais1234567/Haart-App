@@ -13,6 +13,11 @@ import FirebaseAuth
 import SDWebImage
 import YPImagePicker
 import Firebase
+import FirebaseFirestore
+import FirebaseDynamicLinks
+import FirebaseCore
+import FirebaseDatabase
+import FirebaseStorage
 
 class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, IGAddStoryCellDelegate {
     
@@ -320,7 +325,7 @@ class OthersProfileViewController: AbstractControl,UICollectionViewDelegate,UICo
                     }
                     else {
                         SVProgressHUD.show()
-                        let channel = Channel(name: channelName, createrName: AppSettings.fullName,createrId: self.user.uid, userIds: [recieverId, self.user.uid], userName:userName, profilePicUrl:profilePic, createrProfilePicUrl:AppSettings.profilePicUrl, createUserName:AppSettings.userName)
+                        let channel = Channel(name: channelName, createrName: AppSettings.fullName,createrId: self.user.uid, userIds: [recieverId, self.user.uid], userName:userName, profilePicUrl:profilePic, createrProfilePicUrl:AppSettings.profilePicUrl, createUserName:AppSettings.userName , notificationBit: true)
                         self.db.collection("channels").addDocument(data: channel.representation) { error in
                             SVProgressHUD.dismiss()
                             if let e = error {

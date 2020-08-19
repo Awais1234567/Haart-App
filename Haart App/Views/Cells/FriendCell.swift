@@ -168,7 +168,7 @@ class FriendCell: UITableViewCell {
                     }
                     else {
                         SVProgressHUD.show()
-                        let channel = Channel(name: channelName, createrName: AppSettings.fullName,createrId: self.user.uid, userIds: [recieverId, self.user.uid], userName:userName, profilePicUrl:profilePic, createrProfilePicUrl:AppSettings.profilePicUrl, createUserName:AppSettings.userName)
+                        let channel = Channel(name: channelName, createrName: AppSettings.fullName,createrId: self.user.uid, userIds: [recieverId, self.user.uid], userName:userName,profilePicUrl:profilePic, createrProfilePicUrl:AppSettings.profilePicUrl, createUserName:AppSettings.userName , notificationBit: true)
                         self.db.collection("channels").addDocument(data: channel.representation) { error in
                             SVProgressHUD.dismiss()
                             if let e = error {

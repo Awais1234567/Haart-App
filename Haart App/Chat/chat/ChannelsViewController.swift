@@ -27,9 +27,25 @@
 /// THE SOFTWARE.
 
 import UIKit
+import GoogleMaps
+import GooglePlaces
+import DropDown
+import IQKeyboardManagerSwift
+import Firebase
+import FirebaseCore
+import FirebaseStorage
+import FirebaseDatabase
+import GoogleSignIn
 import FirebaseAuth
-import FirebaseFirestore
 import SVProgressHUD
+import YPImagePicker
+import FirebaseMessaging
+import NotificationView
+import Quickblox
+import QuickbloxWebRTC
+import FirebaseFirestore
+import FirebaseDynamicLinks
+
 class ChannelsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     lazy var tableView: UITableView = {
@@ -63,19 +79,19 @@ class ChannelsViewController: UIViewController, UITableViewDelegate, UITableView
     private let currentUser: User
     
     
-//    init(currentUser: User) {
-//        self.currentUser = currentUser
-//        title = "Messages"
-//        print(currentUser.uid)
-////        let control = AbstractControl()
-////        let ref = control.db.collection("users").whereField("userId", isEqualTo: otherUserId)
-////        ref.getDocuments(completion: {(snapshot, error)in
-////            print(snapshot?.documents[0].data()["fullName"] as? String)
-////
-////        })
-//
-//    }
-   
+    //    init(currentUser: User) {
+    //        self.currentUser = currentUser
+    //        title = "Messages"
+    //        print(currentUser.uid)
+    ////        let control = AbstractControl()
+    ////        let ref = control.db.collection("users").whereField("userId", isEqualTo: otherUserId)
+    ////        ref.getDocuments(completion: {(snapshot, error)in
+    ////            print(snapshot?.documents[0].data()["fullName"] as? String)
+    ////
+    ////        })
+    //
+    //    }
+    
     init(currentUser: User) {
         self.currentUser = currentUser
         print(currentUser.uid)
@@ -83,16 +99,16 @@ class ChannelsViewController: UIViewController, UITableViewDelegate, UITableView
         self.title = "Messages"
         
         print(channels)
-//        let controller = AbstractControl()
-//        let ref = controller.db.collection("users").whereField("userId", isEqualTo: currentUser.uid)
-//        ref.getDocuments { (snapshot, error) in
-//
-//
-//            if(snapshot?.documents.count == 0) {
-//
-//            }
-//            print(snapshot?.documents[0])
-//        }
+        //        let controller = AbstractControl()
+        //        let ref = controller.db.collection("users").whereField("userId", isEqualTo: currentUser.uid)
+        //        ref.getDocuments { (snapshot, error) in
+        //
+        //
+        //            if(snapshot?.documents.count == 0) {
+        //
+        //            }
+        //            print(snapshot?.documents[0])
+        //        }
         
     }
     
@@ -244,6 +260,13 @@ extension ChannelsViewController {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChannelsCell", for: indexPath) as! ChannelssCell
         cell.setData(channel:channels[indexPath.row])
+      if(self.channels[indexPath.row].notificationBit == true){
+        cell.muteIcon.image = nil
+                            
+      }else{
+                cell.muteIcon.image = UIImage(named: "muted")
+        }
+        
         return cell
     }
     
@@ -256,4 +279,91 @@ extension ChannelsViewController {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+// func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+//        let delete = UITableViewRowAction(style: .destructive, title: "") { (action, indexPath) in
+//            // delete item at indexPath
+//        }
+//
+//        let share = UITableViewRowAction(style: .normal, title: nil) { (action, indexPath) in
+//            // share item at indexPath
+//        }
+//    let img2 = UIImage(named: "delete2")
+//
+//
+//    delete.backgroundColor = UIColor(patternImage: (img2!))
+//
+//    let img = UIImage(named : "mute")
+//    share.backgroundColor = UIColor(patternImage: img!)
+//
+//
+//
+//        return [delete, share]
+//    }
+    
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
+            -> UISwipeActionsConfiguration? {
+            let deleteAction = UIContextualAction(style: .destructive, title: nil) { (_, _, completionHandler) in
+                self.updateChannels(self.channels[indexPath.row].id!)
+                self.channels.remove(at: indexPath.row)
+            
+                self.tableView.deleteRows(at: [indexPath], with: .fade)
+                self.tableView.reloadData()
+                completionHandler(true)
+                
+            }
+            deleteAction.image = UIImage(named: "delete2")
+            deleteAction.backgroundColor = .clear
+                
+                let muteAction = UIContextualAction(style: .normal, title: nil) { (_, _, completionHandler) in
+                    print(self.channels[indexPath.row].notificationBit)
+                    if(self.channels[indexPath.row].notificationBit == true){
+                        self.updateNotificationStatus(channel: self.channels[indexPath.row].userName , value : false)
+                      
+                    }else{
+                         self.updateNotificationStatus(channel: self.channels[indexPath.row].userName , value : true)
+                    }
+                              completionHandler(true)
+                          }
+                
+                if(self.channels[indexPath.row].notificationBit == false){
+                    muteAction.image = UIImage(named: "unmute")
+                }else{
+                    muteAction.image = UIImage(named: "mute")
+                }
+                muteAction.backgroundColor = .clear
+                let configuration = UISwipeActionsConfiguration(actions: [deleteAction,muteAction])
+                configuration.performsFirstActionWithFullSwipe = false
+            return configuration
+    }
+    
+    func updateChannels(_ channel: String) { // update when message is received
+     db.collection("channels").document(channel).delete() { err in
+        if let err = err {
+            print("Error removing document: \(err)")
+        } else {
+            print("Document successfully removed!")
+        }
+    }
+
+    }
+    func updateNotificationStatus(channel: String, value : Bool) { // update when message is received
+      let db = Firestore.firestore()
+                let ref = db.collection("channels").whereField("userName", isEqualTo: channel)
+                ref.getDocuments { (snapshot, error) in
+                    if(snapshot?.documents.count ?? 0 > 0) {
+                        print(snapshot?.documents as Any)
+                        snapshot?.documents[0].reference.updateData(["notificationBit": value])
+                    }
+                }
+
+    }
+    
+
+    
 }
+

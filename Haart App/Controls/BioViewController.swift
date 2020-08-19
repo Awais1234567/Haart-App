@@ -19,6 +19,10 @@ import YPImagePicker
 import SDWebImage
 import GoogleMaps
 import Quickblox
+import FirebaseStorage
+import FirebaseDatabase
+import FirebaseDynamicLinks
+import FirebaseCore
 
 class BioViewController: InterestPopUpValues, UIScrollViewDelegate {
     var randomStr:String?

@@ -16,6 +16,11 @@ import Lightbox
 import Quickblox
 import QuickbloxWebRTC
 import PushKit
+import FirebaseCore
+import FirebaseStorage
+import FirebaseDatabase
+import FirebaseFirestore
+import FirebaseDynamicLinks
 
 class ProfileViewController: AbstractControl,UICollectionViewDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, IGAddStoryCellDelegate {
    

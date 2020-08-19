@@ -27,6 +27,11 @@ import GooglePlaces
 import DropDown
 import IQKeyboardManagerSwift
 import Firebase
+import FirebaseCore
+import FirebaseStorage
+import FirebaseDatabase
+import FirebaseFirestore
+import FirebaseDynamicLinks
 import GoogleSignIn
 import FirebaseAuth
 import SVProgressHUD
@@ -122,10 +127,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
     }
     
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-        if let _ = DynamicLinks.dynamicLinks().dynamicLink(fromCustomSchemeURL: url) {
+      let _ = DynamicLinks.dynamicLinks().dynamicLink(fromCustomSchemeURL: url)
             return true
-        }
-        return GIDSignIn.sharedInstance().handle(url, sourceApplication: sourceApplication, annotation: annotation)
+        
     }
    
     func application(_ application: UIApplication, continue userActivity: NSUserActivity,

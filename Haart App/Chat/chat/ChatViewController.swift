@@ -36,6 +36,14 @@ import FirebaseAuth
 import Quickblox
 import QuickbloxWebRTC
 import PushKit
+import FirebaseDynamicLinks
+import Firebase
+import FirebaseCore
+import FirebaseStorage
+import FirebaseDatabase
+import FirebaseFirestore
+import FirebaseDynamicLinks
+import Messages
 
 final class ChatViewController: MessagesViewController {
     
@@ -259,6 +267,9 @@ final class ChatViewController: MessagesViewController {
         titleLabel.font = UIFont.boldSystemFont(ofSize: 17)//boldSystemFontOfSize(17)
         titleLabel.text = title
         titleLabel.sizeToFit()
+        
+       
+        
 
 
         let titleView = UIView(frame: CGRect(x: 0, y: 0, width: max(titleLabel.frame.size.width, subtitleLabel.frame.size.width), height: 30))
@@ -276,6 +287,7 @@ final class ChatViewController: MessagesViewController {
         }
 
         self.navigationItem.titleView = titleView
+        
     }
     
     override func viewDidLayoutSubviews() {

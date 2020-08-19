@@ -88,6 +88,14 @@ class ChannelssCell: UITableViewCell {
         
     }()
     
+    var muteIcon : UIImageView = {
+      let  iv = UIImageView()
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        iv.contentMode = .scaleAspectFit
+         iv.clipsToBounds = true
+        return iv
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
@@ -108,6 +116,7 @@ class ChannelssCell: UITableViewCell {
         addSubview(nameLbl)
         addSubview(timeLbl)
         addSubview(isActiveCircleView)
+        addSubview(muteIcon)
         NSLayoutConstraint.activate([
             outerCircleView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
             outerCircleView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
@@ -129,7 +138,12 @@ class ChannelssCell: UITableViewCell {
             isActiveCircleView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             isActiveCircleView.widthAnchor.constraint(equalToConstant: 10),
             isActiveCircleView.heightAnchor.constraint(equalToConstant: 10),
-            isActiveCircleView.bottomAnchor.constraint(equalTo: timeLbl.topAnchor, constant: -2)
+            isActiveCircleView.bottomAnchor.constraint(equalTo: timeLbl.topAnchor, constant: -2),
+            
+            muteIcon.trailingAnchor.constraint(equalTo: isActiveCircleView.trailingAnchor),
+            muteIcon.topAnchor.constraint(equalTo: isActiveCircleView.bottomAnchor, constant: 20),
+              muteIcon.widthAnchor.constraint(equalToConstant: 20),
+              muteIcon.heightAnchor.constraint(equalToConstant: 20),
         ])
     }
     func setData(channel:Channel) {

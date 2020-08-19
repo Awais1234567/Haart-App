@@ -26,9 +26,16 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import Firebase
 import MessageKit
+import Firebase
+import FirebaseCore
+import FirebaseStorage
+import FirebaseDatabase
 import FirebaseFirestore
+import FirebaseDynamicLinks
+import FirebaseAuth
+
+
 
 struct Message: MessageType {
   
